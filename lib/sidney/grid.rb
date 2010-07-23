@@ -10,7 +10,7 @@ class Grid
   SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
   MARGIN = 4
 
-  attr_reader :scale, :base_scale, :rect
+  attr_reader :scale, :base_scale, :rect, :objects
 
   attr_reader :offset_x, :offset_y
 
@@ -54,7 +54,7 @@ class Grid
     1.times do
     CELLS_WIDE.times do |x|
       CELLS_HIGH.times do |y|
-        @tiles.push Tile.new(:image => "tile.png", :x => x  * CELL_WIDTH, :y => y * CELL_HEIGHT)
+        @tiles.push Tile.new(:image => Image["tile.png"].dup, :x => x  * CELL_WIDTH, :y => y * CELL_HEIGHT)
         @objects.push Sprite.new(:image => Image["object.png"].dup, :x => (x + 0.5) * CELL_WIDTH, :y => (y + 1) * CELL_HEIGHT) if rand(100) < 40
       end
     end

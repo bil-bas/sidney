@@ -29,17 +29,23 @@ class EditScene < GameState
     }
 
     nil
+
+    @context_menu = nil
   end
 
   def left_mouse_button
-    @zoom_box.click($window.cursor.x, $window.cursor.y)
 
     nil
   end
 
 
   def released_left_mouse_button
-    #p "release"
+    x, y = $window.cursor.x, $window.cursor.y
+    @zoom_box.click(x, y)
+    if @context_menu and @context_menu.hit?(x, y)
+      @context_menu.click(x, y)
+      @context_menu = nil
+    end
 
     nil
   end
@@ -61,6 +67,25 @@ class EditScene < GameState
   end
 
   def released_right_mouse_button
+    x, y = $window.cursor.x, $window.cursor.y
+    if @grid.hit?(x, y)
+      x, y = @grid.screen_to_grid(x, y)
+      if object = @grid.hit_object(x, y)
+        items = { :edit => "Edit", :delete => "Delete"}
+        @context_menu = MenuPane.new(items, $window.mouse_x, $window.mouse_y, ZOrder::DIALOG)
+        @context_menu.on_select do |widget, value|
+          case value
+            when :edit
+              p "edit #{object}"
+
+            when :delete
+              @grid.objects.delete(object)
+
+          end
+        end
+      end
+    end
+    
     nil
   end
 
@@ -78,7 +103,9 @@ class EditScene < GameState
 
   def update
     @grid.update
-    @zoom_box.hit?($window.cursor.x, $window.cursor.y)
+    x, y = $window.cursor.x, $window.cursor.y
+    @zoom_box.hit?(x, y)
+    @context_menu.hit?(x, y) if @context_menu
 
     super
   end
@@ -86,6 +113,7 @@ class EditScene < GameState
   def draw
     @grid.draw
     @zoom_box.draw
+    @context_menu.draw if @context_menu
     
     super
   end
