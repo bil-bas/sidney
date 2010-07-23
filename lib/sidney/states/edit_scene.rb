@@ -12,6 +12,8 @@ class EditScene < GameState
       @grid.scale = value * @grid.base_scale
     end
 
+    @font = Font.new($window, nil, 14)
+
     self.input = {
       :left_mouse_button => :left_mouse_button,
       :released_left_mouse_button => :released_left_mouse_button,
@@ -114,6 +116,15 @@ class EditScene < GameState
     @grid.draw
     @zoom_box.draw
     @context_menu.draw if @context_menu
+
+    x, y = $window.cursor.x, $window.cursor.y
+    if @grid.hit?(x, y)
+      x, y = @grid.screen_to_grid(x, y)
+      x, y = x.to_i, y.to_i
+    else
+      x, y = 'x', 'y'
+    end
+    @font.draw("(#{x}, #{y})", 0, 650, ZOrder::GUI)
     
     super
   end
