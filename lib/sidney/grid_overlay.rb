@@ -50,10 +50,7 @@ class GridOverlay
       end
 
       # Edge
-      $window.draw_line(0, 0, EDGE_COLOR, 0,  @height, EDGE_COLOR, ZOrder::GRID) # left
-      $window.draw_line(0, 0, EDGE_COLOR, @width, 0, EDGE_COLOR, ZOrder::GRID) # top
-      $window.draw_line(0, @height, EDGE_COLOR, @width, @height, EDGE_COLOR, ZOrder::GRID) # bottom
-      $window.draw_line(@width, 0, EDGE_COLOR, @width, @height, EDGE_COLOR, ZOrder::GRID) # right
+      $window.draw_box(0, 0, @width, @height, ZOrder::GRID, EDGE_COLOR)
     end
 
     nil
