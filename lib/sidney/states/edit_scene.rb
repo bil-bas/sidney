@@ -7,7 +7,7 @@ class EditScene < GameState
     @grid = Grid.new(($window.height / 240).floor)
 
     zooms = {0.5 => "50%", 1 => "100%", 2 => "200%", 4 => "400%", 8 => "800%"}
-    @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 12 * @grid.scale, 8 * @grid.scale, zooms, 1)
+    @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 16 * @grid.scale, 8 * @grid.scale, zooms, 1)
     @zoom_box.on_change do |widget, value|
       @grid.scale = value * @grid.base_scale
     end

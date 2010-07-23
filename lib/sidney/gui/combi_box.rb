@@ -1,9 +1,7 @@
+require 'gui/gui_element'
 require 'gui/menu_pane'
 
-class CombiBox
-  FONT_SIZE = 14
-  PADDING = 2
-
+class CombiBox < GuiElement
   attr_accessor :index
 
   def index; @menu.items.keys.index(@value) end
@@ -30,26 +28,24 @@ class CombiBox
   # Options are { value => text } pairs
   protected
   def initialize(x, y, width, height, items, initial_value)
+    super(x, y, width, height, ZOrder::GUI)
+
     @value = initial_value
 
     @font = Gosu::Font.new($window, nil, FONT_SIZE)
 
     @border_color = 0xffffffff
     @background_color = 0xff666666
-
-    @z = ZOrder::GUI
     
     @open = false
     @hover_index = 0
 
-    @rect = Rect.new(x, y, width, height)
-
     @on_change = nil # Event handler.
 
-    @menu = MenuPane.new(items, @rect.left, @rect.bottom + 1, @z + 0.01)
+    @menu = MenuPane.new(items, rect.left, rect.bottom + 1, z + 0.01)
     @menu.on_select do |widget, value|
       self.value = value
-    end   
+    end
   end
 
   public
@@ -59,8 +55,8 @@ class CombiBox
 
   public
   def draw
-    $window.draw_box(@rect.x, @rect.y, @rect.width, @rect.height, @z, @border_color, @background_color)
-    @font.draw(text, @rect.x + PADDING, @rect.y + ((@rect.height - FONT_SIZE) / 2).floor, @z)
+    $window.draw_box(rect.x, rect.y, rect.width, rect.height, z, @border_color, @background_color)
+    @font.draw(text, rect.x + PADDING_X, rect.y + ((rect.height - FONT_SIZE) / 2).floor, z)
 
     # Draw the drop-down menu beneath.
     @menu.draw if @open
@@ -71,9 +67,9 @@ class CombiBox
   public
   def hit?(x, y)
     hit = if @open
-      @rect.collide_point?(x, y) or @menu.hit?(x, y)
+      super(x, y) or @menu.hit?(x, y)
     else
-      @rect.collide_point?(x, y)
+      super(x, y)
     end
 
     hit
