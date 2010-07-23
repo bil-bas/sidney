@@ -11,7 +11,7 @@ class CombiBox
   def text; @menu.items[@value]; end
 
   def value=(value)
-    if @menu.items[@value]
+    if @menu.items[value]
       if @value != value
         @value = value
         @on_change.call(self, @value) if @on_change
@@ -75,8 +75,6 @@ class CombiBox
     else
       @rect.collide_point?(x, y)
     end
-    
-    @open = hit
 
     hit
   end
@@ -90,11 +88,15 @@ class CombiBox
   def click(x, y)
     hit = hit?(x, y)
     if hit
-      if @open and @menu.hit?(x, y)
-        @menu.click(x, y)
-
-        @open = false
+      if @open
+        if @menu.hit?(x, y)
+          @menu.click(x, y)          
+        end
       end
+
+      @open = (not @open)
+    else
+
     end
 
     hit

@@ -5,6 +5,7 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/sidney.rbw" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/sidney/gui/combi_box.rb" afterPath="$PROJECT_DIR$/lib/sidney/gui/combi_box.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/sidney/grid.rb" afterPath="$PROJECT_DIR$/lib/sidney/grid.rb" />
     </list>
     <ignored path="sidney.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -41,7 +42,7 @@
       <file leaf-file-name="edit_scene.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/sidney/states/edit_scene.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="81" column="43" selection-start="2281" selection-end="2281" vertical-scroll-proportion="-15.84">
+            <state line="11" column="26" selection-start="382" selection-end="382" vertical-scroll-proportion="-7.44">
               <folding />
             </state>
           </provider>
@@ -50,7 +51,25 @@
       <file leaf-file-name="game.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/sidney/game.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="35" selection-start="276" selection-end="276" vertical-scroll-proportion="0.0">
+            <state line="17" column="0" selection-start="213" selection-end="213" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tile.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/sidney/tile.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="4" selection-start="197" selection-end="197" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sprite.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/sidney/sprite.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="16" column="15" selection-start="264" selection-end="264" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -68,7 +87,7 @@
       <file leaf-file-name="grid.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/sidney/grid.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="53" column="5" selection-start="1357" selection-end="1357" vertical-scroll-proportion="-36.04">
+            <state line="74" column="25" selection-start="2102" selection-end="2102" vertical-scroll-proportion="-10.84">
               <folding />
             </state>
           </provider>
@@ -77,7 +96,7 @@
       <file leaf-file-name="combi_box.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/sidney/gui/combi_box.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="42" selection-start="441" selection-end="441" vertical-scroll-proportion="0.6472946">
+            <state line="14" column="18" selection-start="271" selection-end="271" vertical-scroll-proportion="0.425">
               <folding />
             </state>
           </provider>
@@ -106,7 +125,6 @@
         <option value="C:/Ruby191/lib/ruby/gems/1.9.1/gems/ffi-0.6.3-x86-mingw32/lib/ffi/library.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/cursor.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/fps_display.rb" />
-        <option value="$PROJECT_DIR$/lib/sidney/tile.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/sprite.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/states/edit.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/grid_overlay.rb" />
@@ -115,8 +133,9 @@
         <option value="$PROJECT_DIR$/lib/sidney/combi_box.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/gui/menu_pane.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/states/edit_scene.rb" />
-        <option value="$PROJECT_DIR$/lib/sidney/grid.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/game.rb" />
+        <option value="$PROJECT_DIR$/lib/sidney/tile.rb" />
+        <option value="$PROJECT_DIR$/lib/sidney/grid.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/gui/combi_box.rb" />
       </list>
     </option>
@@ -439,12 +458,12 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32992035" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32992035" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2892768" sideWeight="0.66211605" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2892768" sideWeight="0.7315131" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3993174" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26052332" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26052332" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -485,11 +504,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/Ruby191/lib/ruby/gems/1.9.1/gems/chingu-0.7.6.6/lib/chingu/game_object.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="0" selection-start="4641" selection-end="4641" vertical-scroll-proportion="0.33217993" />
-      </provider>
-    </entry>
     <entry file="file://C:/Ruby191/lib/ruby/gems/1.9.1/gems/texplay-0.2.960-x86-mingw32/lib/texplay.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
@@ -522,20 +536,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sidney/tile.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="49" selection-start="308" selection-end="308" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sidney/sprite.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="0" selection-start="1069" selection-end="1069" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/sidney/grid_overlay.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="38" column="53" selection-start="1108" selection-end="1108" vertical-scroll-proportion="0.0">
@@ -557,30 +557,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sidney/states/edit_scene.rb">
+    <entry file="file://$PROJECT_DIR$/lib/sidney/sprite.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="43" selection-start="2281" selection-end="2281" vertical-scroll-proportion="-15.84">
+        <state line="16" column="15" selection-start="264" selection-end="264" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sidney/grid.rb">
+    <entry file="file://C:/Ruby191/lib/ruby/gems/1.9.1/gems/chingu-0.7.6.6/lib/chingu/game_object.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="5" selection-start="1357" selection-end="1357" vertical-scroll-proportion="-36.04">
+        <state line="124" column="0" selection-start="4641" selection-end="4641" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/sidney/tile.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="4" selection-start="197" selection-end="197" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/sidney/game.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="35" selection-start="276" selection-end="276" vertical-scroll-proportion="0.0">
+        <state line="17" column="0" selection-start="213" selection-end="213" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/sidney/grid.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="74" column="25" selection-start="2102" selection-end="2102" vertical-scroll-proportion="-10.84">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/sidney/states/edit_scene.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="26" selection-start="382" selection-end="382" vertical-scroll-proportion="-7.44">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/sidney/gui/combi_box.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="42" selection-start="441" selection-end="441" vertical-scroll-proportion="0.6472946">
+        <state line="14" column="18" selection-start="271" selection-end="271" vertical-scroll-proportion="0.425">
           <folding />
         </state>
       </provider>
