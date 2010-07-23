@@ -1,3 +1,7 @@
+require 'grid_overlay'
+require 'sprite'
+require 'tile'
+
 class Grid
   CELLS_WIDE, CELLS_HIGH = 13, 13
   CELL_WIDTH = CELL_HEIGHT = 16
@@ -30,7 +34,7 @@ class Grid
     CELLS_WIDE.times do |x|
       CELLS_HIGH.times do |y|
         @tiles.push Tile.new(:image => "tile.png", :x => x  * CELL_WIDTH, :y => y * CELL_HEIGHT)
-        @objects.push Scenery.new(:image => Image["object.png"], :x => (x + 0.5) * CELL_WIDTH, :y => (y + 1) * CELL_HEIGHT) if rand(100) < 40
+        @objects.push Sprite.new(:image => Image["object.png"], :x => (x + 0.5) * CELL_WIDTH, :y => (y + 1) * CELL_HEIGHT) if rand(100) < 40
       end
     end
     end
