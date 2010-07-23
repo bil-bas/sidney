@@ -1,4 +1,4 @@
-require 'combi_box'
+require 'gui/combi_box'
 
 class EditScene < GameState
   def initialize
@@ -7,7 +7,7 @@ class EditScene < GameState
     @grid = Grid.new(($window.height / 240).floor)
 
     zooms = {0.5 => "50%", 1 => "100%", 2 => "200%", 4 => "400%", 8 => "800%"}
-    @zoom_box = CombiBox.new(@grid.margin_x + @grid.screen_width + 10, 0, 12 * @grid.scale, 8 * @grid.scale, zooms, 1)
+    @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 12 * @grid.scale, 8 * @grid.scale, zooms, 1)
     @zoom_box.on_change do |widget, value|
       @grid.scale = value * @grid.base_scale
     end
@@ -45,9 +45,12 @@ class EditScene < GameState
   end
 
   def holding_left_mouse_button
-    x, y = @grid.screen_to_grid($window.cursor.x, $window.cursor.y)
-    if object = @grid.hit_object(x, y)
-      object.set_screen_pixel(x, y, :red)
+    x, y = $window.cursor.x, $window.cursor.y
+    if @grid.hit?(x, y)
+      x, y = @grid.screen_to_grid(x, y)
+      if object = @grid.hit_object(x, y)
+        object.set_screen_pixel(x, y, :red)
+      end
     end
 
     nil
@@ -62,9 +65,12 @@ class EditScene < GameState
   end
 
   def holding_right_mouse_button
-    x, y = @grid.screen_to_grid($window.cursor.x, $window.cursor.y)
-    if object = @grid.hit_object(x, y)
-      object.set_screen_pixel(x, y, :blue)
+    x, y = $window.cursor.x, $window.cursor.y
+    if @grid.hit?(x, y)
+      x, y = @grid.screen_to_grid(x, y)
+      if object = @grid.hit_object(x, y)
+        object.set_screen_pixel(x, y, :blue)
+      end
     end
 
     nil
