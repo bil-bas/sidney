@@ -43,6 +43,7 @@ require 'fps_display'
 require 'cursor'
 require 'grid'
 require 'states/edit_scene'
+require 'gosu/window'
 
 class Game < Window
   attr_reader :cursor

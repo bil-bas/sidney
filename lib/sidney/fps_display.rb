@@ -1,7 +1,7 @@
 class FPSDisplay
   TEXT = 'FPS: '
   COLOR = Color.new(0x88ffffff)
-  SIZE = 16
+  FONT_SIZE = 16
 
   attr_reader :x, :y, :width, :height
 
@@ -13,7 +13,7 @@ class FPSDisplay
   protected
   def initialize(x, y)
     @x, @y = x, y
-    @font = Font.new($window, nil, SIZE)
+    @font = Font.new($window, nil, FONT_SIZE)
 
     @visible = true
 

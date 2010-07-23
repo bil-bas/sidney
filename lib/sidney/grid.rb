@@ -8,18 +8,21 @@ class Grid
   WIDTH = CELL_WIDTH * CELLS_WIDE
   HEIGHT = CELL_WIDTH * CELLS_HIGH
   SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
+  MARGIN = 4
 
-  attr_reader :scale
+  attr_reader :scale, :base_scale, :margin_x, :margin_y, :screen_width, :screen_height
 
-  def set_offset(x, y)
-    @offset_x, @offset_y = x, y
-  end
+  attr_reader :offset_x, :offset_y
 
-  def offset
-    [@offset_x, @offset_y]
-  end
+  attr_writer :offset_x, :offset_y
 
   def zoom; 1.0 / @scale; end
+  def scroll_step; zoom * 4; end
+
+  def left; if @offset_x > 0 then @offset_x -= scroll_step; end; end
+  def right; if @offset_x < WIDTH - (@screen_width / @scale) / CELL_WIDTH then @offset_x += scroll_step; end; end
+  def up; if @offset_y > 0 then @offset_y -= scroll_step; end; end
+  def down; if @offset_x < HEIGHT then @offset_y += scroll_step; end; end
 
   def scale=(n)
     if @scale_range.include? n
@@ -34,7 +37,7 @@ class Grid
 
   def initialize(scale)
     @base_scale = @scale = scale.to_f
-    @margin = (@base_scale * 4).to_i
+    @margin_x, @margin_y = (@base_scale * MARGIN).to_i, (@base_scale * MARGIN).to_i
 
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
 
@@ -51,14 +54,18 @@ class Grid
 
     @objects[0].instance_variable_set(:@dragging, true)
 
-    @overlay = GridOverlay.new(WIDTH * @scale, HEIGHT * @scale, CELL_WIDTH * @scale)
+    @screen_width, @screen_height = (WIDTH * @scale).to_i, (HEIGHT * @scale).to_i
+    @overlay = GridOverlay.new(@screen_width, @screen_height, CELL_WIDTH * @scale)
 
     @offset_x, @offset_y = 30, 0
   end
 
   def hit_object(x, y)
-    @objects.reverse.find do |object|
-      object.hit?(x, y)
+    if (@margin_x..(@margin_x + @screen_width)).include?(x) and
+        (@margin_y..(@margin_y + @screen_height)).include?(y)
+      @objects.reverse.find do |object|
+        object.hit?(x, y)
+      end
     end
   end
   
@@ -71,10 +78,10 @@ class Grid
   end
 
   def draw
-    $window.translate(@margin, @margin) do
+    $window.translate(@margin_x, @margin_y) do
       
-      $window.clip_to(@margin - 1, @margin, @overlay.width + 1,
-                      @overlay.height + 1) do
+      $window.clip_to(@margin_x - 1, @margin_y, @screen_width + 1,
+                      @screen_height + 1) do
 
         $window.scale(@scale) do
           @objects.each { |o| o.draw(@offset_x, @offset_y) }
@@ -97,11 +104,11 @@ class Grid
 
   # Convert screen coordinates to pixellised coordinates.
   def screen_to_grid(x, y)
-    [((x - @margin) / @scale) - @offset_x, ((y - @margin) / @scale) - @offset_y]
+    [((x - @margin_x) / @scale) - @offset_x, ((y - @margin_y) / @scale) - @offset_y]
   end
 
   # Convert pixellised coordinates into screen coordinates.
   def grid_to_screen(x, y)
-    [((x + @offset_x) * @scale) + @margin, ((y + @offset_y) * @scale) + @margin]
+    [((x + @offset_x) * @scale) + @margin_x, ((y + @offset_y) * @scale) + @margin_y]
   end
 end
