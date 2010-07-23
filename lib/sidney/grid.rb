@@ -7,26 +7,36 @@ class Grid
   CELL_WIDTH = CELL_HEIGHT = 16
   WIDTH = CELL_WIDTH * CELLS_WIDE
   HEIGHT = CELL_WIDTH * CELLS_HIGH
+  SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
 
   attr_reader :scale
 
+  def set_offset(x, y)
+    @offset_x, @offset_y = x, y
+  end
+
+  def offset
+    [@offset_x, @offset_y]
+  end
+
+  def zoom; 1.0 / @scale; end
+
   def scale=(n)
-    if n > @max_scale or n < @min_scale
-      nil
-    else
+    if @scale_range.include? n
       @scale = n
       @overlay.cell_width = CELL_WIDTH * @scale
 
-
-      @scale
+      @scale      
+    else
+      nil
     end
   end
 
   def initialize(scale)
     @base_scale = @scale = scale.to_f
     @margin = (@base_scale * 4).to_i
-    @max_scale = @base_scale * 8
-    @min_scale = @base_scale * 0.5
+
+    @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
 
     @objects = Array.new
     @tiles = Array.new
@@ -41,7 +51,9 @@ class Grid
 
     @objects[0].instance_variable_set(:@dragging, true)
 
-    @overlay = GridOverlay.new(0, 0, WIDTH * @scale, HEIGHT * @scale, CELL_WIDTH * @scale)
+    @overlay = GridOverlay.new(WIDTH * @scale, HEIGHT * @scale, CELL_WIDTH * @scale)
+
+    @offset_x, @offset_y = 30, 0
   end
 
   def hit_object(x, y)
@@ -60,32 +72,36 @@ class Grid
 
   def draw
     $window.translate(@margin, @margin) do
-      $window.scale(@scale) do
-        $window.clip_to(@margin, @margin, @overlay.width,
-                        @overlay.height) do
+      
+      $window.clip_to(@margin - 1, @margin, @overlay.width + 1,
+                      @overlay.height + 1) do
 
-          @objects.each { |o| o.draw(0, 0) }
-          @tiles.each { |o| o.draw(0, 0) }
+        $window.scale(@scale) do
+          @objects.each { |o| o.draw(@offset_x, @offset_y) }
+          @tiles.each { |o| o.draw(@offset_x, @offset_y) }
         end
+        
+        @overlay.draw(@offset_x * @scale, @offset_y * @scale)
       end
-
-      @overlay.draw
     end
 
     nil
   end
 
+  # Show/hide the grid overlay.
   def toggle_overlay
     @overlay.visible? ? @overlay.hide! : @overlay.show!
 
     nil
   end
 
+  # Convert screen coordinates to pixellised coordinates.
   def screen_to_grid(x, y)
-    [(x - @margin) / @scale, (y - @margin) / @scale]
+    [((x - @margin) / @scale) - @offset_x, ((y - @margin) / @scale) - @offset_y]
   end
 
+  # Convert pixellised coordinates into screen coordinates.
   def grid_to_screen(x, y)
-    [(x * @scale) + @margin, (y * @scale) + @margin]
+    [((x + @offset_x) * @scale) + @margin, ((y + @offset_y) * @scale) + @margin]
   end
 end

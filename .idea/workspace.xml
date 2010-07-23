@@ -3,8 +3,8 @@
   <component name="ChangeListManager" verified="true">
     <list default="true" readonly="true" id="37ea843d-26e0-4317-baee-3eb9644b87c2" name="Default" comment="">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/sidney.rbw" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/sidney/game.rb" afterPath="$PROJECT_DIR$/lib/sidney/game.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/sidney/grid_overlay.rb" afterPath="$PROJECT_DIR$/lib/sidney/grid_overlay.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/sidney/grid.rb" afterPath="$PROJECT_DIR$/lib/sidney/grid.rb" />
     </list>
     <ignored path="sidney.iws" />
@@ -39,10 +39,10 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="game.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="game.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/sidney/game.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="44" column="27" selection-start="761" selection-end="761" vertical-scroll-proportion="-1.0923077">
+            <state line="44" column="27" selection-start="761" selection-end="761" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -66,10 +66,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="grid.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="grid.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/sidney/grid.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="13" selection-start="53" selection-end="53" vertical-scroll-proportion="0.0">
+            <state line="71" column="2" selection-start="1547" selection-end="1547" vertical-scroll-proportion="1.9572649">
               <folding />
             </state>
           </provider>
@@ -96,7 +96,7 @@
       <file leaf-file-name="grid_overlay.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/sidney/grid_overlay.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="57" selection-start="481" selection-end="481" vertical-scroll-proportion="0.0">
+            <state line="27" column="13" selection-start="692" selection-end="1478" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -141,11 +141,11 @@
         <option value="$PROJECT_DIR$/lib/sidney/cursor.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/fps_display.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/tile.rb" />
-        <option value="$PROJECT_DIR$/lib/sidney/grid_overlay.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/sprite.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/states/edit.rb" />
-        <option value="$PROJECT_DIR$/lib/sidney/grid.rb" />
         <option value="$PROJECT_DIR$/lib/sidney/game.rb" />
+        <option value="$PROJECT_DIR$/lib/sidney/grid_overlay.rb" />
+        <option value="$PROJECT_DIR$/lib/sidney/grid.rb" />
       </list>
     </option>
   </component>
@@ -509,11 +509,6 @@
         <state line="4" column="14" selection-start="55" selection-end="141" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sidney/grid_overlay.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="57" selection-start="481" selection-end="481" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/sidney/cursor.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="7" selection-start="6" selection-end="12" vertical-scroll-proportion="0.0" />
@@ -531,11 +526,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sidney/tile.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="49" selection-start="308" selection-end="308" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/sidney/sprite.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="55" column="0" selection-start="1069" selection-end="1069" vertical-scroll-proportion="0.0">
@@ -543,16 +533,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sidney/grid.rb">
+    <entry file="file://$PROJECT_DIR$/lib/sidney/game.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="13" selection-start="53" selection-end="53" vertical-scroll-proportion="0.0">
+        <state line="44" column="27" selection-start="761" selection-end="761" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sidney/game.rb">
+    <entry file="file://$PROJECT_DIR$/lib/sidney/tile.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="27" selection-start="761" selection-end="761" vertical-scroll-proportion="-1.0923077">
+        <state line="10" column="49" selection-start="308" selection-end="308" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/sidney/grid_overlay.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="13" selection-start="692" selection-end="1478" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/sidney/grid.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="71" column="2" selection-start="1547" selection-end="1547" vertical-scroll-proportion="1.9572649">
           <folding />
         </state>
       </provider>
