@@ -9,9 +9,7 @@ class MenuPane < GuiElement
   def initialize(items, x, y, z, options = {})
     super(x, y, 0, 0, z)
 
-    @font = Gosu::Font.new($window, nil, FONT_SIZE)
-
-    self.items = items   
+    self.items = items
 
     @background_color = 0xff333333
     @hover_background_color = 0xff999999
@@ -28,7 +26,7 @@ class MenuPane < GuiElement
 
     @rect.height = line_height * @items.size
     @items.each_pair do |value, text|
-      rect.width = [rect.width, @font.text_width(text) + PADDING_X * 2].max
+      rect.width = [rect.width, font.text_width(text) + PADDING_X * 2].max
     end
 
     @items.size
@@ -50,7 +48,11 @@ class MenuPane < GuiElement
         $window.draw_box(rect.x, y, rect.width, line_height, z, nil, @hover_background_color)
       end
 
-      @font.draw(item[1], rect.x + PADDING_X, y + ((line_height - FONT_SIZE) / 2).floor, z)
+      ltext, rtext = item[1].split(/\t/)
+      font.draw(ltext, rect.x + PADDING_X, y + ((line_height - FONT_SIZE) / 2).floor, z)
+      if rtext
+        font.draw_rel(rtext, rect.right - PADDING_X, y + ((line_height - FONT_SIZE) / 2).floor, z, 1, 0)
+      end
     end
 
     nil

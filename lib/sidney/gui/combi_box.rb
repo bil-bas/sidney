@@ -32,8 +32,6 @@ class CombiBox < GuiElement
 
     @value = initial_value
 
-    @font = Gosu::Font.new($window, nil, FONT_SIZE)
-
     @border_color = 0xffffffff
     @background_color = 0xff666666
     
@@ -56,7 +54,7 @@ class CombiBox < GuiElement
   public
   def draw
     $window.draw_box(rect.x, rect.y, rect.width, rect.height, z, @border_color, @background_color)
-    @font.draw(text, rect.x + PADDING_X, rect.y + ((rect.height - FONT_SIZE) / 2).floor, z)
+    font.draw(text, rect.x + PADDING_X, rect.y + ((rect.height - FONT_SIZE) / 2).floor, z)
 
     # Draw the drop-down menu beneath.
     @menu.draw if @open

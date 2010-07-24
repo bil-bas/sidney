@@ -7,7 +7,7 @@ class EditScene < GameState
     @grid = Grid.new(($window.height / 240).floor)
 
     zooms = {0.5 => "50%", 1 => "100%", 2 => "200%", 4 => "400%", 8 => "800%"}
-    @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 16 * @grid.scale, 8 * @grid.scale, zooms, 1)
+    @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 20 * @grid.scale, 8 * @grid.scale, zooms, 1)
     @zoom_box.on_change do |widget, value|
       @grid.scale = value * @grid.base_scale
     end
@@ -73,15 +73,15 @@ class EditScene < GameState
     if @grid.hit?(x, y)
       x, y = @grid.screen_to_grid(x, y)
       if object = @grid.hit_object(x, y)
-        items = { :edit => "Edit", :delete => "Delete"}
+        items = { :edit => "Edit", :copy => "Copy\t(Ctrl+C)", :paste => "Paste\t(Ctrl+V)", :delete => "Delete\t(Ctrl+X)"}
         @context_menu = MenuPane.new(items, $window.mouse_x, $window.mouse_y, ZOrder::DIALOG)
         @context_menu.on_select do |widget, value|
           case value
-            when :edit
-              p "edit #{object}"
-
             when :delete
               @grid.objects.delete(object)
+
+            else
+              p "#{value} #{object}"
 
           end
         end
