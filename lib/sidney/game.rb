@@ -54,58 +54,53 @@ class Game < Window
   
   protected
   def initialize
-
     #width, height, full_screen = 640, 480, false
     width, height, full_screen = 960, 720, false
     #width, height, full_screen = 1280, 960, false
+    #width, height, full_screen = 800 * 16 / 10, 800, false
 
     #width, height, full_screen = 640, 480, true
     #width, height, full_screen = Gosu::screen_width, Gosu::screen_height, true
 
     super(width, height, full_screen)
-    
-    p [self.width, self.height]
+  end
+
+  def setup
+    media_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'media'))
+    Image.autoload_dirs << File.join(media_dir, 'images')
+    Sample.autoload_dirs << File.join(media_dir, 'sounds')
+
     retrofy
 
     self.caption = "Sidney"
 
     self.input = {
       :escape => :exit,
-      :f1 => :debug_mode,
-      :f => lambda { @fps.visible? ? @fps.hide! : @fps.show! },
-    }      
+      :f => lambda { @fps.toggle },
+    }
 
     @cursor = Cursor.create
-    @fps = FPSDisplay.new(0, 0)    
+    @fps = FPSDisplay.new(0, 0)
 
     #create_gui
 
     push_game_state(EditScene)
-    #push_game_state(PencilTool)
 
     nil
   end
 
   def create_gui
-    $textbox = GGLib::TextBox.new("textbox1", 500, 100, 12, GGLib::Themes::Rubygoo)
-  end
-
-  def debug_mode
-    push_game_state(GameStates::Debug.new(nil))
-    
-    nil
+    $text_box = GGLib::TextBox.new("textbox1", 500, 100, 12, GGLib::Themes::Rubygoo)
   end
 
   def draw
-    super
-
     @fps.draw
+
+    super
   end
 
   def exit
     close
-
-    nil
   end
 end
 

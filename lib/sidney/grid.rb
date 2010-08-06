@@ -71,9 +71,17 @@ class Grid
 
   def hit_object(x, y)
     if hit?(x, y)
-      @objects.reverse.find do |object|
-        object.hit?(x, y)
+      found = nil
+
+      @objects.each do |object|
+        if object.hit?(x, y)
+          if found.nil? or object.y > found.y
+            found = object
+          end
+        end
       end
+
+      found
     end
   end
   

@@ -1,25 +1,32 @@
 require 'gui/gui_element'
 require 'gui/menu_pane'
+require 'event'
 
 class CombiBox < GuiElement
+  include Event
+
+  event :change
+
+  public
   attr_accessor :index
 
-  def index; @menu.items.keys.index(@value) end
+  public
+  def index; @menu.index(@value) end
   def value; @value; end
-  def text; @menu.items[@value]; end
-
+  def text; @menu.find(@value).text; end
+  
+  public
   def value=(value)
-    if @menu.items[value]
-      if @value != value
-        @value = value
-        @on_change.call(self, @value) if @on_change
-      end
+    if @value != value
+      @value = value
+      publish_change(@value)
     end
   end
 
+  public
   def index=(index)
-    if index.between?(0, @menu.items.size)
-      self.value = @menu.items.keys[index]
+    if index.between?(0, @menu.size - 1)
+      self.value = @menu[index].value
     end
   end
 
@@ -27,7 +34,7 @@ class CombiBox < GuiElement
 
   # Options are { value => text } pairs
   protected
-  def initialize(x, y, width, height, items, initial_value)
+  def initialize(x, y, width, height, initial_value)
     super(x, y, width, height, ZOrder::GUI)
 
     @value = initial_value
@@ -38,12 +45,18 @@ class CombiBox < GuiElement
     @open = false
     @hover_index = 0
 
-    @on_change = nil # Event handler.
-
-    @menu = MenuPane.new(items, rect.left, rect.bottom + 1, z + 0.01)
-    @menu.on_select do |widget, value|
-      self.value = value
+    @menu = MenuPane.new(rect.left, rect.bottom + 1, z + 0.01) do |widget|
+      widget.on_select do |widget, value|
+        self.value = value
+      end
     end
+
+    yield self if block_given?
+  end
+
+  public
+  def add(*args)
+    @menu.add(*args)
   end
 
   public
@@ -94,10 +107,5 @@ class CombiBox < GuiElement
     end
 
     hit
-  end
-
-  public
-  def on_change(method = nil, &block)
-    @on_change = method ? method : block
   end
 end

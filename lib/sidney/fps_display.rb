@@ -28,4 +28,11 @@ class FPSDisplay
 
     nil
   end
+
+  public
+  def toggle
+    visible? ? hide! : show!
+
+    nil
+  end
 end

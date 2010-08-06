@@ -11,8 +11,10 @@ class GuiElement
 
   def initialize(x, y, width, height, z)
     @rect = Rect.new(x, y, width, height)
-    @@font ||= Font.new($window, FONT_NAME, FONT_SIZE)
+
     @z = z
+
+    @@font ||= Font.new($window, FONT_NAME, FONT_SIZE)
   end
 
   def hit?(x, y)
