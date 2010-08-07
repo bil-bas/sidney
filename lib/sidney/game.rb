@@ -34,9 +34,9 @@ include Chingu
 
 module ZOrder
   BACKGROUND = -1 # Tiles
-  FIRST_OBJECT = 0 # Objects are at z = 0...100000
+  FIRST_OBJECT = 0 # Objects are at z = 0...1000000
 
-  GRID, GUI, DIALOG, DRAGGING, FPS, CURSOR = (100001..100006).to_a
+  GRID, GUI, DIALOG, DRAGGING, FPS, CURSOR = (1000001..1000006).to_a
 end
 
 require 'fps_display'
@@ -75,7 +75,6 @@ class Game < Window
     self.caption = "Sidney"
 
     self.input = {
-      :escape => :exit,
       :f => lambda { @fps.toggle },
     }
 

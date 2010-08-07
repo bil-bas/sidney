@@ -42,7 +42,6 @@ class CombiBox < GuiElement
     @border_color = 0xffffffff
     @background_color = 0xff666666
     
-    @open = false
     @hover_index = 0
 
     @menu = MenuPane.new(rect.left, rect.bottom + 1, z + 0.01) do |widget|
@@ -69,21 +68,7 @@ class CombiBox < GuiElement
     $window.draw_box(rect.x, rect.y, rect.width, rect.height, z, @border_color, @background_color)
     font.draw(text, rect.x + PADDING_X, rect.y + ((rect.height - FONT_SIZE) / 2).floor, z)
 
-    # Draw the drop-down menu beneath.
-    @menu.draw if @open
-
     nil
-  end
-
-  public
-  def hit?(x, y)
-    hit = if @open
-      super(x, y) or @menu.hit?(x, y)
-    else
-      super(x, y)
-    end
-
-    hit
   end
 
   public
@@ -95,15 +80,7 @@ class CombiBox < GuiElement
   def click(x, y)
     hit = hit?(x, y)
     if hit
-      if @open
-        if @menu.hit?(x, y)
-          @menu.click(x, y)          
-        end
-      end
-
-      @open = (not @open)
-    else
-
+      $window.game_state_manager.push ShowMenu.new(@menu)
     end
 
     hit

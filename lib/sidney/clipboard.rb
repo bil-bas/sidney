@@ -4,13 +4,11 @@ class Clipboard
   protected
   def initialize
     @items = []
-    @x, @y = nil, nil
   end
 
   public
-  def copy(items, x, y)
+  def copy(items)
     @items = items.dup
-    @x, @y = x, y
   end
 
   public

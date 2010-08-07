@@ -54,10 +54,15 @@ class Sprite < GameObject
     image.set_pixel(x, y, :color => color)
     image.redraw_outline
   end
-
+  
   # Set the pixel at screen location.
   public
   def set_screen_pixel(x, y, color)
     self[x - self.x + (center_x * image.width), y - self.y + (center_y * image.height)] = color
+  end
+
+  public
+  def rect
+    Rect.new(x - center_x * width, y - center_y * height, width, height)
   end
 end

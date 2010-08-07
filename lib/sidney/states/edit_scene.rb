@@ -1,8 +1,14 @@
 require 'gui/combi_box'
 require 'clipboard'
+require 'selection'
 require 'history'
+require 'states/edit_object'
+require 'states/show_menu'
 
 class EditScene < GameState
+  attr_reader :grid
+
+  protected
   def initialize
     super
 
@@ -33,9 +39,14 @@ class EditScene < GameState
       :holding_right => lambda { @grid.right },
       :holding_up => lambda { @grid.up },
       :holding_down => lambda { @grid.down },
+      :released_escape => lambda { $window.close },
+      :delete => lambda { delete unless @selection.empty? },
+      :x => lambda { delete if $window.control_down? and not @selection.empty? },
+      :c => lambda { copy if $window.control_down? and not @selection.empty? },
+      :v => lambda { paste($window.mouse_x, $window.mouse_y) if $window.control_down? and not @clipboard.empty? },
       :z => lambda {
-         if $window.button_down?(Button::KbLeftControl) or $window.button_down?(Button::KbRightControl)
-           if $window.button_down?(Button::KbLeftShift) or $window.button_down?(Button::KbRightShift)
+         if $window.control_down?
+           if $window.shift_down?
              @history.redo if @history.can_redo?
            else
              @history.undo if @history.can_undo?
@@ -45,79 +56,65 @@ class EditScene < GameState
     }
 
     @clipboard = Clipboard.new
-    @context_menu = nil
     @history = History.new
-
-    @selection = Array.new
+    @selection = Selection.new
 
     nil
   end
 
+  public
   def left_mouse_button
     x, y = $window.cursor.x, $window.cursor.y
-    select(x, y) if not @context_menu and @grid.hit?(x, y)
+    select(x, y) if @grid.hit?(x, y)
     
     nil
   end
 
+  protected
   def select(x, y)    
     x, y = @grid.screen_to_grid(x, y)
-    if object = @grid.hit_object(x, y)
-      unless @selection.include? object
-        @selection.push object
-        object.selected = true
-      end
-    else
-      @selection.each { |o| o.selected = false }
+
+    object = @grid.hit_object(x, y)
+
+    unless @selection.include?(object) or $window.shift_down?
       @selection.clear
     end
 
+    if object and not @selection.include? object
+      @selection.push object
+    end
+
     nil
   end
 
+  public
   def released_left_mouse_button
     x, y = $window.cursor.x, $window.cursor.y
-    
-    if @context_menu
-      if @context_menu.hit?(x, y)
-        @context_menu.click(x, y)
-      else
-        @zoom_box.click(x, y)
-        select(x, y) if @grid.hit?(x, y)
-      end
-      @context_menu = nil
-    else
-      @zoom_box.click(x, y)
-      select(x, y) if @grid.hit?(x, y)
-    end
+
+    @zoom_box.click(x, y)
+    select(x, y) if @grid.hit?(x, y)
 
     nil
   end
 
+  public
   def holding_left_mouse_button
-    x, y = $window.cursor.x, $window.cursor.y
-    if @grid.hit?(x, y)
-      x, y = @grid.screen_to_grid(x, y)
-      if object = @grid.hit_object(x, y)
-        object.set_screen_pixel(x, y, :red)
-      end
-    end
-
-    nil
   end
 
+  public
   def right_mouse_button
-    x, y = $window.cursor.x, $window.cursor.y
-    select(x, y) if not @context_menu and @grid.hit?(x, y)
-    
-    nil
   end
 
+  public
+  def holding_right_mouse_button
+  end
+
+  public
   def released_right_mouse_button
-    x, y = $window.cursor.x, $window.cursor.y
+    x, y = $window.mouse_x, $window.mouse_y
     if @grid.hit?(x, y)
-      select(x, y) unless @context_menu
-      @context_menu = MenuPane.new($window.mouse_x, $window.mouse_y, ZOrder::DIALOG) do |widget|
+      select(x, y)
+      MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
         widget.add(:edit, 'Edit', :enabled => @selection.size == 1)
         widget.add_separator
         widget.add(:copy, 'Copy', :shortcut => 'Ctrl-C', :enabled => (not @selection.empty?))
@@ -127,19 +124,21 @@ class EditScene < GameState
         widget.on_select do |widget, value|
           case value
             when :delete
-               delete(x, y)
+              delete
 
             when :copy
-               copy(x, y)
+              copy
 
             when :paste
-               paste(x, y)
+              paste(x, y) # Paste at position the menu was opened, not where the mouse was just clicked.
 
-            else
-              p "#{value} #{@selection.size}"
+            when :edit
+              game_state_manager.push EditObject.new(@selection[0])
 
           end
         end
+
+        game_state_manager.push ShowMenu.new(widget)
       end
     end
     
@@ -147,8 +146,8 @@ class EditScene < GameState
   end
 
   protected
-  def delete(x, y)
-    copy(x, y)    
+  def delete
+    copy
     @selection.each {|o| @grid.objects.delete(o) }
     @selection.clear
 
@@ -157,54 +156,48 @@ class EditScene < GameState
 
   protected
   def paste(x, y)
+    # Work out the overall bounding box for the items on the clipboard.
+    rects = @clipboard.items.map { |o| o.rect }
+    rect = rects.first.union_all(rects[1..-1])
+
+    # Place all items from the clipboard down with the centre of the
+    # bounding box at the mouse position.
     x, y = @grid.screen_to_grid(x, y)
-    offset_x, offset_y = x - @clipboard.x, y - @clipboard.y
-    @selection = @clipboard.items.map do |item|
+    offset_x, offset_y = x - rect.centerx, y - rect.centery
+    @selection.clear
+    
+    @clipboard.items.each do |item|
       copy = item.dup
       copy.x += offset_x
       copy.y += offset_y
       copy.selected = true
       @grid.objects.push copy
-      copy
+      @selection.push copy
     end
 
     nil
   end
 
   protected
-  def copy(x, y)
-    x, y = @grid.screen_to_grid(x, y)
-    @clipboard.copy(@selection, x, y)
+  def copy
+    @clipboard.copy(@selection.items)
 
     nil
   end
 
   public
-  def holding_right_mouse_button
-    x, y = $window.cursor.x, $window.cursor.y
-    if @grid.hit?(x, y)
-      x, y = @grid.screen_to_grid(x, y)
-      if object = @grid.hit_object(x, y)
-        object.set_screen_pixel(x, y, :blue)
-      end
-    end
-
-    nil
-  end
-
   def update
     @grid.update
     x, y = $window.cursor.x, $window.cursor.y
     @zoom_box.hit?(x, y)
-    @context_menu.hit?(x, y) if @context_menu
 
     super
   end
 
+  public
   def draw
     @grid.draw
     @zoom_box.draw
-    @context_menu.draw if @context_menu
 
     x, y = $window.cursor.x, $window.cursor.y
     if @grid.hit?(x, y)
@@ -213,7 +206,8 @@ class EditScene < GameState
     else
       x, y = 'x', 'y'
     end
-    @font.draw("(#{x}, #{y})", 0, 650, ZOrder::GUI)
+
+    @font.draw("(#{x}, #{y}) (#{@grid.objects.size} sprites and #{@grid.tiles.size} tiles) #{game_state_manager.current}", 0, 650, ZOrder::GUI)
     
     super
   end

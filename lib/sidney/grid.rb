@@ -10,7 +10,7 @@ class Grid
   SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
   MARGIN = 4
 
-  attr_reader :scale, :base_scale, :rect, :objects
+  attr_reader :scale, :base_scale, :rect, :objects, :tiles
 
   attr_reader :offset_x, :offset_y
 
@@ -60,7 +60,7 @@ class Grid
     end
     end
 
-    @objects[0].instance_variable_set(:@dragging, true)
+    #@objects[0].instance_variable_set(:@dragging, true)
 
     width, height = (WIDTH * @base_scale).to_i, (HEIGHT * @base_scale).to_i
     @rect = Rect.new(x, y, width, height)
@@ -100,8 +100,8 @@ class Grid
                       @rect.height + 1) do
 
         $window.scale(@scale) do
-          @objects.each { |o| o.draw(@offset_x, @offset_y) }
-          @tiles.each { |o| o.draw(@offset_x, @offset_y) }
+          @objects.each { |o| o.draw(@offset_x, @offset_y) if o.visible? }
+          @tiles.each { |o| o.draw(@offset_x, @offset_y) if o.visible? }
         end
         
         @overlay.draw(@offset_x * @scale, @offset_y * @scale)
