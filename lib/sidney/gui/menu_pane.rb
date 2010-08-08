@@ -139,9 +139,7 @@ class MenuPane < GuiElement
 
   public
   def click(x, y)
-    if hit?(x, y)
-      publish_select(@items[@index].value)
-    end
+    publish_select(@items[@index].value) if hit?(x, y) and @items[@index].enabled?
 
     nil
   end
