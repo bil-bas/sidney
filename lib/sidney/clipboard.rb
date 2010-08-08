@@ -8,7 +8,7 @@ class Clipboard
 
   public
   def copy(items)
-    @items = items.dup
+    @items = items.to_a.dup
   end
 
   public

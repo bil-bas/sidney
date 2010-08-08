@@ -80,8 +80,12 @@ class EditScene < GameState
       @selection.clear
     end
 
-    if object and not @selection.include? object
-      @selection.push object
+    if object
+      if @selection.include? object
+        @selection.remove object if $window.shift_down?
+      else
+        @selection.add object
+      end
     end
 
     nil
@@ -92,7 +96,7 @@ class EditScene < GameState
     x, y = $window.cursor.x, $window.cursor.y
 
     @zoom_box.click(x, y)
-    select(x, y) if @grid.hit?(x, y)
+    #select(x, y) if @grid.hit?(x, y)
 
     nil
   end
@@ -103,6 +107,10 @@ class EditScene < GameState
 
   public
   def right_mouse_button
+    x, y = $window.cursor.x, $window.cursor.y
+    select(x, y) if @grid.hit?(x, y)
+
+    nil
   end
 
   public
@@ -113,7 +121,7 @@ class EditScene < GameState
   def released_right_mouse_button
     x, y = $window.mouse_x, $window.mouse_y
     if @grid.hit?(x, y)
-      select(x, y)
+      #select(x, y)
       MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
         widget.add(:edit, 'Edit', :enabled => @selection.size == 1)
         widget.add_separator
@@ -172,7 +180,7 @@ class EditScene < GameState
       copy.y += offset_y
       copy.selected = true
       @grid.objects.push copy
-      @selection.push copy
+      @selection.add copy
     end
 
     nil
@@ -180,7 +188,7 @@ class EditScene < GameState
 
   protected
   def copy
-    @clipboard.copy(@selection.items)
+    @clipboard.copy(@selection)
 
     nil
   end

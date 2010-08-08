@@ -5,15 +5,27 @@ class Selection
   end
 
   public
-  def push(object)
+  def add(object)
     object.selected = true
     @list.push(object)
+
+    nil
+  end
+
+  public
+  def remove(object)
+    @list.delete(object)
+    object.selected = false
+
+    nil
   end
 
   public
   def clear
     @list.each { |o| o.selected = false }
     @list.clear
+
+    nil
   end
 
   public
@@ -26,5 +38,5 @@ class Selection
   def empty?; @list.empty?; end
   def [](index); @list[index]; end
   def each(&block); @list.each(&block); end
-  def items; @list.dup; end
+  def to_a; @list.dup; end
 end
