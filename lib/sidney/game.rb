@@ -11,13 +11,16 @@ rescue LoadError => ex
   STDERR.puts ex
 end
 
+# Allow gems to find the bin directory.
+ENV['PATH'] = "#{File.join(ROOT_PATH, 'bin')};#{ENV['PATH']}"
+
 #require 'profile'
 
 require 'chingu'
+require 'devil'
+require 'devil/gosu'
 #require 'gglib'
 require 'texplay'
-#require 'ffi-opengl'
-#include Gl, Glu, Glut
 
 include Gosu
 include Chingu
@@ -96,10 +99,6 @@ class Game < Window
     @fps.draw
 
     super
-  end
-
-  def exit
-    close
   end
 end
 
