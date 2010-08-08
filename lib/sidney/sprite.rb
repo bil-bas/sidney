@@ -3,7 +3,7 @@ require 'gosu/image'
 class Sprite < GameObject
   trait :retrofy
 
-  attr_accessor :selected
+  attr_writer :selected, :dragging
 
   def dragging?; @dragging; end
   def selected?; @selected; end

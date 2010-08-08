@@ -3,15 +3,11 @@
 begin
   require 'rubygems'
   gem 'chingu'
-  #gem 'gglib'
-
-  #gem 'ffi-opengl'
-  #gem 'texplay'
 rescue LoadError => ex
   STDERR.puts ex
 end
 
-# Allow gems to find the bin directory.
+# Allow gems to find the bin directory for binary libraries.
 ENV['PATH'] = "#{File.join(ROOT_PATH, 'bin')};#{ENV['PATH']}"
 
 #require 'profile'
@@ -19,12 +15,10 @@ ENV['PATH'] = "#{File.join(ROOT_PATH, 'bin')};#{ENV['PATH']}"
 require 'chingu'
 require 'devil'
 require 'devil/gosu'
-#require 'gglib'
 require 'texplay'
 
 include Gosu
 include Chingu
-#include GGLib
 
 # HACK to prevent Texplay completely grinding the system to a halt!
 #module TexPlay
@@ -85,15 +79,9 @@ class Game < Window
     @cursor = Cursor.create
     @fps = FPSDisplay.new(0, 0)
 
-    #create_gui
-
     push_game_state(EditScene)
 
     nil
-  end
-
-  def create_gui
-    $text_box = GGLib::TextBox.new("textbox1", 500, 100, 12, GGLib::Themes::Rubygoo)
   end
 
   def draw

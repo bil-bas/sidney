@@ -1,6 +1,7 @@
 require 'gui/combi_box'
 require 'gui/clipboard'
 require 'gui/selection'
+require 'gui/dragger'
 require 'gui/history'
 require 'states/edit_object'
 require 'states/show_menu'
@@ -39,7 +40,7 @@ class EditScene < GameState
       :holding_right => lambda { @grid.right },
       :holding_up => lambda { @grid.up },
       :holding_down => lambda { @grid.down },
-      :released_escape => lambda { $window.close },
+      :escape => lambda { @dragger.reset if @dragger.active? },
       :delete => lambda { delete unless @selection.empty? },
       :x => lambda { delete if $window.control_down? and not @selection.empty? },
       :c => lambda { copy if $window.control_down? and not @selection.empty? },
@@ -58,6 +59,7 @@ class EditScene < GameState
     @clipboard = Clipboard.new
     @history = History.new
     @selection = Selection.new
+    @dragger = Dragger.new
 
     nil
   end
@@ -96,13 +98,18 @@ class EditScene < GameState
     x, y = $window.cursor.x, $window.cursor.y
 
     @zoom_box.click(x, y)
-    #select(x, y) if @grid.hit?(x, y)
+
+    @dragger.end unless @dragger.empty?
 
     nil
   end
 
   public
   def holding_left_mouse_button
+    if not @selection.empty? and @dragger.empty?
+      x, y = @grid.screen_to_grid($window.cursor.x, $window.cursor.y)
+      @dragger.begin(@selection, x, y)
+    end
   end
 
   public
@@ -121,7 +128,6 @@ class EditScene < GameState
   def released_right_mouse_button
     x, y = $window.mouse_x, $window.mouse_y
     if @grid.hit?(x, y)
-      #select(x, y)
       MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
         widget.add(:edit, 'Edit', :enabled => @selection.size == 1)
         widget.add_separator
@@ -149,6 +155,8 @@ class EditScene < GameState
         game_state_manager.push ShowMenu.new(widget)
       end
     end
+
+    @dragger.end unless @dragger.empty?
     
     nil
   end
@@ -198,6 +206,7 @@ class EditScene < GameState
     @grid.update
     x, y = $window.cursor.x, $window.cursor.y
     @zoom_box.hit?(x, y)
+    @dragger.update(*@grid.screen_to_grid(x, y)) unless @dragger.empty?
 
     super
   end
