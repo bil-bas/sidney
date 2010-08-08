@@ -23,7 +23,7 @@ begin
   $stdout.reopen(STDOUT_LOG_FILENAME)
 
   require 'game'
-rescue Exception => ex
+ensure
   $stderr.reopen(original_stderr) if defined? original_stderr
   $stdout.reopen(original_stdout) if defined? original_stdout
 end

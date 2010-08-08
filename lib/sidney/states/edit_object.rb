@@ -1,4 +1,4 @@
-require 'history'
+require 'gui/history'
 
 class ObjectBeingEdited < GameObject
   MAX_IMAGE_SIZE = 1022

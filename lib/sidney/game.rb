@@ -42,7 +42,7 @@ module ZOrder
 end
 
 require 'fps_display'
-require 'cursor'
+require 'gui/cursor'
 require 'grid'
 require 'states/edit_scene'
 require 'gosu/window'

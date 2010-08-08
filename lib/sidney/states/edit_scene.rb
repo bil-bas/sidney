@@ -1,7 +1,7 @@
 require 'gui/combi_box'
-require 'clipboard'
-require 'selection'
-require 'history'
+require 'gui/clipboard'
+require 'gui/selection'
+require 'gui/history'
 require 'states/edit_object'
 require 'states/show_menu'
 
