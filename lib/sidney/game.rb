@@ -26,7 +26,6 @@ include Gosu
 include Chingu
 #include GGLib
 
-
 # HACK to prevent Texplay completely grinding the system to a halt!
 #module TexPlay
 #   alias_method :force_refresh_cache, :refresh_cache
@@ -47,6 +46,8 @@ require 'cursor'
 require 'grid'
 require 'states/edit_scene'
 require 'gosu/window'
+
+exit if defined?(Ocra)
 
 class Game < Window
   attr_reader :cursor
