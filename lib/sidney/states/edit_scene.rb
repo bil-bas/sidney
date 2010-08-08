@@ -33,7 +33,7 @@ class EditScene < GameState
       :right_mouse_button => :right_mouse_button,
       :released_right_mouse_button => :released_right_mouse_button,
       :holding_right_mouse_button => :holding_right_mouse_button,
-      :g => lambda { @grid.toggle_overlay },
+      :g => lambda { @grid.toggle_overlay if $window.control_down? },
       :wheel_up => lambda { @zoom_box.index += 1 },
       :wheel_down => lambda { @zoom_box.index -= 1 },
       :holding_left => lambda { @grid.left },

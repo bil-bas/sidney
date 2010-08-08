@@ -73,7 +73,7 @@ class Game < Window
     self.caption = "Sidney"
 
     self.input = {
-      :f => lambda { @fps.toggle },
+      :f => lambda { @fps.toggle if control_down? },
     }
 
     @cursor = Cursor.create
