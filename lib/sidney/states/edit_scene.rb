@@ -179,7 +179,7 @@ class EditScene < GameState
     # Place all items from the clipboard down with the centre of the
     # bounding box at the mouse position.
     x, y = @grid.screen_to_grid(x, y)
-    offset_x, offset_y = x - rect.centerx, y - rect.centery
+    offset_x, offset_y = (x - rect.centerx).round, (y - rect.centery).round
     @selection.clear
     
     @clipboard.items.each do |item|

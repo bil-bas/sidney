@@ -1,3 +1,4 @@
+module Gosu
 class Image
   def outline
     @outline
@@ -34,4 +35,5 @@ class Image
 
     @outline
   end
+end
 end

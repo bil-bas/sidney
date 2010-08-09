@@ -1,8 +1,7 @@
+require 'chingu/game_object'
 require 'gosu/image'
 
 class Sprite < GameObject
-  trait :retrofy
-
   attr_writer :selected, :dragging
 
   def dragging?; @dragging; end
@@ -10,7 +9,6 @@ class Sprite < GameObject
 
   def initialize(options = {})
     super({:center_y => 1}.merge(options))
-    #image.force_refresh_cache
   end
 
   def setup
@@ -31,14 +29,14 @@ class Sprite < GameObject
     nil
   end
 
-  def draw(x, y)
+  def draw
     if @selected
       image.redraw_outline unless image.outline
       color = 0xffffff00
-      image.outline.draw((self.x - self.width * center_x) + x - 1, (self.y - self.height * center_y) + y - 1, zorder, 1, 1, color)
+      image.outline.draw((self.x - self.width * center_x) - 1, (self.y - self.height * center_y) - 1, zorder, 1, 1, color)
     end
 
-    image.draw((self.x - self.width * center_x) + x, (self.y - self.height * center_y) + y, zorder)
+    image.draw((self.x - self.width * center_x), (self.y - self.height * center_y), zorder)
   end
 
   def hit?(x, y)

@@ -22,7 +22,10 @@ class Dragger
 
   public
   def end
-    @items.each { |o| o.dragging = false }
+    @items.each do |object|
+      object.x, object.y = object.x.round, object.y.round
+      object.dragging = false
+    end
     @items.clear
 
     nil

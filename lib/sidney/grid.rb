@@ -10,6 +10,7 @@ class Grid
   SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
   MARGIN = 4
 
+  public
   attr_reader :scale, :base_scale, :rect, :objects, :tiles
 
   attr_reader :offset_x, :offset_y
@@ -21,14 +22,14 @@ class Grid
 
   # Move view-port right one step (scroll background left).
   def right; if @offset_x > 0 then @offset_x -= scroll_step; end; end
-  def left; if @offset_x < WIDTH - (@rect.width / @scale) / CELL_WIDTH then @offset_x += scroll_step; end; end
+  def left; if @offset_x < WIDTH then @offset_x += scroll_step; end; end
   def down; if @offset_y > 0 then @offset_y -= scroll_step; end; end
-  def up; if @offset_x < HEIGHT then @offset_y += scroll_step; end; end
+  def up; if @offset_y < HEIGHT then @offset_y += scroll_step; end; end
 
   public
   def scale=(n)
     if @scale_range.include? n
-      @scale = n
+      @scale = n.to_f
       @overlay.cell_width = CELL_WIDTH * @scale
 
       @scale      
@@ -66,14 +67,14 @@ class Grid
     @rect = Rect.new(x, y, width, height)
     @overlay = GridOverlay.new(@rect.width, @rect.height, CELL_WIDTH * @scale)
 
-    @offset_x, @offset_y = 30, 0   
+    @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2   
   end
 
   def hit_object(x, y)
     if hit?(x, y)
       found = nil
 
-      @objects.each do |object|
+      @objects.reverse_each do |object|
         if object.hit?(x, y)
           if found.nil? or object.y > found.y
             found = object
@@ -95,13 +96,13 @@ class Grid
 
   def draw
     $window.translate(@rect.x, @rect.y) do
-      
-      $window.clip_to(@rect.x - 1, @rect.y, @rect.width + 1,
-                      @rect.height + 1) do
 
+      $window.clip_to(@rect.x - 1, @rect.y - 1, @rect.width + 2, @rect.height + 2) do
         $window.scale(@scale) do
-          @objects.each { |o| o.draw(@offset_x, @offset_y) if o.visible? }
-          @tiles.each { |o| o.draw(@offset_x, @offset_y) if o.visible? }
+          $window.translate(@offset_x, @offset_y) do
+            @objects.each { |o| o.draw if o.visible? }
+            @tiles.each { |o| o.draw if o.visible? }
+          end
         end
         
         @overlay.draw(@offset_x * @scale, @offset_y * @scale)
