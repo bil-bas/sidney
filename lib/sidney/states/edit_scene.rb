@@ -1,7 +1,6 @@
 require 'gui/combi_box'
 require 'gui/clipboard'
 require 'gui/selection'
-require 'gui/dragger'
 require 'gui/history'
 require 'states/edit_object'
 require 'states/show_menu'
@@ -40,7 +39,7 @@ class EditScene < GameState
       :holding_right => lambda { @grid.right },
       :holding_up => lambda { @grid.up },
       :holding_down => lambda { @grid.down },
-      :escape => lambda { @dragger.reset if @dragger.active? },
+      :escape => lambda { @selection.reset_drag if @selection.dragging? },
       :delete => lambda { delete unless @selection.empty? },
       :x => lambda { delete if $window.control_down? and not @selection.empty? },
       :c => lambda { copy if $window.control_down? and not @selection.empty? },
@@ -59,7 +58,6 @@ class EditScene < GameState
     @clipboard = Clipboard.new
     @history = History.new
     @selection = Selection.new
-    @dragger = Dragger.new
 
     nil
   end
@@ -99,21 +97,22 @@ class EditScene < GameState
 
     @zoom_box.click(x, y)
 
-    @dragger.end unless @dragger.empty?
+    @selection.end_drag if @selection.dragging?
 
     nil
   end
 
   public
   def holding_left_mouse_button
-    if not @selection.empty? and @dragger.empty?
+    unless @selection.dragging?
       x, y = @grid.screen_to_grid($window.cursor.x, $window.cursor.y)
-      @dragger.begin(@selection, x, y)
+      @selection.begin_drag(x, y)
     end
   end
 
   public
   def right_mouse_button
+    return if @selection.dragging?
     x, y = $window.cursor.x, $window.cursor.y
     select(x, y) if @grid.hit?(x, y)
 
@@ -126,6 +125,7 @@ class EditScene < GameState
 
   public
   def released_right_mouse_button
+    return if @selection.dragging?
     x, y = $window.mouse_x, $window.mouse_y
     if @grid.hit?(x, y)
       MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
@@ -155,8 +155,6 @@ class EditScene < GameState
         game_state_manager.push ShowMenu.new(widget)
       end
     end
-
-    @dragger.end unless @dragger.empty?
     
     nil
   end
@@ -206,7 +204,7 @@ class EditScene < GameState
     @grid.update
     x, y = $window.cursor.x, $window.cursor.y
     @zoom_box.hit?(x, y)
-    @dragger.update(*@grid.screen_to_grid(x, y)) unless @dragger.empty?
+    @selection.update_drag(*@grid.screen_to_grid(x, y)) if @selection.dragging?
 
     super
   end
@@ -228,13 +226,4 @@ class EditScene < GameState
     
     super
   end
-=begin
-  # Called Each time when we enter the game state, use this to reset the gamestate to a "virgin state"
-  def setup
-  end
-
-  # Called when we leave the game state
-  def finalize
-  end
-=end
 end
