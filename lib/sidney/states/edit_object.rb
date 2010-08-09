@@ -9,6 +9,11 @@ class EditObject < GameState
   end
 
   protected
+  def zoom_box
+    game_state_manager.previous.zoom_box
+  end
+
+  protected
   def cursor
     $window.cursor
   end
@@ -28,6 +33,13 @@ class EditObject < GameState
       :holding_left_mouse_button => :holding_left_mouse_button,
       :holding_right_mouse_button => :holding_right_mouse_button,
       :released_escape => lambda { game_state_manager.pop },
+      :g => lambda { grid.toggle_overlay if $window.control_down? },
+      :wheel_up => lambda { zoom_box.index += 1 },
+      :wheel_down => lambda { zoom_box.index -= 1 },
+      :holding_left => lambda { grid.left },
+      :holding_right => lambda { grid.right },
+      :holding_up => lambda { grid.up },
+      :holding_down => lambda { grid.down },
     }
 
     @image = TexPlay.create_image($window, MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT)

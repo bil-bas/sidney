@@ -6,7 +6,7 @@ require 'states/edit_object'
 require 'states/show_menu'
 
 class EditScene < GameState
-  attr_reader :grid
+  attr_reader :grid, :zoom_box
 
   protected
   def initialize
