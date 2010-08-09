@@ -2,12 +2,18 @@ class ShowMenu < GameState
   protected
   def initialize(menu)
     @menu = menu
+    super
+  end
 
+  public
+  def setup
     self.input = {
       [:left_mouse_button, :right_mouse_button] => :mouse_button_down,
       [:released_left_mouse_button, :released_right_mouse_button] => :mouse_button_up,
       :escape => lambda { game_state_manager.pop },
     }
+
+    nil
   end
 
   # Close the menu if the user clicks down outside the menu.
@@ -39,7 +45,8 @@ class ShowMenu < GameState
 
   public
   def update
-    @menu.hit?($window.cursor.x, $window.cursor.y)
+    x, y = $window.cursor.x, $window.cursor.y
+    @menu.hover(x, y) if @menu.hit?(x, y)
 
     nil
   end

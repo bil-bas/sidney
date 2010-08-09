@@ -125,8 +125,8 @@ class MenuPane < GuiElement
   end
 
   public
-  def hit?(x, y)
-    hit = super(x, y)
+  def hover(x, y)
+    hit = hit?(x, y)
 
     if hit
       @index = ((y - rect.y) / line_height).floor
@@ -134,7 +134,7 @@ class MenuPane < GuiElement
       @index = nil
     end
 
-    hit
+    nil
   end
 
   public
