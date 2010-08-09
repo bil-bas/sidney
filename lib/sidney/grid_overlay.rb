@@ -3,6 +3,8 @@ class GridOverlay
   BLOCK_COLOR = Color.new(0xff888888)
   EDGE_COLOR = Color.new(0xffffffff)
 
+  Z = ZOrder::GRID_OVERLAY
+
   attr_reader :width, :height, :cell_width
   def cell_width=(value)
     @cell_width = value.to_i
@@ -28,11 +30,11 @@ class GridOverlay
       # Single-pixel grid
       if @width < cell_width * 4
         (offset_y..@height).step(@cell_width / 16) do |y|
-          $window.draw_line(offset_x, y, PIXEL_COLOR, @width, y, PIXEL_COLOR, ZOrder::GRID)
+          $window.draw_line(offset_x, y, PIXEL_COLOR, @width, y, PIXEL_COLOR, Z)
         end
 
         (offset_x..@width).step(@cell_width / 16) do |x|
-          $window.draw_line(x, offset_y, PIXEL_COLOR, x, @height, PIXEL_COLOR, ZOrder::GRID)
+          $window.draw_line(x, offset_y, PIXEL_COLOR, x, @height, PIXEL_COLOR, Z)
         end
 
         block_color = BLOCK_COLOR
@@ -42,15 +44,15 @@ class GridOverlay
 
       # 16-pixel grid
       (offset_y..@height).step(@cell_width) do |y|
-        $window.draw_line(offset_x, y, block_color, @width, y, block_color, ZOrder::GRID)
+        $window.draw_line(offset_x, y, block_color, @width, y, block_color, Z)
       end
 
       (offset_x..@width).step(@cell_width) do |x|
-        $window.draw_line(x, offset_y, block_color, x, @height, block_color, ZOrder::GRID)
+        $window.draw_line(x, offset_y, block_color, x, @height, block_color, Z)
       end
 
       # Edge
-      $window.draw_box(0, 0, @width, @height, ZOrder::GRID, EDGE_COLOR)
+      $window.draw_box(0, 0, @width, @height, Z, EDGE_COLOR)
     end
 
     nil

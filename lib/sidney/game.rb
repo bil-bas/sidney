@@ -32,7 +32,7 @@ module ZOrder
   BACKGROUND = -1 # Tiles
   FIRST_OBJECT = 0 # Objects are at z = 0...1000000
 
-  GRID, GUI, DIALOG, DRAGGING, FPS, CURSOR = (1000001..1000006).to_a
+  GUI, DRAGGING, GRID_OVERLAY, DIALOG, FPS, CURSOR = (1000001..1000007).to_a
 end
 
 require 'fps_display'
