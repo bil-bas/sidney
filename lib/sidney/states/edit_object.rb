@@ -23,10 +23,7 @@ class EditObject < GameState
     @object = object
 
     super  
-  end
 
-  public
-  def setup
     @object.hide!
 
     self.input = {
@@ -87,7 +84,20 @@ class EditObject < GameState
 
   public
   def finalize
-    #@object.image = @image
+    old_width, old_height = @object.image.width, @object.image.height
+
+    # Crop the temporary image if necessary.
+    box = @image.auto_crop_box
+    if box.width != @image.width or box.height != @image.height
+      @image = @image.crop(box)
+      # TODO: correct x/y
+    end
+
+    # Replace the old image with the temporary one.
+    @object.image = @image
+    @object.size = [@image.width, @image.height]
+    @object.x -= (@image.width - old_width * 2) / 2
+    @object.y += old_height - @image.height / 2
     @object.show!
   end
 end

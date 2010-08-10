@@ -32,7 +32,7 @@ class Sprite < GameObject
   def draw
     if @selected
       image.redraw_outline unless image.outline
-      color = 0xffffff00
+      color = 0x00ffff00 + ((Math.sin(Time.now.to_f * 4) * 50 + 180).to_i.abs * 256 * 256 * 256)
       image.outline.draw((self.x - self.width * center_x) - 1, (self.y - self.height * center_y) - 1, zorder, 1, 1, color)
     end
 
