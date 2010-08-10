@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 ROOT_PATH = if ENV['OCRA_EXECUTABLE']
   File.dirname(ENV['OCRA_EXECUTABLE'])
 else
