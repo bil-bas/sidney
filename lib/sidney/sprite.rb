@@ -21,7 +21,7 @@ class Sprite < GameObject
 
   def update(z)
     self.zorder = if @dragging
-      ZOrder::DRAGGING
+      ZOrder::DRAGGING + self.y / 10000.0
     else
       (self.y * 256) + z
     end
