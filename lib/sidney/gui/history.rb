@@ -34,7 +34,7 @@ class History
   # If there are currently any actions that have been undone, they will be permanently lost and cannot be redone.
   #
   # === Parameters
-  # +action+:: Action to be performed [History::Action]
+  # +action+:: Action to be performed [Action]
   public
   def do(action)
     raise ArgumentError, "Parameter, 'action', expected to be a #{Action}, but received: #{action}" unless action.is_a? Action

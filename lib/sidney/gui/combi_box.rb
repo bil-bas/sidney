@@ -33,7 +33,6 @@ class CombiBox < GuiElement
 
   def rect; @rect.dup; end
 
-  # Options are { value => text } pairs
   protected
   def initialize(x, y, width, height, initial_value)
     super(x, y, width, height, ZOrder::GUI)

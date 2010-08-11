@@ -6,10 +6,10 @@ class Image
   # Create a new image which is completely transparent (unless using :color option).
   #
   # === Parameters
-  # +width+
-  # +height+
-  # +options+
-  #   :color - Colour to fill the new image with.
+  # +width+:: [Int]
+  # +height+:: [Int]
+  # +options+:: [Hash]
+  # * :color - Colour to fill the new image with.
   public
   def self.create(width, height, options = {})
     TexPlay.create_image($window, width, height, options)
@@ -85,8 +85,9 @@ class Image
   end
 
   # Crop the image down to a rectangular part of it.
+  #
   # === Parameters
-  # +box:: [Rect]
+  # +box+:: [Rect]
   #
   # Returns: The cropped image [Gosu::Image].
   public

@@ -19,11 +19,11 @@ class MenuPane < GuiElement
     end
 
     # === Parameters
-    # +value+:: 
-    # +text+::
-    # ==== Options
-    # +:enabled+ -
-    # +:shortcut+ -
+    # +value+:: Value if the user picks this item [Any]
+    # +text+:: Descriptive text shown to the user [String]
+    # +options+:: [Hash]
+    # * +:enabled+ - [Boolean]
+    # * +:shortcut+ - [String]
     protected
     def initialize(value, text, options = {})
       options = {:enabled => true}.merge(options)

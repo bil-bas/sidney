@@ -1,15 +1,23 @@
 module Sidney
 class Clipboard
-  attr_reader :x, :y, :items
+  # Items held in the clipboard.
+  attr_reader :items
 
+  #
   protected
   def initialize
     @items = []
   end
 
+  # Copy items into the clipboard.
+  #
+  # === Parameters
+  # +items+:: Items to copy [Array]
   public
   def copy(items)
     @items = items.to_a.dup
+
+    nil
   end
 
   public
