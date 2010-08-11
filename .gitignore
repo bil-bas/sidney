@@ -1,5 +1,4 @@
 /doc/rdoc
 /sidney.exe
-/logs/stderr.log
-/logs/stdout.log
+/logs
 /.idea
