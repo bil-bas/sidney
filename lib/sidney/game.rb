@@ -2,7 +2,6 @@
 
 begin
   require 'rubygems'
-  gem 'chingu'
 rescue LoadError => ex
   STDERR.puts ex
 end
