@@ -1,4 +1,4 @@
-require 'chingu/game_object'
+require 'chingu'
 
 class Tile < GameObject
   def initialize(options = {})

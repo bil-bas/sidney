@@ -1,5 +1,5 @@
-require 'chingu/game_object'
-require 'gosu/image'
+require 'chingu'
+require 'gosu_ext/image'
 
 class Sprite < GameObject
   attr_writer :selected, :dragging

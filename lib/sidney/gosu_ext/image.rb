@@ -3,6 +3,18 @@ class Image
   # Image that is an outline of the image itself [Gosu::Image]
   attr_reader :outline
 
+  # Create a new image which is completely transparent (unless using :color option).
+  #
+  # === Parameters
+  # +width+
+  # +height+
+  # +options+
+  #   :color - Colour to fill the new image with.
+  public
+  def self.create(width, height, options = {})
+    TexPlay.create_image($window, width, height, options)
+  end
+
   # Clear all transparent colors to transparent black.
   public
   def clear_transparency
@@ -18,7 +30,7 @@ class Image
     if @outline
       @outline.rect 0, 0, @outline.width, @outline.height, :fill => true, :color => [0, 0, 0, 0]
     else
-      @outline = TexPlay.create_image($window, width + 2, height + 2)
+      @outline = Image.create(width + 2, height + 2)
     end
 
     clear_transparency
@@ -80,7 +92,7 @@ class Image
   public
   def crop(box)
     if (box.width < width and box.height <= height) or (box.width <= width and box.height < height)
-      cropped = TexPlay.create_image($window, box.width, box.height)
+      cropped = Image.create(box.width, box.height)
       cropped.splice self, 0, 0, :crop => [box.x, box.y, box.right, box.bottom]
       cropped
     else
