@@ -1,5 +1,6 @@
-# Pick a scene. Enter from editing a scene.
-
-class PickScene < GameState
-  #Code here
+module Sidney
+  # Pick a scene. Enter from editing a scene.
+  class PickScene < GameState
+    #Code here
+  end
 end

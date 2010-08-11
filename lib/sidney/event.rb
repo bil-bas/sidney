@@ -1,3 +1,5 @@
+module Sidney
+
 # Adds a method "event" to the class.
 # Usage:
 #   class Cheese
@@ -37,4 +39,5 @@ module Event
       end
     end
   end
+end
 end

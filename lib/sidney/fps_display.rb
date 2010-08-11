@@ -1,3 +1,4 @@
+module Sidney
 class FPSDisplay
   TEXT = 'FPS: '
   COLOR = Color.new(0x88ffffff)
@@ -35,4 +36,5 @@ class FPSDisplay
 
     nil
   end
+end
 end

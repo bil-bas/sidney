@@ -1,5 +1,6 @@
 require 'gui/gui_element'
 
+module Sidney
 class ToolTip < GuiElement
   def initialize(x, y)
     super(x, y, 0, 0, ZOrder::GUI)
@@ -17,4 +18,5 @@ class ToolTip < GuiElement
     font.draw(@text, x + PADDING_X, y + PADDING_Y, z, 0xffffffff)
   end
 
+end
 end

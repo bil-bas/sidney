@@ -1,6 +1,8 @@
 require 'helper'
 require 'gui/history'
 
+module Sidney
+  
 class History
   class Maths < Action
     def initialize(value)
@@ -138,4 +140,5 @@ describe History do
       end
     end
   end
+end
 end

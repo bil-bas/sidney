@@ -2,6 +2,7 @@ require 'gui/gui_element'
 require 'gui/menu_pane'
 require 'event'
 
+module Sidney
 class CombiBox < GuiElement
   include Event
 
@@ -85,4 +86,5 @@ class CombiBox < GuiElement
 
     hit
   end
+end
 end

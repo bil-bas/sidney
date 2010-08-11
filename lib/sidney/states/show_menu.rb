@@ -1,4 +1,9 @@
+require 'log'
+
+module Sidney
+
 class ShowMenu < GameState
+  include Log
   protected
   def initialize(menu)
     @menu = menu
@@ -13,6 +18,14 @@ class ShowMenu < GameState
       :escape => lambda { game_state_manager.pop },
     }
 
+    log.info { "Opened menu" }
+
+    nil
+  end
+
+  public
+  def finalize
+    log.info { "Closed menu" }
     nil
   end
 
@@ -50,4 +63,5 @@ class ShowMenu < GameState
 
     nil
   end
+end
 end

@@ -1,6 +1,10 @@
 require 'gui/history'
+require 'log'
 
+module Sidney
 class EditObject < GameState
+  include Log
+  
   MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = 416, 416
 
   protected
@@ -45,6 +49,13 @@ class EditObject < GameState
     nil
   end
 
+  public
+  def setup
+    log.info { "Started editing image" }
+
+    nil
+  end
+
   protected
   def holding_left_mouse_button
     x, y = cursor.x, cursor.y
@@ -80,6 +91,8 @@ class EditObject < GameState
         end
       end
     end
+
+    nil
   end
 
   # Save the edited image to the object we are editing.
@@ -90,19 +103,29 @@ class EditObject < GameState
     box = @image.auto_crop_box
     if box.width != @image.width or box.height != @image.height
       @image = @image.crop(box)
-      # TODO: correct x/y
+      # TODO: correct x/y      
     end
+
+    log.info { "Image re-sized from #{@object.image.width}x#{@object.image.height} to #{box.width}x#{box.height}" }
 
     # Replace the old image with the temporary one.
     @object.image = @image
     @object.size = [@image.width, @image.height]
     @object.x -= (@image.width - old_width * 2) / 2
     @object.y += old_height - @image.height / 2
+
+    log.info { "Saved image" }
+
+    nil
   end
 
   public
   def finalize
     # Ensure the object is visible again, since we hid it while editing.
     @object.show!
+    log.info { "Stopped editing image"}
+
+    nil
   end
+end
 end

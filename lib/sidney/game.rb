@@ -19,14 +19,8 @@ require 'texplay'
 include Gosu
 include Chingu
 
-# HACK to prevent Texplay completely grinding the system to a halt!
-#module TexPlay
-#   alias_method :force_refresh_cache, :refresh_cache
-#   def refresh_cache
-#     # Do nothing.
-#   end
-#end
-
+module Sidney
+# Z-order of all elements of the game.
 module ZOrder
   BACKGROUND = -1 # Tiles
   FIRST_OBJECT = 0 # Objects are at z = 0...1000000
@@ -34,6 +28,7 @@ module ZOrder
   GUI, DRAGGING, GRID_OVERLAY, DIALOG, FPS, CURSOR = (1000001..1000007).to_a
 end
 
+require 'log'
 require 'fps_display'
 require 'gui/cursor'
 require 'grid'
@@ -41,11 +36,15 @@ require 'states/edit_scene'
 
 exit if defined?(Ocra)
 
+# Main game window.
 class Game < Window
+  include Log
+  
   attr_reader :cursor
 
-  # Any larger and Gosu will scale the whole window to fit.
+  # Any taller and Gosu will scale the whole window to fit.
   MAX_HEIGHT = Gosu::screen_width * 0.8
+  # Any wider and Gosu will scale the whole window to fit.
   MAX_WIDTH = Gosu::screen_width * 0.9
   
   protected
@@ -59,6 +58,7 @@ class Game < Window
     #width, height, full_screen = Gosu::screen_width, Gosu::screen_height, true
 
     super(width, height, full_screen)
+    log.info { "Opened window" }
   end
 
   def setup
@@ -122,5 +122,6 @@ class Game < Window
     button_down?(Button::KbLeftAlt) or button_down?(Button::KbRightAlt)
   end
 end
+end
 
-Game.new.show
+Sidney::Game.new.show

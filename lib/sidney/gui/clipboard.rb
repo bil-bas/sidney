@@ -1,3 +1,4 @@
+module Sidney
 class Clipboard
   attr_reader :x, :y, :items
 
@@ -15,4 +16,5 @@ class Clipboard
   def empty?
     @items.empty?
   end
+end
 end

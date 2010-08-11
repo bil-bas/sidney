@@ -1,6 +1,7 @@
 require 'chingu'
 require 'gosu_ext/image'
 
+module Sidney
 class Sprite < GameObject
   attr_writer :selected, :dragging
 
@@ -63,4 +64,5 @@ class Sprite < GameObject
   def rect
     Rect.new(x - center_x * width, y - center_y * height, width, height)
   end
+end
 end

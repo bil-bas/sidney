@@ -1,6 +1,7 @@
 require 'helper'
 require 'event'
 
+module Sidney
 describe Event do
   before :each do
     class EventTest
@@ -52,4 +53,5 @@ describe Event do
       called.should == 3
     end
   end
+end
 end

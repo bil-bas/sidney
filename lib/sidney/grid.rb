@@ -2,6 +2,7 @@ require 'grid_overlay'
 require 'sprite'
 require 'tile'
 
+module Sidney
 class Grid
   CELLS_WIDE, CELLS_HIGH = 13, 13
   CELL_WIDTH = CELL_HEIGHT = 16
@@ -128,4 +129,5 @@ class Grid
   def grid_to_screen(x, y)
     [((x + @offset_x) * @scale) + @rect.x, ((y + @offset_y) * @scale) + @rect.y]
   end
+end
 end

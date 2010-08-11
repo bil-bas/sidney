@@ -1,3 +1,4 @@
+module Sidney
 class GuiElement
   FONT_SIZE = 16
   FONT_NAME = 'Lucida Console'
@@ -51,4 +52,5 @@ class GuiElement
   def update
     nil
   end
+end
 end

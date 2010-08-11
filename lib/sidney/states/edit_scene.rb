@@ -5,7 +5,10 @@ require 'gui/history'
 require 'states/edit_object'
 require 'states/show_menu'
 
+module Sidney
 class EditScene < GameState
+  include Log
+
   attr_reader :grid, :zoom_box
 
   protected
@@ -61,6 +64,11 @@ class EditScene < GameState
     @selection = Selection.new
 
     nil
+  end
+
+  public
+  def setup
+    log.info { "Started editing scene"}
   end
 
   public
@@ -232,4 +240,5 @@ class EditScene < GameState
     
     super
   end
+end
 end

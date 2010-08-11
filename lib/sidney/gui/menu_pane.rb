@@ -1,6 +1,7 @@
 require 'gui/gui_element'
 require 'event'
 
+module Sidney
 class MenuPane < GuiElement
   include Event
 
@@ -143,4 +144,5 @@ class MenuPane < GuiElement
 
     nil
   end
+end
 end
