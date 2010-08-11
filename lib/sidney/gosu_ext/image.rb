@@ -40,19 +40,19 @@ class Image
       x = 0
 
       while x and x < width
-        if x == 0 and get_pixel(0, y)[3] != 0
+        if x == 0 and not transparent_pixel?(x, y)
+          # If the first pixel is opaque, then put an outline above it.
           @outline.set_pixel(0, y + 1, :color => :white)
           x = 1
         else
-          x = line(x, y, width - 1, y, :trace => { :while_color => :alpha })[0] rescue nil
-          unless x.nil?
-            @outline.set_pixel(x, y + 1, :color => :white)
-          end
+          found = line(x, y, width - 1, y, :trace => { :while_color => :alpha })
+          x = found ? found[0] : nil
+          @outline.set_pixel(x, y + 1, :color => :white) if x
         end
 
         if x and x < width
-          x = line(x, y, width - 1, y, :trace => { :until_color => :alpha })[0] rescue nil
-          x = width if x.nil?
+          found = line(x, y, width - 1, y, :trace => { :until_color => :alpha })
+          x = found ? found[0] : width
           @outline.set_pixel(x + 1, y + 1, :color => :white)
         end
       end
@@ -62,20 +62,20 @@ class Image
     width.times do |x|
       y = 0
 
-      while y and y < width
-        if y == 0 and get_pixel(x, 0)[3] != 0
+      while y and y < height
+        if y == 0 and not transparent_pixel?(x, y)
+          # If the first pixel is opaque, then put an outline to the left of it.
           @outline.set_pixel(x + 1, 0, :color => :white)
           y = 1
         else
-          y = line(x, y, x, height - 1, :trace => { :while_color => :alpha })[1] rescue nil
-          unless y.nil?
-            @outline.set_pixel(x + 1, y, :color => :white)
-          end
+          found = line(x, y, x, height - 1, :trace => { :while_color => :alpha })
+          y = found ? found[1] : nil
+          @outline.set_pixel(x + 1, y, :color => :white) if y
         end
-
+        
         if y and y < height
-          y = line(x, y, x, height - 1, :trace => { :until_color => :alpha })[1] rescue nil
-          y = height if y.nil?
+          found = line(x, y, x, height - 1, :trace => { :until_color => :alpha })
+          y = found ? found[1] : height
           @outline.set_pixel(x + 1, y + 1, :color => :white)
         end
       end

@@ -29,7 +29,7 @@ class EditObject < GameState
     self.input = {
       :holding_left_mouse_button => :holding_left_mouse_button,
       :holding_right_mouse_button => :holding_right_mouse_button,
-      :released_escape => lambda { game_state_manager.pop },
+      :released_escape => lambda { save_changes; game_state_manager.pop },
       :g => lambda { grid.toggle_overlay if $window.control_down? },
       :wheel_up => lambda { zoom_box.index += 1 },
       :wheel_down => lambda { zoom_box.index -= 1 },
@@ -61,7 +61,7 @@ class EditObject < GameState
     x, y = cursor.x, cursor.y
     if grid.hit?(x, y)
       x, y = grid.screen_to_grid(x, y)
-      @image.set_pixel(x, y, :color => 0x00000000)
+      @image.set_pixel(x, y, :color => :alpha)
     end
 
     nil
@@ -82,10 +82,10 @@ class EditObject < GameState
     end
   end
 
-  public
-  def finalize
+  # Save the edited image to the object we are editing.
+  protected
+  def save_changes
     old_width, old_height = @object.image.width, @object.image.height
-
     # Crop the temporary image if necessary.
     box = @image.auto_crop_box
     if box.width != @image.width or box.height != @image.height
@@ -98,6 +98,11 @@ class EditObject < GameState
     @object.size = [@image.width, @image.height]
     @object.x -= (@image.width - old_width * 2) / 2
     @object.y += old_height - @image.height / 2
+  end
+
+  public
+  def finalize
+    # Ensure the object is visible again, since we hid it while editing.
     @object.show!
   end
 end
