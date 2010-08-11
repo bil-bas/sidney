@@ -25,6 +25,9 @@ begin
   $stdout.reopen(STDOUT_LOG_FILENAME)
 
   require 'game'
+rescue Exception => ex
+  $stderr.puts "FATAL ERROR - #{ex.class}: #{ex}\n#{ex.backtrace.join("\n")}"
+  raise ex # Just to make sure that the user sees the error in the CLI/IDE too.
 ensure
   $stderr.reopen(original_stderr) if defined? original_stderr
   $stdout.reopen(original_stdout) if defined? original_stdout
