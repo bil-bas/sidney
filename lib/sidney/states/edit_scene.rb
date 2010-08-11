@@ -41,6 +41,7 @@ class EditScene < GameState
       :holding_down => lambda { @grid.down },
       :escape => lambda { @selection.reset_drag if @selection.dragging? },
       :delete => lambda { delete unless @selection.empty? },
+      :e => lambda { edit_object if $window.control_down? and @selection.size == 1 },
       :x => lambda { delete if $window.control_down? and not @selection.empty? },
       :c => lambda { copy if $window.control_down? and not @selection.empty? },
       :v => lambda { paste($window.mouse_x, $window.mouse_y) if $window.control_down? and not @clipboard.empty? },
@@ -129,7 +130,7 @@ class EditScene < GameState
     x, y = $window.mouse_x, $window.mouse_y
     if @grid.hit?(x, y)
       MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
-        widget.add(:edit, 'Edit', :enabled => @selection.size == 1)
+        widget.add(:edit, 'Edit', :shortcut => 'Ctrl-E', :enabled => @selection.size == 1)
         widget.add_separator
         widget.add(:copy, 'Copy', :shortcut => 'Ctrl-C', :enabled => (not @selection.empty?))
         widget.add(:paste, 'Paste', :shortcut => 'Ctrl-V', :enabled => (@selection.empty? and not @clipboard.empty?))
@@ -147,7 +148,7 @@ class EditScene < GameState
               paste(x, y) # Paste at position the menu was opened, not where the mouse was just clicked.
 
             when :edit
-              game_state_manager.push EditObject.new(@selection[0])
+              edit_object
 
           end
         end
@@ -159,6 +160,11 @@ class EditScene < GameState
     nil
   end
 
+  protected
+  def edit_object
+    game_state_manager.push EditObject.new(@selection[0])
+  end
+  
   protected
   def delete
     copy
