@@ -1,5 +1,5 @@
 require 'helper'
-require 'history'
+require 'gui/history'
 
 class History
   class Maths < Action
