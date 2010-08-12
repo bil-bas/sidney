@@ -6,7 +6,9 @@ module Sidney
 class EditObject < GuiState
   include Log
   
-  MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = 416, 416
+  MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = 208 * 2, 208 * 2
+  IMAGE_X = - MAX_IMAGE_WIDTH / 4
+  IMAGE_Y = - MAX_IMAGE_HEIGHT / 4
 
   protected
   def grid
@@ -42,8 +44,8 @@ class EditObject < GuiState
       :holding_down => lambda { grid.down },
     }
 
-    @image = TexPlay.create_image($window, MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT)
-    @image.splice(@object.image, @object.x - @object.width * 0.5, @object.y - @object.height)
+    @image = Image.create(MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT)
+    @image.splice(@object.image, @object.x - @object.width * 0.5 - IMAGE_X, @object.y - @object.height - IMAGE_Y)
     nil
   end
 
@@ -59,7 +61,7 @@ class EditObject < GuiState
     x, y = cursor.x, cursor.y
     if grid.hit?(x, y)
       x, y = grid.screen_to_grid(x, y)
-      @image.set_pixel(x, y, :color => :red)
+      @image.set_pixel(x - IMAGE_X, y - IMAGE_Y, :color => :red)
     end
 
     nil
@@ -70,7 +72,7 @@ class EditObject < GuiState
     x, y = cursor.x, cursor.y
     if grid.hit?(x, y)
       x, y = grid.screen_to_grid(x, y)
-      @image.set_pixel(x, y, :color => :alpha)
+      @image.set_pixel(x - IMAGE_X, y - IMAGE_X, :color => :alpha)
     end
 
     nil
@@ -85,7 +87,7 @@ class EditObject < GuiState
     $window.translate(rect.x, rect.y) do
       $window.clip_to(rect.x, rect.y, rect.width, rect.height) do
         $window.scale(grid.scale) do
-          @image.draw(grid.offset_x, grid.offset_y, 100001)
+          @image.draw(grid.offset_x + IMAGE_X, grid.offset_y + IMAGE_Y, 100001)
         end
       end
     end
@@ -100,8 +102,7 @@ class EditObject < GuiState
     # Crop the temporary image if necessary.
     box = @image.auto_crop_box
     if box.width != @image.width or box.height != @image.height
-      @image = @image.crop(box)
-      # TODO: correct x/y      
+      @image = @image.crop(box)     
     end
 
     log.info { "Image re-sized from #{@object.image.width}x#{@object.image.height} to #{box.width}x#{box.height}" }
@@ -109,8 +110,8 @@ class EditObject < GuiState
     # Replace the old image with the temporary one.
     @object.image = @image
     @object.size = [@image.width, @image.height]
-    @object.x -= (@image.width - old_width * 2) / 2
-    @object.y += old_height - @image.height / 2
+    @object.x = box.x + IMAGE_X + @image.width / 2
+    @object.y = box.y + IMAGE_Y + @image.height
 
     log.info { "Saved image" }
 
