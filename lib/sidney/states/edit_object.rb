@@ -6,9 +6,9 @@ module Sidney
 class EditObject < GuiState
   include Log
   
-  MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = 208 * 2, 208 * 2
-  IMAGE_X = - MAX_IMAGE_WIDTH / 4
-  IMAGE_Y = - MAX_IMAGE_HEIGHT / 4
+  MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = 208 * 3, 208 * 3
+  IMAGE_X = - MAX_IMAGE_WIDTH / 3
+  IMAGE_Y = - MAX_IMAGE_HEIGHT / 3
 
   protected
   def grid
