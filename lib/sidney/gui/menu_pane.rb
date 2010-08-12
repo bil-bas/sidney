@@ -99,11 +99,6 @@ class MenuPane < GuiElement
   end
 
   public
-  def update
-    
-  end
-
-  public
   def draw
     $window.draw_box(rect.x, rect.y, rect.width, rect.height, z, @border_color, @background_color)
 
@@ -127,15 +122,14 @@ class MenuPane < GuiElement
 
   public
   def hover(x, y)
-    hit = hit?(x, y)
-
-    if hit
-      @index = ((y - rect.y) / line_height).floor
-    else
-      @index = nil
-    end
+    @index = ((y - rect.y) / line_height).floor
 
     nil
+  end
+
+  public
+  def leave
+    @index = nil
   end
 
   public

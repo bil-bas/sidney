@@ -2,11 +2,12 @@ require 'gui/combi_box'
 require 'gui/clipboard'
 require 'gui/selection'
 require 'gui/history'
+require 'states/gui_state'
 require 'states/edit_object'
 require 'states/show_menu'
 
 module Sidney
-class EditScene < GameState
+class EditScene < GuiState
   include Log
 
   attr_reader :grid, :zoom_box
@@ -26,18 +27,12 @@ class EditScene < GameState
       @grid.scale = value * @grid.base_scale
     end
 
+    add_element(@zoom_box)
+
     @font = Font.new($window, nil, 14)
 
     self.input = {
-      :left_mouse_button => :left_mouse_button,
-      :released_left_mouse_button => :released_left_mouse_button,
-      :holding_left_mouse_button => :holding_left_mouse_button,
-      :right_mouse_button => :right_mouse_button,
-      :released_right_mouse_button => :released_right_mouse_button,
-      :holding_right_mouse_button => :holding_right_mouse_button,
       :g => lambda { @grid.toggle_overlay if $window.control_down? },
-      :wheel_up => lambda { @zoom_box.index += 1 },
-      :wheel_down => lambda { @zoom_box.index -= 1 },
       :holding_left => lambda { @grid.left },
       :holding_right => lambda { @grid.right },
       :holding_up => lambda { @grid.up },
@@ -63,6 +58,18 @@ class EditScene < GameState
     @history = History.new
     @selection = Selection.new
 
+    nil
+  end
+
+  public
+  def mouse_wheel_up
+    @zoom_box.index += 1
+    nil
+  end
+
+  public
+  def mouse_wheel_down
+    @zoom_box.index -= 1
     nil
   end
 
@@ -217,7 +224,6 @@ class EditScene < GameState
   def update
     @grid.update
     x, y = $window.cursor.x, $window.cursor.y
-    @zoom_box.hit?(x, y)
     @selection.update_drag(*@grid.screen_to_grid(x, y)) if @selection.dragging?
 
     super
@@ -226,7 +232,6 @@ class EditScene < GameState
   public
   def draw
     @grid.draw
-    @zoom_box.draw
 
     x, y = $window.cursor.x, $window.cursor.y
     if @grid.hit?(x, y)

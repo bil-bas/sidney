@@ -1,8 +1,9 @@
+require 'states/gui_state'
 require 'gui/history'
 require 'log'
 
 module Sidney
-class EditObject < GameState
+class EditObject < GuiState
   include Log
   
   MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = 416, 416
@@ -26,17 +27,15 @@ class EditObject < GameState
   def initialize(object)
     @object = object
 
-    super  
+    super() 
 
     @object.hide!
 
     self.input = {
-      :holding_left_mouse_button => :holding_left_mouse_button,
-      :holding_right_mouse_button => :holding_right_mouse_button,
       :released_escape => lambda { save_changes; game_state_manager.pop },
       :g => lambda { grid.toggle_overlay if $window.control_down? },
-      :wheel_up => lambda { zoom_box.index += 1 },
-      :wheel_down => lambda { zoom_box.index -= 1 },
+      :mouse_wheel_up => lambda { zoom_box.index += 1 },
+      :mouse_wheel_down => lambda { zoom_box.index -= 1 },
       :holding_left => lambda { grid.left },
       :holding_right => lambda { grid.right },
       :holding_up => lambda { grid.up },
@@ -45,7 +44,6 @@ class EditObject < GameState
 
     @image = TexPlay.create_image($window, MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT)
     @image.splice(@object.image, @object.x - @object.width * 0.5, @object.y - @object.height)
-
     nil
   end
 

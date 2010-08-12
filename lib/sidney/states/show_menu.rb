@@ -1,13 +1,17 @@
+require 'states/gui_state'
+
 require 'log'
 
 module Sidney
 
-class ShowMenu < GameState
+class ShowMenu < GuiState
   include Log
   protected
   def initialize(menu)
     @menu = menu
-    super
+    super()
+
+    add_element @menu
   end
 
   public
@@ -51,17 +55,8 @@ class ShowMenu < GameState
   public
   def draw
     game_state_manager.previous.draw
-    @menu.draw
 
-    nil
-  end
-
-  public
-  def update
-    x, y = $window.cursor.x, $window.cursor.y
-    @menu.hover(x, y) if @menu.hit?(x, y)
-
-    nil
+    super
   end
 end
 end
