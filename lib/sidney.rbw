@@ -20,9 +20,11 @@ begin
   
   original_stderr = $stderr.dup
   $stderr.reopen(STDERR_LOG_FILENAME)
+  $stderr.sync = true
 
   original_stdout = $stdout.dup
   $stdout.reopen(STDOUT_LOG_FILENAME)
+  $stdout.sync = true
 
   require 'game'
 rescue Exception => ex
