@@ -71,20 +71,22 @@ class Grid
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2   
   end
 
+  # Returns the object that the mouse is over, otherwise nil
   def hit_object(x, y)
-    if hit?(x, y)
-      found = nil
+    return unless hit?(x, y)
 
-      @objects.reverse_each do |object|
-        if object.hit?(x, y)
-          if found.nil? or object.y > found.y
-            found = object
-          end
+    x, y = screen_to_grid(x, y)
+    found = nil
+
+    @objects.reverse_each do |object|
+      if object.hit?(x, y)
+        if found.nil? or object.y > found.y
+          found = object
         end
       end
-
-      found
     end
+
+    found
   end
   
   def update

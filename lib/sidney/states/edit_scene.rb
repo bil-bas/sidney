@@ -81,15 +81,18 @@ class EditScene < GuiState
   public
   def left_mouse_button
     x, y = $window.cursor.x, $window.cursor.y
-    select(x, y) if @grid.hit?(x, y)
+    if @grid.hit?(x, y)
+      select(x, y)
+
+      x, y = @grid.screen_to_grid(x, y)
+      @selection.begin_drag(x, y)
+    end
     
     nil
   end
 
   protected
-  def select(x, y)    
-    x, y = @grid.screen_to_grid(x, y)
-
+  def select(x, y)
     object = @grid.hit_object(x, y)
 
     unless @selection.include?(object) or $window.shift_down?
@@ -113,17 +116,15 @@ class EditScene < GuiState
 
     @zoom_box.click(x, y)
 
-    @selection.end_drag if @selection.dragging?
+    if @selection.dragging?
+      if @grid.hit?(x, y)
+        @selection.end_drag
+      else
+        @selection.reset_drag
+      end
+    end
 
     nil
-  end
-
-  public
-  def holding_left_mouse_button
-    unless @selection.dragging?
-      x, y = @grid.screen_to_grid($window.cursor.x, $window.cursor.y)
-      @selection.begin_drag(x, y)
-    end
   end
 
   public
