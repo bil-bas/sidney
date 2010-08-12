@@ -1,3 +1,6 @@
+require 'gosu'
+require 'texplay'
+
 module Gosu
 class Image
   # Image that is an outline of the image itself [Gosu::Image]
@@ -6,10 +9,12 @@ class Image
   # Create a new image which is completely transparent (unless using :color option).
   #
   # === Parameters
-  # +width+:: [Int]
-  # +height+:: [Int]
-  # +options+:: [Hash]
+  # +width+:: [Fixnum]
+  # +height+:: [Fixnum]
+  # ==== Options
   # * :color - Colour to fill the new image with.
+  #
+  # Returns: A new image [Gosu::Image]
   public
   def self.create(width, height, options = {})
     TexPlay.create_image($window, width, height, options)
@@ -72,7 +77,7 @@ class Image
           y = found ? found[1] : nil
           @outline.set_pixel(x + 1, y, :color => :white) if y
         end
-        
+
         if y and y < height
           found = line(x, y, x, height - 1, :trace => { :until_color => :alpha })
           y = found ? found[1] : height
@@ -136,6 +141,47 @@ class Image
     end
 
     Rect.new(box_left, box_top, box_right - box_left + 1, box_bottom - box_top + 1)
+  end
+
+  # Used to create images directory from raw data.
+  class BlobData
+    # Width of the image [Fixnum].
+    attr_reader :columns
+    # Height of the image [Fixnum]
+    attr_reader :rows
+
+    # Get the raw image data in RGBA format [String]
+    def to_blob; @data; end
+
+    # +data+:: String of unsigned bytes in RGBA order [String of length height x width x 4]
+    # +width+:: Width of the image [Fixnum]
+    # +height+:: Height of the image [Fixnum]
+    protected
+    def initialize(data, width, height)
+      @data, @columns, @rows = data, width, height
+    end
+
+    # Convert into a Gosu::Image
+    public
+    def to_image(tileable = false)
+      Image.new($window, BlobData.new(data, width, height), tileable)
+    end
+  end
+
+  # Generate a new image from raw blob data.
+  #
+  # === Parameters
+  # +data+:: String of unsigned bytes in RGBA order [String of length height x width x 4]
+  # +width+:: Width of the image [Fixnum]
+  # +height+:: Height of the image [Fixnum]
+  # ==== Options
+  # * +:tileable+ - Are the edges of the image sharp? [Boolean, defaults to false]
+  #
+  # Returns: A new image [Gosu::Image]
+  public
+  def self.from_blob(data, width, height, options = {})
+    options = { :tileable => false }.merge!(options)
+    BlobData.new(data, width, height).to_image(options[:tileable])
   end
 end
 end
