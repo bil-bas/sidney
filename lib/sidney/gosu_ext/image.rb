@@ -3,6 +3,8 @@ require 'texplay'
 
 module Gosu
 class Image
+  DEFAULT_TRANSPARENCY_TOLERANCE = 0.0
+
   # Image that is an outline of the image itself [Gosu::Image]
   attr_reader :outline
 
@@ -11,6 +13,7 @@ class Image
   # === Parameters
   # +width+:: [Fixnum]
   # +height+:: [Fixnum]
+  #
   # ==== Options
   # * :color - Colour to fill the new image with.
   #
@@ -21,11 +24,15 @@ class Image
   end
 
   # Clear all transparent colors to transparent black.
+  #
+  # ==== Options
+  # * :tolerance - Lowest alpha value to clear [0.0..1.0, defaults to 0.0].
+  #
   public
-  def clear_transparency
-    # TODO: Hopefully TexPlay author will fix this!
-    #rect 0, 0, width, height, :filled => true, :color => :alpha, :dest_select => :transparent
-
+  def clear_transparency(options = {})
+    options = { :tolerance => DEFAULT_TRANSPARENCY_TOLERANCE }.merge! options
+    rect 0, 0, width, height, :fill => true, :color => :alpha, :dest_select => :transparent, :tolerance => options[:tolerance]
+    
     nil
   end
 
