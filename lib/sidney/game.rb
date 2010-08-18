@@ -12,6 +12,8 @@ ENV['PATH'] = "#{File.join(ROOT_PATH, 'bin')};#{ENV['PATH']}"
 #require 'profile'
 
 require 'i18n'
+I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
+
 require 'chingu'
 require 'devil'
 require 'devil/gosu'
@@ -68,7 +70,7 @@ class Game < Window
 
     retrofy
 
-    self.caption = "Sidney"
+    self.caption = t 'window_title'
 
     on_input(:f) { @fps.toggle if holding_control? }
 
@@ -76,9 +78,7 @@ class Game < Window
     @fps = FPSDisplay.new(0, 0)
 
     push_game_state(EditScene)
-
-    I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
-
+   
     nil
   end
 

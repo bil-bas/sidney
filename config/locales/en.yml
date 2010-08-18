@@ -1,5 +1,6 @@
-# encoding: utf-8
 en:
+  window_title: 'Sidney: Story in a Box'
+  
   help: # General help, shown in every mode.
     (Escape to exit this help).
 
@@ -41,6 +42,10 @@ en:
 
 
       Ctrl-E => Edit selected object.
+
+      Ctrl-N => Flip object vertically.
+
+      Ctrl-M => Mirror object horizontally.
 
   edit_object:
     help:
