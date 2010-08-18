@@ -57,7 +57,7 @@ class EditObject < GuiState
     @object.hide!
 
     @image = Image.create(MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT)
-    @image.splice(@object.image, @object.x - @object.width * 0.5 - IMAGE_X, @object.y - @object.height - IMAGE_Y)
+    @image.splice(@object.image, @object.x - IMAGE_X, @object.y - @object.height - IMAGE_Y)
     
     object
   end
@@ -117,6 +117,7 @@ class EditObject < GuiState
     old_width, old_height = @object.image.width, @object.image.height
     # Crop the temporary image if necessary.
     box = @image.auto_crop_box
+    
     if box.width != @image.width or box.height != @image.height
       @image = @image.crop(box)     
     end
@@ -126,7 +127,7 @@ class EditObject < GuiState
     # Replace the old image with the temporary one.
     @object.image = @image
     @object.size = [@image.width, @image.height]
-    @object.x = box.x + IMAGE_X + @image.width / 2
+    @object.x = box.x + IMAGE_X
     @object.y = box.y + IMAGE_Y + @image.height
     
     @image = nil

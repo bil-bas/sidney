@@ -9,7 +9,7 @@ class Sprite < GameObject
   def selected?; @selected; end
 
   def initialize(options = {})
-    super({center_y: 1}.merge(options))
+    super({center_x: 0, center_y: 1}.merge!(options))
   end
 
   def setup
