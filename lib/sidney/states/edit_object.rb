@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'states/gui_state'
 require 'gosu_ext/color'
 require 'gui/history'
@@ -35,6 +37,7 @@ class EditObject < GuiState
     add_inputs(
       released_escape: ->{ save_changes; pop_game_state },
       g: ->{ grid.toggle_overlay if $window.holding_control? },
+      f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_object.help', :general => t('help'))) },
       mouse_wheel_up: ->{ zoom_box.index += 1 },
       mouse_wheel_down: ->{ zoom_box.index -= 1 },
       holding_left: ->{ grid.left },
@@ -125,19 +128,12 @@ class EditObject < GuiState
     @object.size = [@image.width, @image.height]
     @object.x = box.x + IMAGE_X + @image.width / 2
     @object.y = box.y + IMAGE_Y + @image.height
-
-    log.info { "Saved image" }
-
-    nil
-  end
-
-  public
-  def finalize
-    # Ensure the object is visible again, since we hid it while editing.
-    @object.show!
+    
     @image = nil
 
-    log.info { "Stopped editing image"}
+    @object.show!
+
+    log.info { "Saved image" }
 
     nil
   end

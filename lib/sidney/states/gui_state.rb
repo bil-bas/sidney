@@ -30,6 +30,10 @@ module Sidney
       nil
     end
 
+    # Internationalisation helper.
+    public
+    def t(*args); I18n.t(*args); end
+
     public
     def update
       x, y = $window.mouse_x, $window.mouse_y

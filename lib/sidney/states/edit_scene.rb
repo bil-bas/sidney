@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'gui/combi_box'
 require 'gui/clipboard'
 require 'gui/selection'
@@ -43,6 +45,7 @@ class EditScene < GuiState
       x: -> { delete if $window.holding_control? and not @selection.empty? },
       c: -> { copy if $window.holding_control? and not @selection.empty? },
       v: -> { paste($window.mouse_x, $window.mouse_y) if $window.holding_control? and not @clipboard.empty? },
+      f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_scene.help', :general => t('help')))},
       z: lambda do
          if $window.holding_control?
            if $window.holding_shift?

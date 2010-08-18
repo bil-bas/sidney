@@ -1,0 +1,58 @@
+# encoding: utf-8
+en:
+  help: # General help, shown in every mode.
+    (Escape to exit this help).
+
+
+    F1 => Show this help.
+
+
+    Arrow keys => Move view.
+
+    Mouse wheel => Zoom view.
+
+
+    Ctrl-F => Show/hide frames per second (FPS).
+
+    Ctrl-G => Show/hide pixel grid.
+
+  edit_scene:
+    help:
+      === Editing scene ===
+
+
+      {{general}}
+
+
+      LMB => Select object (click elsewhere to deselect).
+
+      RMB => Context menu.
+
+      Shift + LMB => Select/deselect object. Can multi-select.
+
+      Drag LMB => Move selected objects (Press Escape to return them to their original positions).
+
+
+      Ctrl-X => Delete selected objects.
+
+      Ctrl-C => Copy selected objects.
+
+      Ctrl-V => Copy selected at mouse position.
+
+
+      Ctrl-E => Edit selected object.
+
+  edit_object:
+    help:
+      === Editing object ===
+
+
+      {{general}}
+
+
+      LMB => Paint in current colour.
+
+      RMB => Sample colour of pixel under mouse cursor.
+      
+
+      Escape => Save and leave editing mode.

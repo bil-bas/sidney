@@ -11,6 +11,7 @@ ENV['PATH'] = "#{File.join(ROOT_PATH, 'bin')};#{ENV['PATH']}"
 
 #require 'profile'
 
+require 'i18n'
 require 'chingu'
 require 'devil'
 require 'devil/gosu'
@@ -76,14 +77,20 @@ class Game < Window
 
     push_game_state(EditScene)
 
+    I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
+
     nil
   end
 
+  protected
   def draw
     @fps.draw
 
     super
   end
+
+  public
+  def t(*args); I18n.t(*args); end
 
   public
   def draw_box(x, y, width, height, z, border_color = nil, fill_color = nil)
