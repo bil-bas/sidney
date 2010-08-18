@@ -161,7 +161,7 @@ class EditScene < GuiState
           end
         end
 
-        game_state_manager.push ShowMenu.new(widget)
+        push_game_state ShowMenu.new(widget)
       end
     end
     
@@ -170,7 +170,9 @@ class EditScene < GuiState
 
   protected
   def edit_object
-    game_state_manager.push EditObject.new(@selection[0])
+    @edit_object ||= EditObject.new
+    @edit_object.object = @selection[0]
+    push_game_state @edit_object
   end
   
   protected

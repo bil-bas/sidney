@@ -1,4 +1,5 @@
 require 'states/gui_state'
+require 'gosu_ext/color'
 require 'gui/history'
 require 'log'
 
@@ -10,14 +11,16 @@ class EditObject < GuiState
   IMAGE_X = - MAX_IMAGE_WIDTH / 3
   IMAGE_Y = - MAX_IMAGE_HEIGHT / 3
 
+  INITIAL_DRAW_COLOR = [1, 1, 1, 1]
+
   protected
   def grid
-    game_state_manager.previous.grid
+    previous_game_state.grid
   end
 
   protected
   def zoom_box
-    game_state_manager.previous.zoom_box
+    previous_game_state.zoom_box
   end
 
   protected
@@ -26,15 +29,11 @@ class EditObject < GuiState
   end
 
   protected
-  def initialize(object)
-    @object = object
-
-    super() 
-
-    @object.hide!
+  def initialize
+    super()
 
     add_inputs(
-      released_escape: ->{ save_changes; game_state_manager.pop },
+      released_escape: ->{ save_changes; pop_game_state },
       g: ->{ grid.toggle_overlay if $window.holding_control? },
       mouse_wheel_up: ->{ zoom_box.index += 1 },
       mouse_wheel_down: ->{ zoom_box.index -= 1 },
@@ -44,15 +43,26 @@ class EditObject < GuiState
       holding_down: ->{ grid.down }
     )
 
+    @draw_color = INITIAL_DRAW_COLOR
+
+    nil
+  end
+
+  public
+  def object=(object)
+    @object = object
+    @object.hide!
+
     @image = Image.create(MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT)
     @image.splice(@object.image, @object.x - @object.width * 0.5 - IMAGE_X, @object.y - @object.height - IMAGE_Y)
-    nil
+    
+    object
   end
 
   public
   def setup
     log.info { "Started editing image" }
-
+    
     nil
   end
 
@@ -61,7 +71,7 @@ class EditObject < GuiState
     x, y = cursor.x, cursor.y
     if grid.hit?(x, y)
       x, y = grid.screen_to_grid(x, y)
-      @image.set_pixel(x - IMAGE_X, y - IMAGE_Y, color: :red)
+      @image.set_pixel(x - IMAGE_X, y - IMAGE_Y, color: @draw_color)
     end
 
     nil
@@ -72,7 +82,7 @@ class EditObject < GuiState
     x, y = cursor.x, cursor.y
     if grid.hit?(x, y)
       x, y = grid.screen_to_grid(x, y)
-      @image.set_pixel(x - IMAGE_X, y - IMAGE_X, color: :alpha)
+      @draw_color = @image.get_pixel(x - IMAGE_X, y - IMAGE_X)
     end
 
     nil
@@ -80,7 +90,7 @@ class EditObject < GuiState
 
   public
   def draw
-    game_state_manager.previous.draw
+    previous_game_state.draw
     rect = grid.rect
     $window.draw_box(rect.x, rect.y, rect.right, rect.bottom, 100000, nil, 0xa0000000)
 
@@ -91,6 +101,9 @@ class EditObject < GuiState
         end
       end
     end
+
+    x, y = grid.rect.right, grid.rect.top
+    $window.draw_box x + 10, y + 50, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_rgba(*@draw_color.map {|c| (c * 255).to_i })
 
     nil
   end
@@ -122,6 +135,8 @@ class EditObject < GuiState
   def finalize
     # Ensure the object is visible again, since we hid it while editing.
     @object.show!
+    @image = nil
+
     log.info { "Stopped editing image"}
 
     nil
