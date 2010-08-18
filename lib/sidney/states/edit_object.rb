@@ -33,16 +33,16 @@ class EditObject < GuiState
 
     @object.hide!
 
-    self.input = {
-      :released_escape => lambda { save_changes; game_state_manager.pop },
-      :g => lambda { grid.toggle_overlay if $window.control_down? },
-      :mouse_wheel_up => lambda { zoom_box.index += 1 },
-      :mouse_wheel_down => lambda { zoom_box.index -= 1 },
-      :holding_left => lambda { grid.left },
-      :holding_right => lambda { grid.right },
-      :holding_up => lambda { grid.up },
-      :holding_down => lambda { grid.down },
-    }
+    add_inputs(
+      released_escape: ->{ save_changes; game_state_manager.pop },
+      g: ->{ grid.toggle_overlay if $window.holding_control? },
+      mouse_wheel_up: ->{ zoom_box.index += 1 },
+      mouse_wheel_down: ->{ zoom_box.index -= 1 },
+      holding_left: ->{ grid.left },
+      holding_right: ->{ grid.right },
+      holding_up: ->{ grid.up },
+      holding_down: ->{ grid.down }
+    )
 
     @image = Image.create(MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT)
     @image.splice(@object.image, @object.x - @object.width * 0.5 - IMAGE_X, @object.y - @object.height - IMAGE_Y)
@@ -61,7 +61,7 @@ class EditObject < GuiState
     x, y = cursor.x, cursor.y
     if grid.hit?(x, y)
       x, y = grid.screen_to_grid(x, y)
-      @image.set_pixel(x - IMAGE_X, y - IMAGE_Y, :color => :red)
+      @image.set_pixel(x - IMAGE_X, y - IMAGE_Y, color: :red)
     end
 
     nil
@@ -72,7 +72,7 @@ class EditObject < GuiState
     x, y = cursor.x, cursor.y
     if grid.hit?(x, y)
       x, y = grid.screen_to_grid(x, y)
-      @image.set_pixel(x - IMAGE_X, y - IMAGE_X, :color => :alpha)
+      @image.set_pixel(x - IMAGE_X, y - IMAGE_X, color: :alpha)
     end
 
     nil

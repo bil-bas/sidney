@@ -26,7 +26,7 @@ class MenuPane < GuiElement
     # * +:shortcut+ - [String]
     protected
     def initialize(value, text, options = {})
-      options = {:enabled => true}.merge(options)
+      options = {enabled: true}.merge(options)
 
       @value, @text = value, text
       @enabled = [true, false].include?(options[:enabled]) ? options[:enabled] : true
@@ -81,7 +81,7 @@ class MenuPane < GuiElement
   def add_separator
     @@sep_num ||= 0
     @@sep_num += 1
-    @items << Item.new(:"_sep_#{@@sep_num}", '---', :enabled => false)
+    @items << Item.new(:"_sep_#{@@sep_num}", '---', enabled: false)
     recalc
     self
   end

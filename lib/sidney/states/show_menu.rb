@@ -16,11 +16,11 @@ class ShowMenu < GuiState
 
   public
   def setup
-    self.input = {
+    add_inputs(
       [:left_mouse_button, :right_mouse_button] => :mouse_button_down,
       [:released_left_mouse_button, :released_right_mouse_button] => :mouse_button_up,
-      :escape => lambda { game_state_manager.pop },
-    }
+      :escape => lambda { game_state_manager.pop }
+    )
 
     log.info { "Opened menu" }
 

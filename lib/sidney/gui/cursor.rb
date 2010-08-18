@@ -1,7 +1,7 @@
 module Sidney
 class Cursor < GameObject
   def initialize(options = {})
-    super({:image => "mouse.png", :center => 0, :zorder => ZOrder::CURSOR}.merge(options))
+    super({image: "mouse.png", center: 0, zorder: ZOrder::CURSOR}.merge(options))
 
     nil
   end

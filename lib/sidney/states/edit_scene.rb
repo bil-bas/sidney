@@ -31,28 +31,28 @@ class EditScene < GuiState
 
     @font = Font.new($window, nil, 14)
 
-    self.input = {
-      :g => lambda { @grid.toggle_overlay if $window.control_down? },
-      :holding_left => lambda { @grid.left },
-      :holding_right => lambda { @grid.right },
-      :holding_up => lambda { @grid.up },
-      :holding_down => lambda { @grid.down },
-      :escape => lambda { @selection.reset_drag if @selection.dragging? },
-      :delete => lambda { delete unless @selection.empty? },
-      :e => lambda { edit_object if $window.control_down? and @selection.size == 1 },
-      :x => lambda { delete if $window.control_down? and not @selection.empty? },
-      :c => lambda { copy if $window.control_down? and not @selection.empty? },
-      :v => lambda { paste($window.mouse_x, $window.mouse_y) if $window.control_down? and not @clipboard.empty? },
-      :z => lambda {
-         if $window.control_down?
-           if $window.shift_down?
+    add_inputs(
+      g: -> { @grid.toggle_overlay if $window.holding_control? },
+      holding_left: -> { @grid.left },
+      holding_right: -> { @grid.right },
+      holding_up: -> { @grid.up },
+      holding_down: -> { @grid.down },
+      escape: -> { @selection.reset_drag if @selection.dragging? },
+      delete: -> { delete unless @selection.empty? },
+      e: -> { edit_object if $window.holding_control? and @selection.size == 1 },
+      x: -> { delete if $window.holding_control? and not @selection.empty? },
+      c: -> { copy if $window.holding_control? and not @selection.empty? },
+      v: -> { paste($window.mouse_x, $window.mouse_y) if $window.holding_control? and not @clipboard.empty? },
+      z: lambda do
+         if $window.holding_control?
+           if $window.holding_shift?
              @history.redo if @history.can_redo?
            else
              @history.undo if @history.can_undo?
            end
          end
-      },
-    }
+      end
+    )
 
     @clipboard = Clipboard.new
     @history = History.new
@@ -95,13 +95,13 @@ class EditScene < GuiState
   def select(x, y)
     object = @grid.hit_object(x, y)
 
-    unless @selection.include?(object) or $window.shift_down?
+    unless @selection.include?(object) or $window.holding_shift?
       @selection.clear
     end
 
     if object
       if @selection.include? object
-        @selection.remove object if $window.shift_down?
+        @selection.remove object if $window.holding_shift?
       else
         @selection.add object
       end
@@ -146,26 +146,18 @@ class EditScene < GuiState
     x, y = $window.mouse_x, $window.mouse_y
     if @grid.hit?(x, y)
       MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
-        widget.add(:edit, 'Edit', :shortcut => 'Ctrl-E', :enabled => @selection.size == 1)
+        widget.add(:edit, 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
         widget.add_separator
-        widget.add(:copy, 'Copy', :shortcut => 'Ctrl-C', :enabled => (not @selection.empty?))
-        widget.add(:paste, 'Paste', :shortcut => 'Ctrl-V', :enabled => (@selection.empty? and not @clipboard.empty?))
-        widget.add(:delete, 'Delete', :shortcut => 'Ctrl-X', :enabled => (not @selection.empty?))
+        widget.add(:copy, 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
+        widget.add(:paste, 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not @clipboard.empty?))
+        widget.add(:delete, 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
 
         widget.on_select do |widget, value|
           case value
-            when :delete
-              delete
-
-            when :copy
-              copy
-
-            when :paste
-              paste(x, y) # Paste at position the menu was opened, not where the mouse was just clicked.
-
-            when :edit
-              edit_object
-
+            when :delete then delete
+            when :copy   then copy
+            when :paste  then paste(x, y) # Paste at position the menu was opened, not where the mouse was just clicked.
+            when :edit   then edit_object
           end
         end
 

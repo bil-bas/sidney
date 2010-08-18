@@ -39,7 +39,6 @@ exit if defined?(Ocra)
 # Main game window.
 class Game < Window
   include Log
-  
   attr_reader :cursor
 
   # Any taller and Gosu will scale the whole window to fit.
@@ -70,9 +69,7 @@ class Game < Window
 
     self.caption = "Sidney"
 
-    self.input = {
-      :f => lambda { @fps.toggle if control_down? },
-    }
+    on_input(:f) { @fps.toggle if holding_control? }
 
     @cursor = Cursor.create
     @fps = FPSDisplay.new(0, 0)
@@ -108,18 +105,18 @@ class Game < Window
   end
 
   public
-  def shift_down?
-    button_down?(Button::KbLeftShift) or button_down?(Button::KbRightShift)
+  def holding_shift?
+    holding_any? :left_shift, :right_shift
   end
 
   public
-  def control_down?
-    button_down?(Button::KbLeftControl) or button_down?(Button::KbRightControl)
+  def holding_control?
+    holding_any? :left_control, :right_control
   end
 
   public
-  def alt_down?
-    button_down?(Button::KbLeftAlt) or button_down?(Button::KbRightAlt)
+  def holding_alt?
+    holding_any? :left_alt, :right_alt
   end
 end
 end
