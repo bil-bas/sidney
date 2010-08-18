@@ -12,7 +12,6 @@ APP_EXE = "#{APP}.exe"
 namespace :rdoc do
   Rake::RDocTask.new do |rdoc|
     rdoc.rdoc_dir = RDOC_DIR
-    rdoc.options << '--line-numbers'
     rdoc.rdoc_files.add(%w(*.rdoc doc/*.rdoc lib/**/*.rb))
     rdoc.title = 'Sidney - Story In A Box'
   end
