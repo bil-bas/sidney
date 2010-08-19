@@ -183,5 +183,21 @@ class Image
     options = { tileable: false }.merge!(options)
     BlobData.new(data, width, height).to_image(options)
   end
+
+
+  # Manipulates an image with DevIL within a block, before returning the newly manipulated version.
+  #
+  # Returns: The manipulated image [Gosu::Image]
+  public
+  def as_devil(&block)
+    raise "Must provide a block" unless block_given?
+
+    devil_image = Devil.from_blob(to_blob, width, height) # Image#to_devil is broken.
+    yield devil_image
+    gosu_image = devil_image.to_gosu $window
+    devil_image.delete
+    
+    gosu_image
+  end
 end
 end

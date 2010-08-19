@@ -39,6 +39,8 @@ class EditScene < GuiState
       holding_right: -> { @grid.right },
       holding_up: -> { @grid.up },
       holding_down: -> { @grid.down },
+      m: -> { @selection[0].mirror! if @selection.size == 1 and $window.holding_control? },
+      n: -> { @selection[0].flip! if @selection.size == 1 and $window.holding_control? },
       escape: -> { @selection.reset_drag if @selection.dragging? },
       delete: -> { delete unless @selection.empty? },
       e: -> { edit_object if $window.holding_control? and @selection.size == 1 },
@@ -150,6 +152,8 @@ class EditScene < GuiState
     if @grid.hit?(x, y)
       MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
         widget.add(:edit, 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
+        widget.add(:mirror, 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
+        widget.add(:flip, 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
         widget.add_separator
         widget.add(:copy, 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
         widget.add(:paste, 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not @clipboard.empty?))
@@ -161,6 +165,8 @@ class EditScene < GuiState
             when :copy   then copy
             when :paste  then paste(x, y) # Paste at position the menu was opened, not where the mouse was just clicked.
             when :edit   then edit_object
+            when :flip   then @selection[0].flip!
+            when :mirror then @selection[0].mirror!
           end
         end
 

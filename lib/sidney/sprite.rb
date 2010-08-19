@@ -64,5 +64,21 @@ class Sprite < GameObject
   def rect
     Rect.new(x - center_x * width, y - center_y * height, width, height)
   end
+
+  # Flip horizontally.
+  public
+  def mirror!
+    @image = @image.as_devil { |img| img.mirror }
+
+    self
+  end
+
+  # Flip horizontally.
+  public
+  def flip!
+    @image = @image.as_devil { |img| img.flip }
+
+    self
+  end
 end
 end
