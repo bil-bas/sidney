@@ -106,7 +106,7 @@ class EditObject < GuiState
     end
 
     x, y = grid.rect.right, grid.rect.top
-    $window.draw_box x + 10, y + 50, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_rgba(*@draw_color.map {|c| (c * 255).to_i })
+    $window.draw_box x + 10, y + 50, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_texplay(@draw_color)
 
     nil
   end
