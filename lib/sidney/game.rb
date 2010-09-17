@@ -11,13 +11,17 @@ ENV['PATH'] = "#{File.join(ROOT_PATH, 'bin')};#{ENV['PATH']}"
 
 #require 'profile'
 
+# Gems
+require 'active_record'
 require 'i18n'
-I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
-
 require 'chingu'
 require 'devil'
 require 'devil/gosu'
 require 'texplay'
+
+exit if defined? Ocra
+
+I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
 
 include Gosu
 include Chingu
@@ -36,8 +40,6 @@ require 'fps_display'
 require 'gui/cursor'
 require 'grid'
 require 'states/edit_scene'
-
-exit if defined?(Ocra)
 
 # Main game window.
 class Game < Window
