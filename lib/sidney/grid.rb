@@ -100,7 +100,7 @@ class Grid
   def draw
     $window.translate(@rect.x, @rect.y) do
 
-      $window.clip_to(@rect.x - 1, @rect.y - 1, @rect.width + 2, @rect.height + 2) do
+      $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
         $window.scale(@scale) do
           $window.translate(@offset_x, @offset_y) do
             @objects.each { |o| o.draw if o.visible? }

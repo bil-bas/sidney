@@ -95,10 +95,23 @@ class EditObject < GuiState
   def draw
     previous_game_state.draw
     rect = grid.rect
-    $window.draw_box(rect.x, rect.y, rect.right, rect.bottom, 100000, nil, 0xa0000000)
+
+    unless @transparent_small
+      row = [[80, 80, 80, 255], [120, 120, 120, 255]]
+      blob = [row, row.reverse]
+      # Small transparent checkerboard drawn behind colour wells.
+      @transparent_small = Image.from_blob(blob.flatten.pack('C*'), 2, 2)
+      # Large grey checkerboard drawn behind the object being edited.
+      @transparent_large = Image.create(120, 120)
+      @transparent_large.rect 0, 0, @transparent_large.width - 1, @transparent_large.height - 1,
+                              :filled => true, :texture => @transparent_small
+    end
+
+    #$window.draw_box(rect.x, rect.y, rect.right, rect.bottom, 100000, nil, 0xa0000000)
 
     $window.translate(rect.x, rect.y) do
-      $window.clip_to(rect.x, rect.y, rect.width, rect.height) do
+      $window.clip_to(0, 0, rect.width, rect.height) do
+        @transparent_large.draw(((grid.offset_x % 16) - 16) * grid.scale, ((grid.offset_y % 16) - 16) * grid.scale, 100000, 4 * grid.scale, 4 * grid.scale, 0xa0ffffff)
         $window.scale(grid.scale) do
           @image.draw(grid.offset_x + IMAGE_X, grid.offset_y + IMAGE_Y, 100001)
         end
@@ -106,6 +119,7 @@ class EditObject < GuiState
     end
 
     x, y = grid.rect.right, grid.rect.top
+    @transparent_small.draw x + 10, y + 50, ZOrder::GUI, 25, 25
     $window.draw_box x + 10, y + 50, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_texplay(@draw_color)
 
     nil
