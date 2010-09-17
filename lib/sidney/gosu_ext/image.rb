@@ -104,33 +104,36 @@ class Image
   #
   # Returns: The rectangle containing all visible pixels [Chingu::Rect]
   public
-  def auto_crop_box
+  def auto_crop_box(options = {})
+    options = { color: :alpha }.merge! options
     box_left, box_top = 0, 0
     box_right, box_bottom = width - 1, height - 1
 
     clear(dest_select: :transparent)
 
+    color = options[:color]
+
     # Find where the leftmost column with non-transparent pixels is.
     width.times do |x|
-      break if line(x, 0, x, height - 1, trace: { while_color: :alpha })
+      break if line(x, 0, x, height - 1, trace: { while_color: color })
       box_left += 1
     end
 
     # Find where the rightmost column with non-transparent pixels is.
     (width - 1).downto(box_left) do |x|
-      break if line(x, 0, x, height - 1, trace: { while_color: :alpha })
+      break if line(x, 0, x, height - 1, trace: { while_color: color })
       box_right -= 1
     end
 
     # Find where the highest row with non-transparent pixels is.
     height.times do |y|
-      break if line(0, y, width - 1, y, trace: { while_color: :alpha })
+      break if line(0, y, width - 1, y, trace: { while_color: color })
       box_top += 1
     end
 
     # Find where the lowest row with non-transparent pixels is.
     (height - 1).downto(box_top) do |y|
-      break if line(0, y, width - 1, y, trace: { while_color: :alpha })
+      break if line(0, y, width - 1, y, trace: { while_color: color })
       box_bottom -= 1
     end
 
@@ -175,7 +178,7 @@ class Image
   # +width+:: Width of the image [Fixnum]
   # +height+:: Height of the image [Fixnum]
   # ==== Options
-  # * +:tileable+ - Are the edges of the image sharp? [Boolean, defaults to false]
+  # * +:tileable+You are a - Are the edges of the image sharp? [Boolean, defaults to false]
   #
   # Returns: A new image [Gosu::Image]
   public
