@@ -1,7 +1,7 @@
 module Sidney
 class GuiElement
-  FONT_SIZE = 16
-  FONT_NAME = 'Lucida Console'
+  FONT_SIZE = 18
+  FONT_NAME = File.join(ROOT_PATH, 'media', 'fonts', 'SFPixelate.ttf')
   PADDING_X, PADDING_Y = 10, 5
   
   attr_reader :rect, :z

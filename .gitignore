@@ -1,6 +1,7 @@
-/doc/rdoc
+/doc
 /sidney.exe
 /logs
 /.idea
 /test_data/generated
 /db
+/.yardoc
