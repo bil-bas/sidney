@@ -68,7 +68,10 @@ class Grid
     @rect = Rect.new(x, y, width, height)
     @overlay = GridOverlay.new(@rect.width, @rect.height, CELL_WIDTH * @scale)
 
-    @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2   
+    @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
+
+    @buffer = TexPlay.create_image($window, WIDTH * 3, HEIGHT * 3)
+    redraw
   end
 
   # Returns the object that the mouse is over, otherwise nil
@@ -94,21 +97,33 @@ class Grid
       object.update(i)
     end
 
+    # Only re-render the buffer if anything has changed.
+    if @buffer_needs_redraw
+      @buffer.paint do
+        @buffer.clear
+        @tiles.each { |o| o.draw_to_buffer(self, WIDTH, HEIGHT) if o.visible? }
+        z_ordered_objects = @objects.sort_by {|o| o.zorder }
+        z_ordered_objects.each { |o| o.draw_to_buffer(self, WIDTH, HEIGHT) if o.visible? }
+      end
+      @buffer_needs_redraw = false
+    end
     nil
   end
 
-  def draw
-    $window.translate(@rect.x, @rect.y) do
+  # Force the grid space to be redrawn because something has been modified.
+  def redraw
+    @buffer_needs_redraw = true
+  end
 
+  def draw
+    # Draw the buffer and the overlay.
+    $window.translate(@rect.x, @rect.y) do
       $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
-        $window.scale(@scale) do
-          $window.translate(@offset_x, @offset_y) do
-            @objects.each { |o| o.draw if o.visible? }
-            @tiles.each { |o| o.draw if o.visible? }
-          end
+        $window.scale(scale) do
+          @buffer.draw((@offset_x - WIDTH), (@offset_y - HEIGHT), 0)
         end
-        
-        @overlay.draw(@offset_x * @scale, @offset_y * @scale)
+
+        @overlay.draw(@offset_x, @offset_y)
       end
     end
 
@@ -130,6 +145,13 @@ class Grid
   # Convert pixellised coordinates into screen coordinates.
   def grid_to_screen(x, y)
     [((x + @offset_x) * @scale) + @rect.x, ((y + @offset_y) * @scale) + @rect.y]
+  end
+
+  public
+  def save_frame(file_name)
+    @visible_area = @buffer.crop(Rect.new(WIDTH, HEIGHT, WIDTH, HEIGHT))
+    @visible_area.as_devil {|devil| devil.flip.save(file_name) }
+    nil
   end
 end
 end

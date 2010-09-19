@@ -30,14 +30,26 @@ class Sprite < GameObject
     nil
   end
 
+  def draw_to_buffer(buffer, x_offset, y_offset)
+    if @selected
+      image.redraw_outline unless image.outline
+      color = [1, 1, 0, ((Math.sin(Time.now.to_f * 4) * 50 + 180) / 256.0)]
+      buffer.splice(image.outline, (x_offset + x - width * center_x) - 1, (y_offset + y - height * center_y) - 1,
+                    color: color, chroma_key: :alpha)
+    end
+
+    buffer.splice(image, (x_offset + x - width * center_x), (y_offset + y - height * center_y), chroma_key: :alpha)
+  end
+
   def draw
     if @selected
       image.redraw_outline unless image.outline
-      color = 0x00ffff00 + ((Math.sin(Time.now.to_f * 4) * 50 + 180).to_i.abs * 256 * 256 * 256)
-      image.outline.draw((self.x - self.width * center_x) - 1, (self.y - self.height * center_y) - 1, zorder, 1, 1, color)
+      color = Color.from_texplay([1, 1, 0, ((Math.sin(Time.now.to_f * 4) * 50 + 180) / 256.0)])
+      image.outline.draw((x - width * center_x) - 1, (y - height * center_y) - 1, zorder,
+                    1, 1, color)
     end
 
-    image.draw((self.x - self.width * center_x), (self.y - self.height * center_y), zorder)
+    image.draw((x - width * center_x), (y - height * center_y), zorder)
   end
 
   def hit?(x, y)

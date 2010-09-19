@@ -37,7 +37,7 @@ class EditObject < GuiState
     add_inputs(
       released_escape: ->{ save_changes; pop_game_state },
       g: ->{ grid.toggle_overlay if $window.holding_control? },
-      f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_object.help', :general => t('help'))) },
+      f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) },
       mouse_wheel_up: ->{ zoom_box.index += 1 },
       mouse_wheel_down: ->{ zoom_box.index -= 1 },
       holding_left: ->{ grid.left },
@@ -104,7 +104,7 @@ class EditObject < GuiState
       # Large grey checkerboard drawn behind the object being edited.
       @transparent_large = Image.create(120, 120)
       @transparent_large.rect 0, 0, @transparent_large.width - 1, @transparent_large.height - 1,
-                              :filled => true, :texture => @transparent_small
+                              filled: true, texture: @transparent_small
     end
 
     #$window.draw_box(rect.x, rect.y, rect.right, rect.bottom, 100000, nil, 0xa0000000)

@@ -39,6 +39,7 @@ class EditScene < GuiState
       holding_right: -> { @grid.right },
       holding_up: -> { @grid.up },
       holding_down: -> { @grid.down },
+      s: -> { save_frame if $window.holding_control? },
       m: -> { @selection[0].mirror! if @selection.size == 1 and $window.holding_control? },
       n: -> { @selection[0].flip! if @selection.size == 1 and $window.holding_control? },
       escape: -> { @selection.reset_drag if @selection.dragging? },
@@ -47,7 +48,7 @@ class EditScene < GuiState
       x: -> { delete if $window.holding_control? and not @selection.empty? },
       c: -> { copy if $window.holding_control? and not @selection.empty? },
       v: -> { paste($window.mouse_x, $window.mouse_y) if $window.holding_control? and not @clipboard.empty? },
-      f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_scene.help', :general => t('help')))},
+      f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_scene.help', general: t('help')))},
       z: lambda do
          if $window.holding_control?
            if $window.holding_shift?
@@ -79,8 +80,16 @@ class EditScene < GuiState
   end
 
   public
+  def save_frame
+    @frame_index ||= 0
+    @frame_index += 1
+    @grid.save_frame(File.join(ROOT_PATH, "frame_%05d.png" % @frame_index))
+  end
+
+  public
   def setup
-    log.info { "Started editing scene"}
+    log.info { "Started editing scene" }
+    @grid.redraw
   end
 
   public
@@ -91,6 +100,7 @@ class EditScene < GuiState
 
       x, y = @grid.screen_to_grid(x, y)
       @selection.begin_drag(x, y)
+      @grid.redraw
     end
     
     nil
@@ -102,13 +112,18 @@ class EditScene < GuiState
 
     unless @selection.include?(object) or $window.holding_shift?
       @selection.clear
+      @grid.redraw
     end
 
     if object
       if @selection.include? object
-        @selection.remove object if $window.holding_shift?
+        if $window.holding_shift?
+          @selection.remove object
+          @grid.redraw
+        end
       else
         @selection.add object
+        @grid.redraw
       end
     end
 
@@ -124,8 +139,10 @@ class EditScene < GuiState
     if @selection.dragging?
       if @grid.hit?(x, y)
         @selection.end_drag
+        @grid.redraw
       else
         @selection.reset_drag
+        @grid.redraw
       end
     end
 
@@ -168,6 +185,7 @@ class EditScene < GuiState
             when :flip   then @selection[0].flip!
             when :mirror then @selection[0].mirror!
           end
+          @grid.redraw
         end
 
         push_game_state ShowMenu.new(widget)
@@ -182,6 +200,7 @@ class EditScene < GuiState
     @edit_object ||= EditObject.new
     @edit_object.object = @selection[0]
     push_game_state @edit_object
+    @grid.redraw
   end
   
   protected
@@ -189,6 +208,8 @@ class EditScene < GuiState
     copy
     @selection.each {|o| @grid.objects.delete(o) }
     @selection.clear
+
+    @grid.redraw
 
     nil
   end
@@ -214,6 +235,8 @@ class EditScene < GuiState
       @selection.add copy
     end
 
+    @grid.redraw
+
     nil
   end
 
@@ -236,6 +259,13 @@ class EditScene < GuiState
   public
   def draw
     @grid.draw
+    if @selection.dragging?
+      $window.translate(grid.rect.x + grid.offset_x * grid.scale, grid.rect.y + grid.offset_y * grid.scale) do
+        $window.scale(grid.scale) do
+          @selection.each { |o| o.draw }
+        end
+      end
+    end
 
     x, y = $window.cursor.x, $window.cursor.y
     if @grid.hit?(x, y)
@@ -246,7 +276,6 @@ class EditScene < GuiState
     end
 
     @font.draw("(#{x}, #{y}) (#{@grid.objects.size} sprites and #{@grid.tiles.size} tiles) #{game_state_manager.current}", 0, $window.height - 25, ZOrder::GUI)
-    
     super
   end
 end
