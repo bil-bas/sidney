@@ -18,7 +18,7 @@ class EditScene < GuiState
   def initialize
     super
 
-    @grid = Grid.new(($window.height / 240).floor)
+    @grid = Grid.new(($window.height / 300).floor)
 
     zooms = {0.5 => "50%", 1 => "100%", 2 => "200%", 4 => "400%", 8 => "800%"}
     @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 20 * @grid.scale, 8 * @grid.scale, 1)
@@ -31,7 +31,7 @@ class EditScene < GuiState
 
     add_element(@zoom_box)
 
-    @font = Font.new($window, nil, 14)
+    @font = Font.new($window, GuiElement::FONT_NAME, GuiElement::FONT_SIZE)
 
     add_inputs(
       g: -> { @grid.toggle_overlay if $window.holding_control? },
@@ -245,7 +245,7 @@ class EditScene < GuiState
       x, y = 'x', 'y'
     end
 
-    @font.draw("(#{x}, #{y}) (#{@grid.objects.size} sprites and #{@grid.tiles.size} tiles) #{game_state_manager.current}", 0, 650, ZOrder::GUI)
+    @font.draw("(#{x}, #{y}) (#{@grid.objects.size} sprites and #{@grid.tiles.size} tiles) #{game_state_manager.current}", 0, $window.height - 25, ZOrder::GUI)
     
     super
   end

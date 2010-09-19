@@ -53,12 +53,12 @@ class Game < Window
   
   protected
   def initialize
-    #width, height, full_screen = 640, 480, false
-    width, height, full_screen = 960, 720, false
-    #width, height, full_screen = 1280, 960, false
+    #width, height, full_screen = 400, 300, false
+    width, height, full_screen = 800, 600, false
+    #width, height, full_screen = 1200, 900, false
     #width, height, full_screen = 800 * 16 / 10, 800, false
 
-    #width, height, full_screen = 640, 480, true
+    #width, height, full_screen = 800, 600, true
     #width, height, full_screen = Gosu::screen_width, Gosu::screen_height, true
 
     super(width, height, full_screen)

@@ -1,6 +1,6 @@
 module Sidney
 class GuiElement
-  FONT_SIZE = 18
+  FONT_SIZE = 15
   FONT_NAME = File.join(ROOT_PATH, 'media', 'fonts', 'SFPixelate.ttf')
   PADDING_X, PADDING_Y = 10, 5
   
