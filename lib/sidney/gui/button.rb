@@ -1,4 +1,4 @@
-require 'gui/gui_element'
+require_relative 'gui_element'
 
 module Sidney
 class Button < GuiElement

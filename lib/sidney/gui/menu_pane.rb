@@ -1,5 +1,5 @@
-require 'gui/gui_element'
-require 'event'
+require_relative 'gui_element'
+require_relative '../event'
 
 module Sidney
 class MenuPane < GuiElement

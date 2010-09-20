@@ -1,6 +1,6 @@
-require 'gui/gui_element'
-require 'gui/menu_pane'
-require 'event'
+require_relative 'gui_element'
+require_relative 'menu_pane'
+require_relative '../event'
 
 module Sidney
 class CombiBox < GuiElement

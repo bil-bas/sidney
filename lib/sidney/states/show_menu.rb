@@ -1,6 +1,6 @@
-require 'states/gui_state'
+require_relative '../states/gui_state'
 
-require 'log'
+require_relative '../log'
 
 module Sidney
 

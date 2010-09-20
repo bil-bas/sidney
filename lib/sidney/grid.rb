@@ -1,6 +1,6 @@
-require 'grid_overlay'
-require 'sprite'
-require 'tile'
+require_relative 'grid_overlay'
+require_relative 'sprite'
+require_relative 'tile'
 
 module Sidney
 class Grid
@@ -10,6 +10,7 @@ class Grid
   HEIGHT = CELL_WIDTH * CELLS_HIGH
   SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
   MARGIN = 4
+  SAVE_ZOOM = 1 # Render to a image this many times larger.
 
   public
   attr_reader :scale, :base_scale, :rect, :objects, :tiles
@@ -44,37 +45,31 @@ class Grid
     @rect.collide_point?(x, y)
   end
 
+  protected
   def initialize(scale)
     @base_scale = @scale = scale.to_f
-    
-    x, y = (@base_scale * MARGIN).to_i, (@base_scale * MARGIN).to_i
 
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
 
     @objects = Array.new
     @tiles = Array.new
-    1.times do
     CELLS_WIDE.times do |x|
       CELLS_HIGH.times do |y|
         @tiles.push Tile.new(image: Image["tile.png"], x: x * CELL_WIDTH, y: y * CELL_HEIGHT)
         @objects.push Sprite.new(image: Image["object.png"], x: x * CELL_WIDTH, y: (y + 1) * CELL_HEIGHT) if rand(100) < 40
       end
     end
-    end
 
-    #@objects[0].instance_variable_set(:@dragging, true)
-
+    x, y = (@base_scale * MARGIN).to_i, (@base_scale * MARGIN).to_i
     width, height = (WIDTH * @base_scale).to_i, (HEIGHT * @base_scale).to_i
     @rect = Rect.new(x, y, width, height)
     @overlay = GridOverlay.new(@rect.width, @rect.height, CELL_WIDTH * @scale)
 
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
-
-    @buffer = TexPlay.create_image($window, WIDTH * 3, HEIGHT * 3)
-    redraw
   end
 
   # Returns the object that the mouse is over, otherwise nil
+  public
   def hit_object(x, y)
     return unless hit?(x, y)
 
@@ -91,39 +86,29 @@ class Grid
 
     found
   end
-  
+
+  public
   def update
     @objects.each_with_index do |object, i|
       object.update(i)
     end
 
-    # Only re-render the buffer if anything has changed.
-    if @buffer_needs_redraw
-      @buffer.paint do
-        @buffer.clear
-        @tiles.each { |o| o.draw_to_buffer(self, WIDTH, HEIGHT) if o.visible? }
-        z_ordered_objects = @objects.sort_by {|o| o.zorder }
-        z_ordered_objects.each { |o| o.draw_to_buffer(self, WIDTH, HEIGHT) if o.visible? }
-      end
-      @buffer_needs_redraw = false
-    end
     nil
   end
 
-  # Force the grid space to be redrawn because something has been modified.
-  def redraw
-    @buffer_needs_redraw = true
-  end
-
+  public
   def draw
     # Draw the buffer and the overlay.
     $window.translate(@rect.x, @rect.y) do
       $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
         $window.scale(scale) do
-          @buffer.draw((@offset_x - WIDTH), (@offset_y - HEIGHT), 0)
+          $window.translate(@offset_x, @offset_y) do
+            @tiles.each { |o| o.draw if o.visible? }
+            @objects.each { |o| o.draw if o.visible? and not o.dragging? }
+          end
         end
 
-        @overlay.draw(@offset_x, @offset_y)
+        @overlay.draw(@offset_x * scale, @offset_y * scale)
       end
     end
 
@@ -131,6 +116,7 @@ class Grid
   end
 
   # Show/hide the grid overlay.
+  public
   def toggle_overlay
     @overlay.visible? ? @overlay.hide! : @overlay.show!
 
@@ -138,19 +124,37 @@ class Grid
   end
 
   # Convert screen coordinates to pixellised coordinates.
+  public
   def screen_to_grid(x, y)
     [((x - @rect.x) / @scale) - @offset_x, ((y - @rect.y) / @scale) - @offset_y]
   end
 
   # Convert pixellised coordinates into screen coordinates.
+  public
   def grid_to_screen(x, y)
     [((x + @offset_x) * @scale) + @rect.x, ((y + @offset_y) * @scale) + @rect.y]
   end
 
   public
+  def render_to_buffer
+    buffer = TexPlay.create_image($window, WIDTH, HEIGHT)
+    buffer.paint do
+      @tiles.each {|o| o.draw_to_buffer(buffer) if o.visible? }
+      z_ordered_objects = @objects.sort_by {|o| o.zorder }
+      z_ordered_objects.each {|o| o.draw_to_buffer(buffer) if o.visible? }
+    end
+    buffer
+  end
+
+  public
   def save_frame(file_name)
-    @visible_area = @buffer.crop(Rect.new(WIDTH, HEIGHT, WIDTH, HEIGHT))
-    @visible_area.as_devil {|devil| devil.flip.save(file_name) }
+    render_to_buffer.as_devil do |devil|
+      devil.flip
+      if SAVE_ZOOM > 1
+        devil.resize(WIDTH * SAVE_ZOOM, HEIGHT * SAVE_ZOOM, filter: Devil::NEAREST)
+      end
+      devil.save(file_name)
+    end
     nil
   end
 end

@@ -1,12 +1,12 @@
 # encoding: utf-8
 
-require 'gui/combi_box'
-require 'gui/clipboard'
-require 'gui/selection'
-require 'gui/history'
-require 'states/gui_state'
-require 'states/edit_object'
-require 'states/show_menu'
+require_relative '../gui/combi_box'
+require_relative '../gui/clipboard'
+require_relative '../gui/selection'
+require_relative '../gui/history'
+require_relative '../states/gui_state'
+require_relative '../states/edit_object'
+require_relative '../states/show_menu'
 
 module Sidney
 class EditScene < GuiState
@@ -89,7 +89,6 @@ class EditScene < GuiState
   public
   def setup
     log.info { "Started editing scene" }
-    @grid.redraw
   end
 
   public
@@ -100,7 +99,6 @@ class EditScene < GuiState
 
       x, y = @grid.screen_to_grid(x, y)
       @selection.begin_drag(x, y)
-      @grid.redraw
     end
     
     nil
@@ -112,18 +110,15 @@ class EditScene < GuiState
 
     unless @selection.include?(object) or $window.holding_shift?
       @selection.clear
-      @grid.redraw
     end
 
     if object
       if @selection.include? object
         if $window.holding_shift?
           @selection.remove object
-          @grid.redraw
         end
       else
         @selection.add object
-        @grid.redraw
       end
     end
 
@@ -139,10 +134,8 @@ class EditScene < GuiState
     if @selection.dragging?
       if @grid.hit?(x, y)
         @selection.end_drag
-        @grid.redraw
       else
         @selection.reset_drag
-        @grid.redraw
       end
     end
 
@@ -185,7 +178,6 @@ class EditScene < GuiState
             when :flip   then @selection[0].flip!
             when :mirror then @selection[0].mirror!
           end
-          @grid.redraw
         end
 
         push_game_state ShowMenu.new(widget)
@@ -200,7 +192,6 @@ class EditScene < GuiState
     @edit_object ||= EditObject.new
     @edit_object.object = @selection[0]
     push_game_state @edit_object
-    @grid.redraw
   end
   
   protected
@@ -208,8 +199,6 @@ class EditScene < GuiState
     copy
     @selection.each {|o| @grid.objects.delete(o) }
     @selection.clear
-
-    @grid.redraw
 
     nil
   end
@@ -234,8 +223,6 @@ class EditScene < GuiState
       @grid.objects.push copy
       @selection.add copy
     end
-
-    @grid.redraw
 
     nil
   end

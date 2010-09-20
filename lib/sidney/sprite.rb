@@ -1,5 +1,5 @@
 require 'chingu'
-require 'gosu_ext/image'
+require_relative 'gosu_ext/image'
 
 module Sidney
 class Sprite < GameObject
@@ -30,17 +30,12 @@ class Sprite < GameObject
     nil
   end
 
-  def draw_to_buffer(buffer, x_offset, y_offset)
-    if @selected
-      image.redraw_outline unless image.outline
-      color = [1, 1, 0, ((Math.sin(Time.now.to_f * 4) * 50 + 180) / 256.0)]
-      buffer.splice(image.outline, (x_offset + x - width * center_x) - 1, (y_offset + y - height * center_y) - 1,
-                    color: color, chroma_key: :alpha)
-    end
-
-    buffer.splice(image, (x_offset + x - width * center_x), (y_offset + y - height * center_y), chroma_key: :alpha)
+  public
+  def draw_to_buffer(buffer)
+    buffer.splice(image, (x - width * center_x), (y - height * center_y), chroma_key: :alpha)
   end
 
+  public
   def draw
     if @selected
       image.redraw_outline unless image.outline

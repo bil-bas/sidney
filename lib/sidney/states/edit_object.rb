@@ -1,9 +1,9 @@
 # encoding: utf-8
 
-require 'states/gui_state'
-require 'gosu_ext/color'
-require 'gui/history'
-require 'log'
+require_relative 'gui_state'
+require_relative '../gosu_ext/color'
+require_relative '../gui/history'
+require_relative '../log'
 
 module Sidney
 class EditObject < GuiState
@@ -102,7 +102,7 @@ class EditObject < GuiState
       # Small transparent checkerboard drawn behind colour wells.
       @transparent_small = Image.from_blob(blob.flatten.pack('C*'), 2, 2)
       # Large grey checkerboard drawn behind the object being edited.
-      @transparent_large = Image.create(120, 120)
+      @transparent_large = Image.create(Grid::WIDTH + Grid::CELL_WIDTH, Grid::HEIGHT + Grid::CELL_HEIGHT)
       @transparent_large.rect 0, 0, @transparent_large.width - 1, @transparent_large.height - 1,
                               filled: true, texture: @transparent_small
     end
@@ -111,7 +111,9 @@ class EditObject < GuiState
 
     $window.translate(rect.x, rect.y) do
       $window.clip_to(0, 0, rect.width, rect.height) do
-        @transparent_large.draw(((grid.offset_x % 16) - 16) * grid.scale, ((grid.offset_y % 16) - 16) * grid.scale, 100000, 4 * grid.scale, 4 * grid.scale, 0xa0ffffff)
+        @transparent_large.draw(((grid.offset_x % Grid::CELL_WIDTH) - Grid::CELL_WIDTH) * grid.scale,
+                                ((grid.offset_y % Grid::CELL_HEIGHT) - Grid::CELL_HEIGHT) * grid.scale,
+                                100000, 4 * grid.scale, 4 * grid.scale, 0xa0ffffff)
         $window.scale(grid.scale) do
           @image.draw(grid.offset_x + IMAGE_X, grid.offset_y + IMAGE_Y, 100001)
         end

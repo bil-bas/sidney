@@ -1,7 +1,11 @@
 # encoding: utf-8
 
 begin
-  require 'rubygems'
+  begin
+    require 'minigems'
+  rescue LoadError => ex
+    require 'rubygems'
+  end
 rescue LoadError => ex
   STDERR.puts ex
 end
@@ -12,14 +16,16 @@ ENV['PATH'] = "#{File.join(ROOT_PATH, 'bin')};#{ENV['PATH']}"
 #require 'profile'
 
 # Gems
+
+begin; gem 'activerecord'; rescue Exception => ex; end
 require 'active_record'
+begin; gem 'i18n'; rescue Exception => ex; end
 require 'i18n'
+begin; gem 'chingu'; rescue Exception => ex; end
 require 'chingu'
 require 'devil'
 require 'devil/gosu'
 require 'texplay'
-
-exit if defined? Ocra
 
 I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
 
@@ -35,11 +41,15 @@ module ZOrder
   GUI, DRAGGING, GRID_OVERLAY, DIALOG, FPS, CURSOR = (1000001..1000007).to_a
 end
 
-require 'log'
-require 'fps_display'
-require 'gui/cursor'
-require 'grid'
-require 'states/edit_scene'
+require_relative 'log'
+require_relative 'database'
+require_relative 'fps_display'
+require_relative 'gui/cursor'
+require_relative 'grid'
+require_relative 'states/edit_scene'
+require_relative 'resources'
+
+exit if defined? Ocra
 
 # Main game window.
 class Game < Window
