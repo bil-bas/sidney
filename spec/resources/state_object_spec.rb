@@ -1,6 +1,6 @@
 require_relative 'visual_resource_helper'
 
-require_relative 'state_object'
+require 'state_object'
 include RSiD
 
 describe StateObject do

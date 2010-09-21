@@ -1,7 +1,9 @@
 require 'active_record'
-require 'log4r'
+require 'logger'
 
-ActiveRecord::Base.logger = Logger.new(Sidney::Log::LOG_FILE)
+require_relative 'log'
+
+ActiveRecord::Base.logger = Logger.new(File.join(LOG_PATH, "application.log"))
 
 file = File.join(ROOT_PATH, 'db', 'dbfile.sqlite3')
 database_exists = File.exists? file

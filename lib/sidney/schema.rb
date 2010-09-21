@@ -9,16 +9,18 @@ require 'database'
 #       has many tiles (through tile_layer)
 #
 ActiveRecord::Schema.define do
+  uid_length = 12
+  
   create_table :tiles, id: false do |t|
-    t.string :uid, limit: 12, primary: true
+    t.string :uid, limit: uid_length, primary: true
 
     t.string :name,  null: false
     t.binary :image, null: false
   end
 
   create_table :tile_layers, id: false do |t|
-    t.string :room_uid, limit: 12, null: false
-    t.string :tile_uid, limit: 12, null: false
+    t.string :room_uid, limit: uid_length, null: false
+    t.string :tile_uid, limit: uid_length, null: false
 
     t.integer :x, null: false
     t.integer :y, null: false
@@ -30,13 +32,13 @@ ActiveRecord::Schema.define do
   add_index :tile_layers, [:x, :y]
 
   create_table :rooms, id: false do |t|
-    t.string :uid, limit: 12, primary: true
+    t.string :uid, limit: uid_length, primary: true
 
     t.string :name, null: false
   end
 
   create_table :sprites, id: false do |t|
-    t.string :uid, limit: 12, primary: true
+    t.string :uid, limit: uid_length, primary: true
 
     t.string :name,  null: false
     t.binary :image, null: false
@@ -44,13 +46,13 @@ ActiveRecord::Schema.define do
   end
 
   create_table :state_objects, id: false do |t|
-    t.string :uid, limit: 12, primary: true
+    t.string :uid, limit: uid_length, primary: true
     t.string :name, null: false
   end
 
   create_table :sprite_layers, id: false do |t|
-    t.string :state_object_uid, limit: 12, null: false
-    t.string :sprite_uid, limit: 12, null: false
+    t.string :state_object_uid, limit: uid_length, null: false
+    t.string :sprite_uid, limit: uid_length, null: false
 
     t.integer :alpha, null: false
     t.boolean :glows, null: false
@@ -63,8 +65,8 @@ ActiveRecord::Schema.define do
   add_index :sprite_layers, :state_object_uid
 
   create_table :state_object_layers, id: false do |t|
-    t.string :scene_uid, limit: 12, null: false
-    t.string :state_object_uid, limit: 12, null: false
+    t.string :scene_uid, limit: uid_length, null: false
+    t.string :state_object_uid, limit: uid_length, null: false
     
     t.integer :x, null: false
     t.integer :y, null: false
@@ -83,7 +85,7 @@ ActiveRecord::Schema.define do
   add_index :state_object_layers, :state_object_uid
 
   create_table :scenes, id: false do |t|
-    t.string :uid, limit: 12, primary: true
+    t.string :uid, limit: uid_length, primary: true
     t.string :name, null: false
 
     t.string :room_uid, null: false

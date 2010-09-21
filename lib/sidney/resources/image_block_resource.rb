@@ -1,3 +1,5 @@
+require_relative '../gosu_ext'
+
 require_relative 'visual_resource'
 
 module RSiD
@@ -13,7 +15,7 @@ module RSiD
 
     public
     def to_image
-      @cached_image ||= Image.from_blob($window, image, WIDTH, HEIGHT)
+      @cached_image ||= Image.from_blob(image, WIDTH, HEIGHT)
     end
 
     public
@@ -22,26 +24,24 @@ module RSiD
       canvas.splice(to_image, offset_x, offset_y, chroma_key: :alpha)
     end
 
-    class << self
-      protected
-      def image_from_color_data(color_data, mask_data = nil)
-        image = Image.from_blob($window, color_data, WIDTH, HEIGHT)
+    protected
+    def self.image_from_color_data(color_data, mask_data = nil)
+      image = Image.from_blob(color_data, WIDTH, HEIGHT)
 
-        # Merge in the alpha values from the mask-data, if any.
-        if mask_data
-          mask_array = mask.unpack("C*")
-          image.each do |c, x, y|
-            c[3] = mask_array[x + y * WIDTH]
-          end
+      # Merge in the alpha values from the mask-data, if any.
+      if mask_data
+        mask_array = mask.unpack("C*")
+        image.each do |c, x, y|
+          c[3] = mask_array[x + y * WIDTH]
         end
-
-        image
       end
 
-      protected
-      def default_color
-         DEFAULT_COLOR
-      end
+      image
+    end
+
+    protected
+    def self.default_color
+      DEFAULT_COLOR
     end
   end
 end

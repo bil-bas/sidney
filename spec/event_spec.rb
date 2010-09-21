@@ -1,5 +1,5 @@
-$LOAD_PATH.unshift File.dirname(__FILE__) 
-require 'helper'
+require_relative 'helper'
+
 require 'event'
 
 module Sidney

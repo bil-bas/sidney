@@ -1,6 +1,6 @@
 require_relative 'visual_resource_helper'
 
-require_relative 'room'
+require 'room'
 include RSiD
 
 describe Room do

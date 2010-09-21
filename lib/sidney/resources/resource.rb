@@ -31,18 +31,13 @@ module RSiD
     validates_format_of :uid, with: /\A[a-z0-9]{12}\Z/
     validates_length_of :name, in: 1..NAME_LENGTH
 
-  public
     def self.type
       type = self.to_s[/[^:]+$/].downcase
       type == 'stateobject' ? 'object' : type
     end
 
-    def type
-      self.class.type
-    end
-
     # For unversioned files, assume a default version. Override this for
-    # files that have specific versions. 
+    # files that have specific versions.
     def self.current_version
       DEFAULT_VERSION
     end
@@ -92,13 +87,13 @@ module RSiD
         if version > current_version
           raise Exception.new(version)
         end
-        
+
         offset = MAGIC_CODE.length + 1
       else
         version = DEFAULT_VERSION
         offset = 0
       end
-      
+
       [version, offset]
     end
 
@@ -121,7 +116,6 @@ module RSiD
     # - binary data along with a uid, such as when read from a disk (:data, :uid)
     # - attributes (:att1..:attN)
     def self.generate(options = {})
-
       if options[:data]
         options = attributes_from_data(options[:data])
       else
@@ -141,15 +135,6 @@ module RSiD
       created
     end
 
-    def recalculate_uid
-      # TODO: Don't understand why I can't just use uid= here
-      self.uid = calculate_uid
-    end
-
-    def calculate_uid
-      Digest::SHA1.hexdigest(to_binary)[0...UID_NUM_NIBBLES]
-    end
-
     def self.default
       @@defaults[type] = generate unless @@defaults[type]
       @@defaults[type]
@@ -159,21 +144,24 @@ module RSiD
       @@defaults = {}
     end
 
+    def type
+      self.class.type
+    end
+
+    def recalculate_uid
+      self.uid = calculate_uid
+    end
+
+    def calculate_uid
+      Digest::SHA1.hexdigest(to_binary)[0...UID_NUM_NIBBLES]
+    end
+
     def ==(other)
       other.class == self.class and other.uid == uid
     end
 
     def to_binary
       [name].pack(NAME_PACK)
-    end
-
-    def save_file
-      dir = File.join(CACHE_DIR, type)
-      FileUtils.mkdir_p(dir) unless File.exist?(dir)
-      
-      File.open(File.join(dir, uid), "wb") do |file|
-        file.write(to_binary)
-      end
     end
   end
 end

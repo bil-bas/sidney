@@ -17,19 +17,20 @@ module RSiD
       super(data[offset..-1], attributes)
     end
 
+    def self.default_attributes(attributes = {})
+      attributes[:image] = [0, 0, 0, 0].pack("C4")[0] * AREA
+
+      super(attributes)
+    end
+
     def to_binary
-      colors + super
+      image + super
     end
 
     # Converting to a sprite, we assume all pixels are opaque
     def to_sprite
       mask = Array.new(AREA, Sprite::OPAQUE)
       Sprite.generate(image: image, mask: mask, name: name)
-    end
-
-    # Tiles are always opaque.
-    def transparent?(x, y)
-      false
     end
   end
 end

@@ -201,5 +201,10 @@ class Image
     
     gosu_image
   end
+
+  public
+  def save(file_name)
+    as_devil {|devil| devil.flip.save(file_name) }
+  end
 end
 end

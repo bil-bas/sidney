@@ -1,13 +1,13 @@
-require_relative "helper"
+require_relative '../helper'
 
-require_relative 'room'
-require_relative 'scene'
-require_relative 'sprite'
-require_relative 'sprite_layer'
-require_relative 'state_object'
-require_relative 'state_object_layer'
-require_relative 'tile'
-require_relative 'tile_layer'
+require 'room'
+require 'scene'
+require 'sprite'
+require 'sprite_layer'
+require 'state_object'
+require 'state_object_layer'
+require 'tile'
+require 'tile_layer'
 
 include RSiD
 
@@ -59,21 +59,6 @@ share_examples_for "Resource" do
 
     it "should default name to 'default'" do
       @default_resource.name.should == 'default'
-    end
-  end
-  
-  describe "to_binary()" do
-    it "should serialise to binary what it was originally given" do
-      @resource.to_binary.should == @data
-    end
-  end
-
-  describe "save_file()" do
-    it "should save an identical data file as it loaded" do
-      File.delete(@resource_file_saved) if File.exists?(@resource_file_saved)
-      described_class::CACHE_DIR.sub!(/.*/, CACHE_OUT)
-      @resource.save_file
-      File.read(@resource_file_saved).should == File.read(@resource_file_read)
     end
   end
 

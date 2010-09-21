@@ -1,6 +1,6 @@
 require_relative 'visual_resource_helper'
 
-require_relative 'scene'
+require 'scene'
 include RSiD
 
 describe Scene do

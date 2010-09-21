@@ -1,3 +1,5 @@
+require 'gosu'
+
 module Gosu
   class Color
     # RGB in 0..255 format (Alpha assumed 255)
