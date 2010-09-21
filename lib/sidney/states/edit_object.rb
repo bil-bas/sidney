@@ -9,7 +9,7 @@ module Sidney
 class EditObject < GuiState
   include Log
   
-  MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = 208 * 3, 208 * 3
+  MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = Grid::WIDTH * 3, Grid::HEIGHT * 3
   IMAGE_X = - MAX_IMAGE_WIDTH / 3
   IMAGE_Y = - MAX_IMAGE_HEIGHT / 3
 
