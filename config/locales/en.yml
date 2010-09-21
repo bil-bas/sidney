@@ -47,6 +47,8 @@ en:
 
       Ctrl-M => Mirror object horizontally.
 
+      Ctrl-S => Save current frame.
+
   edit_object:
     help:
       === Editing object ===

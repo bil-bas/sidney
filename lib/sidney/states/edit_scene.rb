@@ -83,7 +83,9 @@ class EditScene < GuiState
   def save_frame
     @frame_index ||= 0
     @frame_index += 1
-    @grid.save_frame(File.join(ROOT_PATH, "frame_%05d.png" % @frame_index))
+    flip_book_dir = File.join(ROOT_PATH, 'flip_books')
+    FileUtils.mkdir_p flip_book_dir unless File.exists? flip_book_dir
+    @grid.save_frame(File.join(flip_book_dir, 'frame_%05d.png' % @frame_index))
   end
 
   public
