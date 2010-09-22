@@ -49,8 +49,6 @@ require_relative 'grid'
 require_relative 'states/edit_scene'
 require_relative 'resources'
 
-exit if defined? Ocra
-
 # Main game window.
 class Game < Window
   include Log
@@ -62,14 +60,14 @@ class Game < Window
   MAX_WIDTH = Gosu::screen_width * 0.9
   
   protected
-  def initialize
-    #width, height, full_screen = 400, 300, false
-    width, height, full_screen = 800, 600, false
-    #width, height, full_screen = 1200, 900, false
-    #width, height, full_screen = 800 * 16 / 10, 800, false
+  def initialize(full_screen)
+    #width, height = 400, 300
+    width, height = 800, 600
+    #width, height = 1200, 900
+    #width, height = 800 * 16 / 10, 800
 
-    #width, height, full_screen = 800, 600, true
-    #width, height, full_screen = Gosu::screen_width, Gosu::screen_height, true
+    #width, height = 800, 600
+    #width, height = Gosu::screen_width, Gosu::screen_height
 
     super(width, height, full_screen)
     log.info { "Opened window" }
@@ -137,7 +135,23 @@ class Game < Window
   def holding_alt?
     holding_any? :left_alt, :right_alt
   end
+
+  public
+  def self.run
+    return if defined? Ocra
+
+    full_screen = case ARGV
+                    when []
+                      false
+                    when ["--full-screen"], ["-f"]
+                      true
+                    else
+                      return "Usage:\n  #{File.basename($0)} [--full-screen]"
+                      nil
+                  end
+
+    new(full_screen).show
+  end
 end
 end
 
-Sidney::Game.new.show
