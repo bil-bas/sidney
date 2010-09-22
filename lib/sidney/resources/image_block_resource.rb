@@ -25,8 +25,8 @@ module RSiD
 
     public
     def draw_on_image(canvas, offset_x, offset_y, opacity = 255, glow = false)
-      # TODO: Use opacity parameter.
-      canvas.splice(to_image, offset_x, offset_y, chroma_key: :alpha)
+      # TODO: Use opacity parameters.
+      canvas.splice(to_image, offset_x, offset_y, chroma_key: :transparent)
     end
 
     protected
@@ -42,7 +42,7 @@ module RSiD
         end
       end
 
-      image
+      Image.from_blob(image.to_blob, WIDTH, HEIGHT)
     end
 
     protected

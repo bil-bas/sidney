@@ -5,6 +5,10 @@ require 'gosu_ext'
 share_examples_for 'VisualResource' do
   it_should_behave_like "Resource"
 
+  before :all do
+    $window = Gosu::Window.new(640, 480, false)
+  end
+
   before :each do
     @png_created = File.join(GENERATED_DIR, "#{described_class.type}_images", "#{@name} - #{@uid}.png")
     @default_png_created = File.join(GENERATED_DIR, "#{described_class.type}_images", "default.png")

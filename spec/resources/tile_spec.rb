@@ -4,10 +4,6 @@ require 'tile'
 include RSiD
 
 describe Tile do
-  before :all do
-    $window = Gosu::Window.new(640, 480, false)
-  end
-
   before :each do
     @uid = '0d183059ae8b'
     @name = 'court'

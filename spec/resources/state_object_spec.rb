@@ -12,12 +12,14 @@ describe StateObject do
   it_should_behave_like "VisualResource"
 
   describe "initialize() default" do
+    subject { described_class.load(@uid) }
+
     before :each do
-      @resource = described_class.default
+      subject = described_class.default
     end
 
     it "should have no layers" do
-      @resource.num_layers.should == 0
+      subject.num_layers.should == 0
     end
   end
 end

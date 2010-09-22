@@ -95,7 +95,7 @@ module RSiD
     end
 
     def to_image
-      image = Image.new(WIDTH, HEIGHT)
+      image = Image.create(WIDTH, HEIGHT)
       draw_on_image(image, Sprite::WIDTH * 6, Sprite::HEIGHT * 5)
     end
 

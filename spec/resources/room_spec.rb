@@ -9,6 +9,8 @@ describe Room do
     @name = 'closet az'
   end
 
+  subject { described_class.load(@uid) }
+
   it_should_behave_like "VisualResource"
 
   it "should contain all 169 tiles" do
@@ -22,21 +24,21 @@ describe Room do
     it "should return all 169 grid tiles inside the grid area" do
       (0...13).each do |y|
         (0...13).each do |x|
-          tile = @resource.tile(x, y)
+          tile = subject.tile(x, y)
           tile.should be_a_kind_of Tile
         end
       end
     end
 
     it "should return nil outside the grid" do
-      @resource.tile(-1, -1).should be_nil
-      @resource.tile(13, 13).should be_nil
+      subject.tile(-1, -1).should be_nil
+      subject.tile(13, 13).should be_nil
     end
   end
 
   describe "layers_by_x_y()" do
     it "should return 169 layers containing tiles" do
-      layers = @resource.layers_by_x_y
+      layers = subject.layers_by_x_y
       layers.size.should == 169
       layers.each do |layer|
         layer.tile.should be_a_kind_of Tile
@@ -45,14 +47,12 @@ describe Room do
   end
 
   describe "default()" do
-    before :each do
-      @default_resource2 = described_class.default
-    end
+    subject { described_class.default }
 
     it "should contain only default tiles" do
       (0...13).each do |y|
         (0...13).each do |x|
-          tile = @default_resource2.tile(x, y)
+          tile = subject.tile(x, y)
           tile.should == Tile.default
         end
       end
@@ -61,7 +61,7 @@ describe Room do
     it "should have all tiles being passable" do
       (0...13).each do |y|
         (0...13).each do |x|
-          @default_resource2.blocked?(x, y).should be_false
+          subject.blocked?(x, y).should be_false
         end
       end
     end

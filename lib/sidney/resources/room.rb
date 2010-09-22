@@ -128,7 +128,7 @@ module RSiD
     end
 
     def to_image
-      image = Image.new(WIDTH, HEIGHT)
+      image = Image.create(WIDTH, HEIGHT)
 
       layers_by_x_y.each do |layer|
         tile = Tile.load(layer.tile_uid)

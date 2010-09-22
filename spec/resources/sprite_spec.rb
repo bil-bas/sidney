@@ -4,10 +4,6 @@ require 'sprite'
 include RSiD
 
 describe Sprite do
-  before :all do
-    $window = Gosu::Window.new(640, 480, false)
-  end
-
   before :each do
     @uid = '009a8897cf6b'
     @name = 'grapefruit'
