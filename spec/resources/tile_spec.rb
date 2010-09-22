@@ -16,58 +16,33 @@ describe Tile do
   it_should_behave_like "VisualResource"
 
   describe "default()" do
-    before :each do
-      @default_resource = described_class.default
-    end
+    subject { described_class.default }
 
-    it "should be blank" do
-      pending "to_image getting fixed"
+    it "should be blank and opaque" do
       blank = [0, 0, 0, 1]
       (0...16).each do |y|
         (0...16).each do |x|
-          @default_resource.to_image.pixel(x, y).should == blank
-        end
-      end
-    end
-
-    it "should be opaque" do
-      pending "to_image getting fixed"
-      (0...16).each do |y|
-        (0...16).each do |x|
-          @default_resource.to_image.pixel(x, y)[3].should == 0
+          subject.to_image.get_pixel(x, y).should == blank
         end
       end
     end
   end
 
-=begin
-describe "to_sprite()" do
+  describe "to_sprite()" do
+    subject { described_class.load(@uid) }
+
     before :each do
-      @default_resource = described_class.default
-      @sprite = @default_resource.to_sprite
+      @sprite = subject.to_sprite
     end
 
     it "should be a Sprite" do
       @sprite.should be_a_kind_of Sprite
     end
 
-    it "should have a different uid, but same name and colors" do
-
-      @sprite.uid.should_not be_nil
-      @sprite.uid.should_not == @default_resource.uid
-
-      @sprite.name.should == @default_resource.name
-      @sprite.image.should == @default_resource.image
-    end
-
-    it "should be opaque" do
-      pending "to_image getting fixed"
-      (0...16).each do |y|
-        (0...16).each do |x|
-          @sprite.to_image.pixel(x, y)[3].should == 0
-        end
-      end
+    it "should have the same uid, name and image data" do
+      @sprite.uid.should == subject.uid
+      @sprite.name.should == subject.name
+      @sprite.image.should == subject.image
     end
   end
-=end
 end

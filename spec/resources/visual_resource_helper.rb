@@ -10,27 +10,27 @@ share_examples_for 'VisualResource' do
     @default_png_created = File.join(GENERATED_DIR, "#{described_class.type}_images", "default.png")
     $window = Gosu::Window.new(640, 480, false)
   end
+
+  subject { described_class.load(@uid) }
   
   describe "to_image()" do
     it "should create a png image" do
-      pending "to_image getting fixed"
       File.delete(@png_created) if File.exists?(@png_created)
-      @resource.to_image.save(@png_created)
+      FileUtils.mkdir_p(File.dirname(@png_created))
+      subject.to_image.save(@png_created)
       File.exist?(@png_created).should be_true
       File.size(@png_created).should > 0
     end
   end
 
   describe "default()" do
-    before :each do
-      @default_resource = described_class.default
-    end
+    subject { described_class.default }
 
     describe "to_image()" do
       it "should create a png image" do
-        pending "to_image getting fixed"
         File.delete(@default_png_created) if File.exists?(@default_png_created)
-        @default_resource.to_image.save(@default_png_created)
+        FileUtils.mkdir_p(File.dirname(@default_png_created))
+        subject.to_image.save(@default_png_created)
         File.exist?(@default_png_created).should be_true
         File.size(@default_png_created).should > 0
       end
@@ -38,13 +38,15 @@ share_examples_for 'VisualResource' do
   end
   
 
-#  describe "to_image() ALL" do
-#    it "should create a png image" do
-#      Dir[File.join(CACHE_IN, described_class.type, "*")].each do |filename|
-#        object = described_class.load(File.basename(filename))
-#        image = object.to_image
-#        image.write(File.join(GENERATED_DIR, "#{described_class.type}_images", "#{object.name} - #{File.basename(filename)}.png"))
-#      end
-#    end
-#  end
+=begin
+  describe "to_image() ALL" do
+    it "should create a png image" do
+      Dir[File.join(CACHE_IN, described_class.type, "*")].each do |filename|
+        object = described_class.load(File.basename(filename))
+        image = object.to_image.save(File.join(GENERATED_DIR, "#{described_class.type}_images", "#{object.name} - #{File.basename(filename)}.png"))
+      end
+    end
+  end
+=end
+
 end

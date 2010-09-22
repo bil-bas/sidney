@@ -31,6 +31,7 @@ share_examples_for "Resource" do
 
     # Create an example resource.
     @resource = described_class.load(@uid)
+    @imported_uid = @resource.uid # UID changes in Sid import into Sidney
   end
 
   describe "initialize()" do
@@ -38,13 +39,13 @@ share_examples_for "Resource" do
       @resource.name.should == @name
     end
 
-    it "should store the uid" do
-      @resource.uid.should == @uid
+    it "should store a uid" do
+      @resource.uid.should_not be_nil
     end
 
     it "should calculate the uid if not provided" do
       @resource = described_class.generate(data: @data)
-      @resource.uid.should == @uid
+      @resource.uid.should == @imported_uid
     end
   end
 
@@ -64,9 +65,9 @@ share_examples_for "Resource" do
 
   describe "restore from database" do
     it "should return an identical record as it saved" do
-      res = described_class.where(uid: @uid).first
+      res = described_class.where(uid: @imported_uid).first
       res.recalculate_uid
-      res.uid.should == @uid
+      res.uid.should == @imported_uid
     end
   end
 end

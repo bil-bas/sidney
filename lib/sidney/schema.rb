@@ -42,7 +42,6 @@ ActiveRecord::Schema.define do
 
     t.string :name,  null: false
     t.binary :image, null: false
-    t.text :mask, null: false
   end
 
   create_table :state_objects, id: false do |t|

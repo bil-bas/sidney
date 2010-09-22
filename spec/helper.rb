@@ -1,4 +1,5 @@
 require "rspec"
+require "fileutils"
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "..", "lib", "sidney")
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "..", "lib", "sidney", "resources")

@@ -8,6 +8,8 @@ module RSiD
 
     set_primary_key :uid
 
+    DEFAULT_COLOR = [0, 0, 0, 255]
+
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
 
@@ -18,19 +20,14 @@ module RSiD
     end
 
     def self.default_attributes(attributes = {})
-      attributes[:image] = [0, 0, 0, 0].pack("C4")[0] * AREA
+      attributes[:image] = DEFAULT_COLOR.pack('C*') * AREA
 
       super(attributes)
     end
 
-    def to_binary
-      image + super
-    end
-
     # Converting to a sprite, we assume all pixels are opaque
     def to_sprite
-      mask = Array.new(AREA, Sprite::OPAQUE)
-      Sprite.generate(image: image, mask: mask, name: name)
+      Sprite.generate(image: image, name: name)
     end
   end
 end

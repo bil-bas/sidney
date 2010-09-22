@@ -118,7 +118,7 @@ module RSiD
     def self.generate(options = {})
       if options[:data]
         options = attributes_from_data(options[:data])
-      else
+      elsif options.empty?
         options = default_attributes(options)
       end
 

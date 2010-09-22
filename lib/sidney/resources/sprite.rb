@@ -7,21 +7,13 @@ module RSiD
     has_many :state_objects, through: :sprite_layers
 
     set_primary_key :uid
-    attr_accessible :mask
-    serialize :mask
-    
+
     TRANSPARENT = 1
     OPAQUE = 0
     
     DEFAULT_TRANSPARENCY = TRANSPARENT
 
-    # 256 pixel colours + 256 mask
-    MASK_PACK_FORMAT = "C#{AREA}"
-
-    def validate_mask
-      errors.add(:mask, "has incorrect size: #{mask.size}") unless mask.size == AREA
-    end
-    validate :validate_mask
+    DEFAULT_COLOR = [0, 0, 0, 0]
 
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
@@ -30,16 +22,18 @@ module RSiD
 
       offset += COLOR_DATA_SIZE
 
-      attributes[:mask] = data[offset, AREA].unpack(MASK_PACK_FORMAT)
+      mask_data = data[offset, AREA]
       offset += AREA
 
-      attributes[:image] = image_from_color_data(color_data, attributes[:mask]).to_blob
+      attributes[:image] = image_from_color_data(color_data, mask_data).to_blob
       
       super(data[offset..-1], attributes)
     end
 
-    def to_binary
-      to_image.to_blob + super
+    def self.default_attributes(attributes = {})
+      attributes[:image] = DEFAULT_COLOR.pack('C*') * AREA
+
+      super(attributes)
     end
 
     def to_tile
