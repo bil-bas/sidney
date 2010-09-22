@@ -18,7 +18,7 @@ describe Tile do
       blank = [0, 0, 0, 1]
       (0...16).each do |y|
         (0...16).each do |x|
-          subject.to_image.get_pixel(x, y).should == blank
+          subject.image.get_pixel(x, y).should == blank
         end
       end
     end

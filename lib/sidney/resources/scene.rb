@@ -105,22 +105,22 @@ module RSiD
       data + super
     end
 
-    def to_image
-      image = self.class.benchmark('Rendering room') do
-        room.to_image
+    def create_image
+      img = self.class.benchmark('Rendering room') do
+        room.image
       end
 
       self.class.benchmark('Rendering objects') do
         layers = state_object_layers
 
         # Draw background objects.
-        layers.each { |layer| layer.draw_on_image(image) if layer.locked }
+        layers.each { |layer| layer.draw_on_image(img) if layer.locked }
 
         # Draw foreground objects.
-        layers.each { |layer| layer.draw_on_image(image) unless layer.locked }
+        layers.each { |layer| layer.draw_on_image(img) unless layer.locked }
       end
       
-      image
+      img
     end
   end
 end

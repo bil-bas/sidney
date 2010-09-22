@@ -25,19 +25,19 @@ module RSiD
       mask_data = data[offset, AREA]
       offset += AREA
 
-      attributes[:image] = image_from_color_data(color_data, mask_data).to_blob
+      attributes[:image_blob] = image_from_color_data(color_data, mask_data).to_blob
       
       super(data[offset..-1], attributes)
     end
 
     def self.default_attributes(attributes = {})
-      attributes[:image] = DEFAULT_COLOR.pack('C*') * AREA
+      attributes[:image_blob] = DEFAULT_COLOR.pack('C*') * AREA
 
       super(attributes)
     end
 
     def to_tile
-      Tile.generate(name: name, image: image)
+      Tile.generate(name: name, image_blob: image_blob)
     end
   end
 end

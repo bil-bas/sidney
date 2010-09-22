@@ -21,7 +21,7 @@ share_examples_for 'VisualResource' do
     it "should create a png image" do
       File.delete(@png_created) if File.exists?(@png_created)
       FileUtils.mkdir_p(File.dirname(@png_created))
-      subject.to_image.save(@png_created)
+      subject.image.save(@png_created)
       File.exist?(@png_created).should be_true
       File.size(@png_created).should > 0
     end
@@ -34,7 +34,7 @@ share_examples_for 'VisualResource' do
       it "should create a png image" do
         File.delete(@default_png_created) if File.exists?(@default_png_created)
         FileUtils.mkdir_p(File.dirname(@default_png_created))
-        subject.to_image.save(@default_png_created)
+        subject.image.save(@default_png_created)
         File.exist?(@default_png_created).should be_true
         File.size(@default_png_created).should > 0
       end

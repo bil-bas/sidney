@@ -1,6 +1,6 @@
 require 'active_record'
 
-require 'database'
+require_relative 'database'
 
 # scene
 #   has many state_objects (through object_layer)
@@ -15,7 +15,7 @@ ActiveRecord::Schema.define do
     t.string :uid, limit: uid_length, primary: true
 
     t.string :name,  null: false
-    t.binary :image, null: false
+    t.binary :image_blob, null: false
   end
 
   create_table :tile_layers, id: false do |t|
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define do
     t.string :uid, limit: uid_length, primary: true
 
     t.string :name,  null: false
-    t.binary :image, null: false
+    t.binary :image_blob, null: false
   end
 
   create_table :state_objects, id: false do |t|

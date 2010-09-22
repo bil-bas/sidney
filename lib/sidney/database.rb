@@ -1,5 +1,6 @@
 require 'active_record'
 require 'logger'
+require 'sqlite3'
 
 require_relative 'log'
 
@@ -11,7 +12,6 @@ database_exists = File.exists? file
 ActiveRecord::Base.establish_connection(
     adapter: 'sqlite3',
     database: file
-    #database: ':memory:'
 )
 
 require 'schema' unless database_exists

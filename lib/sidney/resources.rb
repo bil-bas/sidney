@@ -21,9 +21,8 @@ Resource::CACHE_DIR.sub!(/.*/, CACHE_IN)
     Dir[File.join(CACHE_IN, resource_class.type, "*")].each do |filename|
       object = resource_class.load(File.basename(filename))
       object.id
-      object.to_image
-      object.outline if resource_class.type == "sprite"
-      object.to_image.to_devil {|devil| devil.save(File.join(GENERATED_DIR, "#{resource_class.type}_images", "#{object.name} - #{File.basename(filename)}.png")) }
+      object.image
+      object.image.to_devil {|devil| devil.save(File.join(GENERATED_DIR, "#{resource_class.type}_images", "#{object.name} - #{File.basename(filename)}.png")) }
     end
   end
 end

@@ -8,25 +8,25 @@ module RSiD
   class ImageBlockResource < VisualResource
     @abstract_class = true
 
-    attr_accessible :image
+    attr_accessible :image_blob
 
     WIDTH = HEIGHT = 16 # 16x16 pixels per tile/sprite.
     AREA = WIDTH * HEIGHT
     COLOR_DATA_SIZE = AREA * 4
 
     public
-    def to_image
-      @cached_image ||= Image.from_blob(image, WIDTH, HEIGHT)
+    def create_image
+      Image.from_blob(image_blob, WIDTH, HEIGHT)
     end
 
     def to_binary
-      image + super
+      image_blob + super
     end
 
     public
     def draw_on_image(canvas, offset_x, offset_y, opacity = 255, glow = false)
       # TODO: Use opacity parameters.
-      canvas.splice(to_image, offset_x, offset_y, chroma_key: :transparent)
+      canvas.splice(image, offset_x, offset_y, chroma_key: :transparent)
     end
 
     protected

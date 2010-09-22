@@ -13,21 +13,20 @@ module RSiD
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
 
-      attributes[:image] = image_from_color_data(data[offset, COLOR_DATA_SIZE]).to_blob
+      attributes[:image_blob] = image_from_color_data(data[offset, COLOR_DATA_SIZE]).to_blob
       offset += COLOR_DATA_SIZE
 
       super(data[offset..-1], attributes)
     end
 
     def self.default_attributes(attributes = {})
-      attributes[:image] = DEFAULT_COLOR.pack('C*') * AREA
+      attributes[:image_blob] = DEFAULT_COLOR.pack('C*') * AREA
 
       super(attributes)
     end
 
-    # Converting to a sprite, we assume all pixels are opaque
     def to_sprite
-      Sprite.generate(image: image, name: name)
+      Sprite.generate(image_blob: image_blob, name: name)
     end
   end
 end

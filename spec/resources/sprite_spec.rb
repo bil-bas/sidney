@@ -18,7 +18,7 @@ describe Sprite do
       color = [0, 0, 0, 0]
       (0...16).each do |y|
         (0...16).each do |x|
-          subject.to_image.get_pixel(x, y).should == color
+          subject.image.get_pixel(x, y).should == color
         end
       end
     end

@@ -127,17 +127,17 @@ module RSiD
         super
     end
 
-    def to_image
-      image = Image.create(WIDTH, HEIGHT)
+    def create_image
+      img = Image.create(WIDTH, HEIGHT)
 
       layers_by_x_y.each do |layer|
         tile = Tile.load(layer.tile_uid)
         unless tile == Tile.default
-          tile.draw_on_image(image, layer.x * Tile::WIDTH, layer.y * Tile::HEIGHT)
+          tile.draw_on_image(img, layer.x * Tile::WIDTH, layer.y * Tile::HEIGHT)
         end
       end
-      
-      image
+
+      img
     end
   end
 end

@@ -94,9 +94,10 @@ module RSiD
       data + super
     end
 
-    def to_image
-      image = Image.create(WIDTH, HEIGHT)
-      draw_on_image(image, Sprite::WIDTH * 6, Sprite::HEIGHT * 5)
+    def create_image
+      img = Image.create(WIDTH, HEIGHT)
+      draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5)
+      img
     end
 
     def draw_on_image(image, offset_x, offset_y)
