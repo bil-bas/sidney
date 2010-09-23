@@ -107,11 +107,11 @@ module RSiD
 
     def create_image
       unless img = super
-        img = #self.class.benchmark('Rendering room') do
+        img = self.class.benchmark('Rendering room') do
           room.image.dup
-        #end
+        end
 
-        #self.class.benchmark('Rendering objects') do
+        self.class.benchmark('Rendering objects') do
           layers = state_object_layers
 
           # Draw background objects.
@@ -119,7 +119,7 @@ module RSiD
 
           # Draw foreground objects.
           layers.each { |layer| layer.draw_on_image(img) unless layer.locked }
-        #end
+        end
 
         img.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
       end

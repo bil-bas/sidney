@@ -126,9 +126,7 @@ module RSiD
       options.delete image
       created = new(options)
       created.recalculate_uid unless created.uid
-      if image
-        image.save(File.join(VisualResource::IMAGE_CACHE_DIR, "#{created.uid}.png"))
-      end
+      created.cache_image(image) if image
       #benchmark("Saving #{self} #{created.uid} #{created.name}") do
         created.save!
       #end

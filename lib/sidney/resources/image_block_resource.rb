@@ -16,12 +16,6 @@ module RSiD
       (uid ? image : @@tmp_image).to_blob + super
     end
 
-    public
-    def draw_on_image(canvas, offset_x, offset_y, opacity = 255, glow = false)
-      # TODO: Use opacity/glow parameters.
-      canvas.splice(image, offset_x, offset_y, chroma_key: :transparent)
-    end
-
     protected
     def self.image_from_color_data(color_data, mask_data = nil)
       image = Image.from_blob(color_data, WIDTH, HEIGHT, caching: !mask_data.nil?)
@@ -31,7 +25,9 @@ module RSiD
         mask_array = mask_data.unpack("C*")
         image.each do |c, x, y|
           # Mask is 1 for transparent; 0 for opaque.
-          c[3] = mask_array[x + y * WIDTH] == 0 ? 1 : 0
+          if mask_array[x + y * WIDTH] == 1
+            c[0..3] = [0, 0, 0, 0]
+          end
         end
       end
 

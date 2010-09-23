@@ -20,6 +20,12 @@ module RSiD
       super(data[offset..-1], attributes)
     end
 
+    public
+    def draw_on_image(canvas, offset_x, offset_y)
+      canvas.splice(image, offset_x, offset_y)
+    end
+
+    public
     def to_sprite
       Sprite.generate(image: image, name: name, uid: uid)
     end

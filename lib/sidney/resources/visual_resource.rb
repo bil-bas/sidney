@@ -20,6 +20,13 @@ module RSiD
       end
     end
 
+    public
+    def cache_image(image)
+      @@cached_images[uid] = image
+      image.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
+    end
+
+    public
     def image
       @@cached_images[uid] ||= create_image
     end
