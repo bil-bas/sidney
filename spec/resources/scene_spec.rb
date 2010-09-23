@@ -3,6 +3,8 @@ require_relative 'visual_resource_helper'
 require 'scene'
 include RSiD
 
+TexPlay.set_options(caching: false)
+
 describe Scene do
   before :each do
     @uid = 'fb7308b69631'

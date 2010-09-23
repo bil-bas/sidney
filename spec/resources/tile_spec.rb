@@ -3,6 +3,8 @@ require_relative 'visual_resource_helper'
 require 'tile'
 include RSiD
 
+TexPlay.set_options(caching: false)
+
 describe Tile do
   before :each do
     @uid = '0d183059ae8b'
@@ -11,7 +13,7 @@ describe Tile do
 
   it_should_behave_like "VisualResource"
 
-  describe "default()" do
+  describe "#default" do
     subject { described_class.default }
 
     it "should be blank and opaque" do
@@ -24,7 +26,7 @@ describe Tile do
     end
   end
 
-  describe "to_sprite()" do
+  describe "#to_sprite" do
     subject { described_class.load(@uid) }
 
     before :each do

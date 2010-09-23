@@ -3,6 +3,7 @@
 /logs
 /.idea
 /test_data/generated
-/db
+/resources
 /.yardoc
 /flip_books
+/spec/profiles

@@ -1,6 +1,7 @@
 require_relative 'resource_helper'
 
 require 'gosu_ext'
+require 'chingu'
 
 share_examples_for 'VisualResource' do
   it_should_behave_like "Resource"
@@ -12,12 +13,11 @@ share_examples_for 'VisualResource' do
   before :each do
     @png_created = File.join(GENERATED_DIR, "#{described_class.type}_images", "#{@name} - #{@uid}.png")
     @default_png_created = File.join(GENERATED_DIR, "#{described_class.type}_images", "default.png")
-    $window = Gosu::Window.new(640, 480, false)
   end
 
   subject { described_class.load(@uid) }
   
-  describe "to_image()" do
+  describe "#image" do
     it "should create a png image" do
       File.delete(@png_created) if File.exists?(@png_created)
       FileUtils.mkdir_p(File.dirname(@png_created))
@@ -27,10 +27,10 @@ share_examples_for 'VisualResource' do
     end
   end
 
-  describe "default()" do
+  describe "#default" do
     subject { described_class.default }
 
-    describe "to_image()" do
+    describe "#image" do
       it "should create a png image" do
         File.delete(@default_png_created) if File.exists?(@default_png_created)
         FileUtils.mkdir_p(File.dirname(@default_png_created))

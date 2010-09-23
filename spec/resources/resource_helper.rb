@@ -34,7 +34,7 @@ share_examples_for "Resource" do
     @imported_uid = @resource.uid # UID changes in Sid import into Sidney
   end
 
-  describe "initialize()" do
+  describe "#initialize" do
     it "should store the name" do
       @resource.name.should == @name
     end
@@ -44,12 +44,12 @@ share_examples_for "Resource" do
     end
 
     it "should calculate the uid if not provided" do
-      @resource = described_class.generate(data: @data)
+      @resource = described_class.generate(data: @data, uid: @uid)
       @resource.uid.should == @imported_uid
     end
   end
 
-  describe "default()" do
+  describe "#default" do
     before :each do
       @default_resource = described_class.default
     end

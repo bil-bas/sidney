@@ -36,9 +36,7 @@ module RSiD
       super(options)
     end
     
-    def self.attributes_from_data(data)
-      attributes = {}
-      
+    def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
       attributes[:version] = version
 
@@ -95,8 +93,12 @@ module RSiD
     end
 
     def create_image
-      img = Image.create(WIDTH, HEIGHT)
-      draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5)
+      unless img = super
+        img = Image.create(WIDTH, HEIGHT)
+        draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5)
+        img.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
+      end
+
       img
     end
 

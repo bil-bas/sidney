@@ -8,30 +8,23 @@ module RSiD
   class ImageBlockResource < VisualResource
     @abstract_class = true
 
-    attr_accessible :image_blob
-
     WIDTH = HEIGHT = 16 # 16x16 pixels per tile/sprite.
     AREA = WIDTH * HEIGHT
     COLOR_DATA_SIZE = AREA * 4
 
-    public
-    def create_image
-      Image.from_blob(image_blob, WIDTH, HEIGHT)
-    end
-
     def to_binary
-      image_blob + super
+      (uid ? image : @@tmp_image).to_blob + super
     end
 
     public
     def draw_on_image(canvas, offset_x, offset_y, opacity = 255, glow = false)
-      # TODO: Use opacity parameters.
+      # TODO: Use opacity/glow parameters.
       canvas.splice(image, offset_x, offset_y, chroma_key: :transparent)
     end
 
     protected
     def self.image_from_color_data(color_data, mask_data = nil)
-      image = Image.from_blob(color_data, WIDTH, HEIGHT)
+      image = Image.from_blob(color_data, WIDTH, HEIGHT, caching: !mask_data.nil?)
 
       # Merge in the alpha values from the mask-data, if any.
       if mask_data
@@ -42,12 +35,21 @@ module RSiD
         end
       end
 
-      Image.from_blob(image.to_blob, WIDTH, HEIGHT)
+      @@tmp_image = image
+
+      image
+    end
+
+    def self.default_attributes(attributes = {})
+      attributes[:image] = Image.from_blob(default_color.pack('C*') * AREA, WIDTH, HEIGHT)
+      @@tmp_image = attributes[:image]
+
+      super(attributes)
     end
 
     protected
     def self.default_color
-      DEFAULT_COLOR
+      self.const_get :DEFAULT_COLOR
     end
   end
 end

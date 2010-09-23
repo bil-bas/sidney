@@ -167,7 +167,7 @@ class Image
     public
     def to_image(options = {})
       options = { tileable: false }.merge!(options)
-      Image.new($window, self, options[:tileable])
+      Image.new($window, self, options[:tileable], options)
     end
   end
 

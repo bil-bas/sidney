@@ -61,14 +61,14 @@ module RSiD
           filename = File.join(CACHE_DIR, type, uid.upcase)
           if File.exist? filename
             File.open(filename, "rb") do |file|
-              benchmark("Generating #{self} #{uid} from disk since not found in DB") do
+              #benchmark("Generating #{self} #{uid} from disk since not found in DB") do
                 generate(data: file.read, uid: uid)
-              end
+              #end
             end
           else
-            benchmark("Generating DEFAULT #{self} #{uid} since not found in DB") do
+            #benchmark("Generating DEFAULT #{self} #{uid} since not found in DB") do
               default # Failed to load...meh!
-            end
+            #end
           end
         end
       end
@@ -117,27 +117,26 @@ module RSiD
     # - attributes (:att1..:attN)
     def self.generate(options = {})
       if options[:data]
-        options = attributes_from_data(options[:data])
+        options = attributes_from_data(options[:data], { uid: options[:uid] })
       elsif options.empty?
         options = default_attributes(options)
       end
 
-      expected_uid = options[:uid]
-      options.delete(:uid)
+      image = options[:image]
+      options.delete image
       created = new(options)
-      created.uid = expected_uid if expected_uid
-      # TODO: Check whether a uid provided as an attribute is correct?
-
       created.recalculate_uid unless created.uid
-      benchmark("Saving #{self} #{created.uid} #{created.name}") do
-        created.save!
+      if image
+        image.save(File.join(VisualResource::IMAGE_CACHE_DIR, "#{created.uid}.png"))
       end
+      #benchmark("Saving #{self} #{created.uid} #{created.name}") do
+        created.save!
+      #end
       created
     end
 
     def self.default
-      @@defaults[type] = generate unless @@defaults[type]
-      @@defaults[type]
+      @@defaults[type] ||= generate
     end
 
     def self.clear_defaults

@@ -13,20 +13,15 @@ module RSiD
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
 
-      attributes[:image_blob] = image_from_color_data(data[offset, COLOR_DATA_SIZE]).to_blob
+      attributes[:image] = image_from_color_data(data[offset, COLOR_DATA_SIZE])
+
       offset += COLOR_DATA_SIZE
 
       super(data[offset..-1], attributes)
     end
 
-    def self.default_attributes(attributes = {})
-      attributes[:image_blob] = DEFAULT_COLOR.pack('C*') * AREA
-
-      super(attributes)
-    end
-
     def to_sprite
-      Sprite.generate(image_blob: image_blob, name: name)
+      Sprite.generate(image: image, name: name, uid: uid)
     end
   end
 end

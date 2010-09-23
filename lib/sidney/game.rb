@@ -26,6 +26,7 @@ require 'chingu'
 require 'devil'
 require 'devil/gosu'
 require 'texplay'
+TexPlay.set_options(caching: false) # Generally, we don't want caching.
 
 I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
 

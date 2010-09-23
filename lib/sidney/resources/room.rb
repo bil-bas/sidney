@@ -77,13 +77,13 @@ module RSiD
       (0...GRID_WIDTH).each do |y|
         (0...GRID_WIDTH).each do |x|
           tile_uid = tile_uids[x + (y * GRID_WIDTH)]
-          self.class.benchmark("Loading tile #{tile_uid}") do
+          #self.class.benchmark("Loading tile #{tile_uid}") do
             Tile.load(tile_uid)
-          end
+          #end
           wall = walls[x + (y * GRID_WIDTH)]
-          self.class.benchmark("Creating TileLayer #{x},#{y} #{uid}->#{tile_uid}") do
+          #self.class.benchmark("Creating TileLayer #{x},#{y} #{uid}->#{tile_uid}") do
             layer = TileLayer.create!(room_uid: uid, tile_uid: tile_uid, x: x, y: y, blocked: wall)
-          end
+          #end
         end
       end
     end
@@ -128,13 +128,16 @@ module RSiD
     end
 
     def create_image
-      img = Image.create(WIDTH, HEIGHT)
+      unless img = super
+        img = Image.create(WIDTH, HEIGHT)
 
-      layers_by_x_y.each do |layer|
-        tile = Tile.load(layer.tile_uid)
-        unless tile == Tile.default
-          tile.draw_on_image(img, layer.x * Tile::WIDTH, layer.y * Tile::HEIGHT)
+        layers_by_x_y.each do |layer|
+          tile = Tile.load(layer.tile_uid)
+          unless tile == Tile.default
+            tile.draw_on_image(img, layer.x * Tile::WIDTH, layer.y * Tile::HEIGHT)
+          end
         end
+        img.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
       end
 
       img
