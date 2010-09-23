@@ -77,13 +77,9 @@ module RSiD
       (0...GRID_WIDTH).each do |y|
         (0...GRID_WIDTH).each do |x|
           tile_uid = tile_uids[x + (y * GRID_WIDTH)]
-          #self.class.benchmark("Loading tile #{tile_uid}") do
-            Tile.load(tile_uid)
-          #end
+          Tile.load(tile_uid)
           wall = walls[x + (y * GRID_WIDTH)]
-          #self.class.benchmark("Creating TileLayer #{x},#{y} #{uid}->#{tile_uid}") do
-            layer = TileLayer.create!(room_uid: uid, tile_uid: tile_uid, x: x, y: y, blocked: wall)
-          #end
+          TileLayer.create!(room_uid: uid, tile_uid: tile_uid, x: x, y: y, blocked: wall)
         end
       end
     end

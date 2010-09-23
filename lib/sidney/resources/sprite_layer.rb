@@ -49,6 +49,7 @@ module RSiD
     end
 
     def draw_on_image(image, offset_x, offset_y)
+
       sprite = Sprite.load(sprite_uid)
       sprite.draw_on_image(image, x + offset_x, 208 - y - offset_y, alpha, glows)
       

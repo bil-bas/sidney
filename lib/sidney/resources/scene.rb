@@ -68,7 +68,7 @@ module RSiD
 
       # All layers have locking now, so if the player is specifically frozen (due to old version),
       # overwrite that default value.
-      object_layers[0].locked = object_zero_frozen
+      object_layers[0].locked = object_zero_frozen unless object_layers.empty?
       
       attributes[:state_object_layers] = object_layers
       offset += object_data_length * num_objects
@@ -107,19 +107,15 @@ module RSiD
 
     def create_image
       unless img = super
-        img = self.class.benchmark('Rendering room') do
-          room.image.dup
-        end
+        img = room.image.dup
 
-        self.class.benchmark('Rendering objects') do
-          layers = state_object_layers
+        layers =state_object_layers.all
 
-          # Draw background objects.
-          layers.each { |layer| layer.draw_on_image(img) if layer.locked }
+        # Draw background objects.
+        layers.each { |layer| layer.draw_on_image(img) if layer.locked }
 
-          # Draw foreground objects.
-          layers.each { |layer| layer.draw_on_image(img) unless layer.locked }
-        end
+        # Draw foreground objects.
+        layers.each { |layer| layer.draw_on_image(img) unless layer.locked }
 
         img.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
       end

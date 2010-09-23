@@ -1,4 +1,5 @@
 require 'gosu'
+require 'chingu'
 require 'texplay'
 
 module Gosu
@@ -86,7 +87,7 @@ class Image
   # Crop the image down to a rectangular part of it.
   #
   # === Parameters
-  # +box+:: [Rect]
+  # +box+:: [Chingu::Rect]
   #
   # Returns: The cropped image [Gosu::Image].
   public
@@ -137,7 +138,7 @@ class Image
       box_bottom -= 1
     end
 
-    Rect.new(box_left, box_top, box_right - box_left + 1, box_bottom - box_top + 1)
+    Chingu::Rect.new(box_left, box_top, box_right - box_left + 1, box_bottom - box_top + 1)
   end
 
   # Used to create images directly from raw data by providing the methods expected by Gosu::Image when it loads from an

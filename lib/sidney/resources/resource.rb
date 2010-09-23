@@ -54,26 +54,23 @@ module RSiD
       if uid == default.uid
         default
       else
-        from_database = where(uid: uid).first
-        if from_database
-          from_database
-        else
-          filename = File.join(CACHE_DIR, type, uid.upcase)
-          if File.exist? filename
-            File.open(filename, "rb") do |file|
-              #benchmark("Generating #{self} #{uid} from disk since not found in DB") do
-                generate(data: file.read, uid: uid)
-              #end
-            end
-          else
-            #benchmark("Generating DEFAULT #{self} #{uid} since not found in DB") do
-              default # Failed to load...meh!
-            #end
-          end
-        end
+        where(uid: uid).first || default
       end
     end
 
+    def self.import(uid, file_name)
+      resource = if File.exist? file_name
+        File.open(file_name, "rb") do |file|
+          generate(data: file.read, uid: uid)
+        end
+      else
+        default # Failed to load...meh!
+      end
+
+      resource.image # Force caching of the image.
+
+      resource
+    end
     # Reads the version header within a data object, assuming
     # that it is there.
     #
@@ -127,9 +124,7 @@ module RSiD
       created = new(options)
       created.recalculate_uid unless created.uid
       created.cache_image(image) if image
-      #benchmark("Saving #{self} #{created.uid} #{created.name}") do
-        created.save!
-      #end
+      created.save!
       created
     end
 

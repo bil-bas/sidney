@@ -73,8 +73,9 @@ module RSiD
       ].pack("#{Resource::UID_PACK} NNNN CCCC")
     end
 
+    public
     def draw_on_image(image)
-      state_object.draw_on_image(image, x, y + Sprite::WIDTH)
+      state_object.draw_on_image(image, x, y + Sprite::WIDTH, alpha)
       image
     end
   end

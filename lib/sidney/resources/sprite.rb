@@ -31,16 +31,18 @@ module RSiD
     end
 
     public
-    def draw_on_image(canvas, offset_x, offset_y, opacity = 255, glow = false)
+    def draw_on_image(canvas, offset_x, offset_y, opacity, glow)
       color_proc = if opacity < 255
         opacity /= 255.0
         lambda { |c| c[3] = opacity unless c[3] == 0; c }
       else
         nil
       end
+
       canvas.splice(image, offset_x, offset_y, :alpha_blend => true, :color_control => color_proc, :mode => glow ? :additive : :copy)
     end
 
+    public
     def to_tile
       Tile.generate(name: name, image: image, uid: uid)
     end

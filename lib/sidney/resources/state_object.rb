@@ -95,18 +95,27 @@ module RSiD
     def create_image
       unless img = super
         img = Image.create(WIDTH, HEIGHT)
-        draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5)
+
+        layers = SpriteLayer.where(state_object_uid: uid)
+        layers.each { |layer| layer.draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5) }
+        box = img.auto_crop_box
+        img = img.crop box
         img.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
       end
 
       img
     end
 
-    def draw_on_image(image, offset_x, offset_y)
-      layers = SpriteLayer.where(state_object_uid: uid)
-      layers.each { |layer| layer.draw_on_image(image, offset_x, offset_y)}
+    def draw_on_image(canvas, offset_x, offset_y, opacity)
+      color_proc = if opacity < 255
+        opacity /= 255.0
+        lambda { |c| c[3] = opacity unless c[3] == 0; c }
+      else
+        nil
+      end
 
-      image
+      canvas.splice(image, offset_x - Sprite::WIDTH * 6, offset_y - Sprite::HEIGHT * 5,
+                    alpha_blend: true, color_control: color_proc)
     end
   end
 end

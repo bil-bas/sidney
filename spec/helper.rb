@@ -13,7 +13,6 @@ INPUT_DIR =  File.join(DATA_DIR, "input")
 GENERATED_DIR = File.join(DATA_DIR, "generated")
 
 CACHE_IN = File.join(INPUT_DIR, "resourceCache")
-CACHE_OUT = File.join(GENERATED_DIR, "resourceCache")
 
 ENV['PATH'] = "#{File.join(ROOT_PATH, 'bin')};#{ENV['PATH']}"
 

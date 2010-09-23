@@ -15,19 +15,11 @@ RESOURCE_CLASSES = [Room, Scene, Sprite, SpriteLayer, StateObject, StateObjectLa
 
 share_examples_for "Resource" do
   before :each do
-
-    RESOURCE_CLASSES.each { |r| r.delete_all }
-    Resource.clear_defaults
-    
     @resource_file_read = File.join(CACHE_IN, described_class.type, @uid)
-    @resource_file_saved = File.join(CACHE_OUT, described_class.type, @uid)
 
     File.open(File.join(CACHE_IN, described_class.type, @uid), "rb") do |file|
       @data = file.read
     end
-
-    # Ensure that the sprites will load/save to the correct location.
-    Resource::CACHE_DIR.sub!(/.*/, CACHE_IN)
 
     # Create an example resource.
     @resource = described_class.load(@uid)
