@@ -13,7 +13,7 @@ class Grid
   SAVE_ZOOM = 1 # Render to a image this many times larger.
 
   public
-  attr_reader :scale, :base_scale, :rect, :objects, :tiles
+  attr_reader :scale, :base_scale, :rect, :scene
 
   attr_reader :offset_x, :offset_y
 
@@ -51,21 +51,14 @@ class Grid
 
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
 
-    @objects = Array.new
-    @tiles = Array.new
-    CELLS_WIDE.times do |x|
-      CELLS_HIGH.times do |y|
-        @tiles.push Tile.new(image: Image["tile.png"], x: x * CELL_WIDTH, y: y * CELL_HEIGHT)
-        @objects.push Sprite.new(image: Image["object.png"], x: x * CELL_WIDTH, y: (y + 1) * CELL_HEIGHT) if rand(100) < 40
-      end
-    end
-
     x, y = (@base_scale * MARGIN).to_i, (@base_scale * MARGIN).to_i
     width, height = (WIDTH * @base_scale).to_i, (HEIGHT * @base_scale).to_i
     @rect = Rect.new(x, y, width, height)
     @overlay = GridOverlay.new(@rect.width, @rect.height, CELL_WIDTH * @scale)
 
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
+
+    @scene = RSiD::Scene.load('5807aa59e056')
   end
 
   # Returns the object that the mouse is over, otherwise nil
@@ -76,22 +69,22 @@ class Grid
     x, y = screen_to_grid(x, y)
     found = nil
 
-    @objects.reverse_each do |object|
-      if object.hit?(x, y)
-        if found.nil? or object.y > found.y
-          found = object
-        end
-      end
-    end
+#    @scene.state_objects.reverse_each do |object|
+#      if object.hit?(x, y)
+#        if found.nil? or object.y > found.y
+#          found = object
+#        end
+#      end
+#    end
 
     found
   end
 
   public
   def update
-    @objects.each_with_index do |object, i|
-      object.update(i)
-    end
+#    @scene.state_objects.each_with_index do |object, i|
+#      object.update(i)
+#    end
 
     nil
   end
@@ -102,10 +95,7 @@ class Grid
     $window.translate(@rect.x, @rect.y) do
       $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
         $window.scale(scale) do
-          $window.translate(@offset_x, @offset_y) do
-            @tiles.each { |o| o.draw if o.visible? }
-            @objects.each { |o| o.draw if o.visible? and not o.dragging? }
-          end
+          @scene.image.draw(@offset_x, @offset_y, ZOrder::SCENE)
         end
 
         @overlay.draw(@offset_x * scale, @offset_y * scale)
@@ -136,19 +126,8 @@ class Grid
   end
 
   public
-  def render_to_buffer
-    buffer = TexPlay.create_image($window, WIDTH, HEIGHT)
-    buffer.paint do
-      @tiles.each {|o| o.draw_to_buffer(buffer) if o.visible? }
-      z_ordered_objects = @objects.sort_by {|o| o.zorder }
-      z_ordered_objects.each {|o| o.draw_to_buffer(buffer) if o.visible? }
-    end
-    buffer
-  end
-
-  public
   def save_frame(file_name)
-    render_to_buffer.as_devil do |devil|
+    @scene.image.as_devil do |devil|
       devil.flip
       if SAVE_ZOOM > 1
         devil.resize(WIDTH * SAVE_ZOOM, HEIGHT * SAVE_ZOOM, filter: Devil::NEAREST)

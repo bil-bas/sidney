@@ -7,8 +7,8 @@ module RSiD
   class Scene < VisualResource  
     belongs_to :room
 
-    has_many :object_layers
-    has_many :state_objects, through: :object_layers
+    has_many :state_object_layers
+    has_many :state_objects, through: :state_object_layers
     
     CURRENT_VERSION = 2
     DEFAULT_OBJECT_ZERO_FROZEN = false
@@ -109,7 +109,7 @@ module RSiD
       unless img = super
         img = room.image.dup
 
-        layers =state_object_layers.all
+        layers = state_object_layers.all
 
         # Draw background objects.
         layers.each { |layer| layer.draw_on_image(img) if layer.locked }

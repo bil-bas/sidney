@@ -36,10 +36,7 @@ include Chingu
 module Sidney
 # Z-order of all elements of the game.
 module ZOrder
-  BACKGROUND = -1 # Tiles
-  FIRST_OBJECT = 0 # Objects are at z = 0...1000000
-
-  GUI, DRAGGING, GRID_OVERLAY, DIALOG, FPS, CURSOR = (1000001..1000007).to_a
+  SCENE, GUI, DRAGGING, GRID_OVERLAY, DIALOG, FPS, CURSOR = (0..1000).to_a
 end
 
 require_relative 'log'

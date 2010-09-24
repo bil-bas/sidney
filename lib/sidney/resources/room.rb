@@ -12,14 +12,21 @@ module RSiD
     set_primary_key :uid
     attr_accessible :walls
     serialize :walls
-    
-    GRID_WIDTH = GRID_HEIGHT = 13
+
+    IMPORT_WIDTH, IMPORT_HEIGHT = 13, 13
+    IMPORT_X_OFFSET, IMPORT_Y_OFFSET = 3, 1 # Move SiD objects 3 right and 1 down.
+    IMPORT_AREA = IMPORT_WIDTH * IMPORT_HEIGHT
+    IMPORT_WALLS = true # Walls for area outside of import.
+
+
+    GRID_WIDTH, GRID_HEIGHT = 20, 15
     GRID_AREA = GRID_WIDTH * GRID_HEIGHT
     WIDTH = GRID_WIDTH * Tile::WIDTH
     HEIGHT = GRID_HEIGHT * Tile::WIDTH
 
     PASSABLE = 0
     BLOCKED = 1
+    DEFAULT_WALLS = false
 
     # :name - Name of the room [String]
     # :tile_uids - Array of uids [Array(169) of String]
@@ -27,8 +34,9 @@ module RSiD
     def initialize(options)
       if options[:tile_uids] and options[:walls]
         @tile_uids_tmp = options[:tile_uids]
-        options.delete(:tile_uids)
         @walls_tmp = options[:walls]
+
+        options.delete(:tile_uids)
         options.delete(:walls)
       else
         raise ArgumentError.new
@@ -52,20 +60,35 @@ module RSiD
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
       
-      attributes[:tile_uids] = data[offset, UID_NUM_BYTES * GRID_AREA].unpack(UID_PACK * GRID_AREA)
-      offset = UID_NUM_BYTES * GRID_AREA
+      imported_tile_uids = data[offset, UID_NUM_BYTES * IMPORT_AREA].unpack(UID_PACK * IMPORT_AREA)
+      offset = UID_NUM_BYTES * IMPORT_AREA
 
       # TODO: If there is enough data, read in walls, otherwise assume they are passable.
-      attributes[:walls] = data[offset, GRID_AREA].unpack("C*")
-      attributes[:walls].map! { |wall| wall == BLOCKED }
-      offset += GRID_AREA
+      imported_walls = data[offset, IMPORT_AREA].unpack("C*")
+      imported_walls.map! { |wall| wall == BLOCKED }
+      offset += IMPORT_AREA
+
+      # Convert the 13x13 SiD grid to 20x15 Sidney grid.
+      tile_uids = Array.new(GRID_AREA, Tile.default.uid)
+      walls = Array.new(GRID_AREA, IMPORT_WALLS)
+
+      (0...IMPORT_HEIGHT).each do |y|
+        (0...IMPORT_WIDTH).each do |x|
+          index = (x + IMPORT_X_OFFSET) + ((y + IMPORT_Y_OFFSET) * GRID_WIDTH)
+          tile_uids[index] = imported_tile_uids[x + y * IMPORT_WIDTH]
+          walls[index] = imported_walls[x + y * IMPORT_WIDTH]
+        end
+      end
+
+      attributes[:tile_uids] = tile_uids
+      attributes[:walls] = walls
 
       super(data[offset..-1], attributes)
     end
 
     def self.default_attributes(attributes = {})
       attributes[:tile_uids] = Array.new(GRID_AREA, Tile.default.uid) unless attributes[:tile_uids]
-      attributes[:walls] = Array.new(GRID_AREA, false) unless attributes[:walls]
+      attributes[:walls] = Array.new(GRID_AREA, DEFAULT_WALLS) unless attributes[:walls]
       
       super(attributes)
     end
@@ -74,11 +97,10 @@ module RSiD
     # tile_uids:: [Array of UID] 
     # walls:: [Array of Boolean]
     def create_tile_layers(tile_uids, walls)
-      (0...GRID_WIDTH).each do |y|
+      (0...GRID_HEIGHT).each do |y|
         (0...GRID_WIDTH).each do |x|
-          tile_uid = tile_uids[x + (y * GRID_WIDTH)]
-          Tile.load(tile_uid)
-          wall = walls[x + (y * GRID_WIDTH)]
+          tile_uid = tile_uids[x + y * GRID_WIDTH]
+          wall = walls[x + y * GRID_WIDTH]
           TileLayer.create!(room_uid: uid, tile_uid: tile_uid, x: x, y: y, blocked: wall)
         end
       end

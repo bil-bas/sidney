@@ -264,7 +264,7 @@ class EditScene < GuiState
       x, y = 'x', 'y'
     end
 
-    @font.draw("(#{x}, #{y}) (#{@grid.objects.size} sprites and #{@grid.tiles.size} tiles) #{game_state_manager.current}", 0, $window.height - 25, ZOrder::GUI)
+    @font.draw("(#{x}, #{y}) ('#{@grid.scene.name}' [#{@grid.scene.uid}] #{game_state_manager.current}", 0, $window.height - 25, ZOrder::GUI)
     super
   end
 end
