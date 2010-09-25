@@ -75,7 +75,7 @@ class Sprite < GameObject
   # Flip horizontally.
   public
   def mirror!
-    @image = @image.as_devil { |img| img.mirror }
+    @image = @image.mirror
 
     self
   end
@@ -83,7 +83,7 @@ class Sprite < GameObject
   # Flip horizontally.
   public
   def flip!
-    @image = @image.as_devil { |img| img.flip }
+    @image = @image.flip
 
     self
   end

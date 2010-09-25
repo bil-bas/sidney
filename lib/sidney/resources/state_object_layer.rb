@@ -2,16 +2,8 @@ require_relative 'state_object'
 
 module RSiD
   class StateObjectLayer < ActiveRecord::Base   
-    belongs_to :scene, foreign_key: :scene_uid
-    belongs_to :state_object, foreign_key: :state_object_uid
-
-    def scene
-      Scene.load(scene_uid)
-    end
-    
-    def state_object
-      StateObject.load(state_object_uid)
-    end
+    belongs_to :scene
+    belongs_to :state_object
 
     def self.data_length(version)
       case version
@@ -32,6 +24,8 @@ module RSiD
       z = z_depth
 
       x, y = data[offset, 8].unpack("NN")
+      x += Room::IMPORT_X_OFFSET * Tile::WIDTH
+      y = (Room::HEIGHT - y) + (Room::IMPORT_Y_OFFSET - 3) * Tile::HEIGHT
       offset += 8
       speech_offset_x, speech_offset_y = data[offset, 8].unpack("NN")
       offset += 8
@@ -49,8 +43,8 @@ module RSiD
 
       alpha = data[offset].unpack("C")[0]
       
-      super(scene_uid: scene_uid,
-            state_object_uid: state_object_uid,
+      super(scene_id: scene_uid,
+            state_object_id: state_object_uid,
             alpha: alpha,
             locked: locked,
             x: x, y: y, z: z,
@@ -63,7 +57,7 @@ module RSiD
 
     def to_binary
       [
-        state_object_uid,
+        state_object_id,
         x, y,
         speech_offset_x, speech_offset_y,
         speech_flipped ? 1 : 0,
@@ -75,7 +69,9 @@ module RSiD
 
     public
     def draw_on_image(image)
-      state_object.draw_on_image(image, x, y + Sprite::WIDTH, alpha)
+      if object = state_object
+        object.draw_on_image(image, x, y, alpha)
+      end
       image
     end
   end

@@ -13,7 +13,6 @@ module RSiD
     NAME_LENGTH = 10
     DEFAULT_NAME = "default"
     @@defaults = {}
-    CACHE_DIR = "resourceCache"
 
     MAGIC_CODE = "SiD1977" # Used as a header for versioned resources.
 
@@ -44,9 +43,8 @@ module RSiD
 
     # Loads resource from wherever it can find it:
     # 1. Cached default resource if that is what is requested.
-    # 2. Database.
-    # 3. Resource cache (on disk).
-    # 4. Gives the default object.
+    # 2. Found in database.
+    # 3. Gives the default object if object not otherwise found.
     #
     # == Parameters
     # :uid:  [String]
@@ -67,7 +65,7 @@ module RSiD
         default # Failed to load...meh!
       end
 
-      resource.image # Force caching of the image.
+      resource.image # Force rendering and caching of the image if it hasn't already been done.
 
       resource
     end
@@ -123,8 +121,12 @@ module RSiD
       options.delete image
       created = new(options)
       created.recalculate_uid unless created.uid
-      created.cache_image(image) if image
+
+      # Manual hack for no apparent reason!
+      created.x_offset = options[:x_offset] if options[:x_offset]
+      created.y_offset = options[:y_offset] if options[:y_offset]
       created.save!
+      created.cache_image(image) if image
       created
     end
 

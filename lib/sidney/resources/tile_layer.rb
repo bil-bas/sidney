@@ -6,12 +6,12 @@ module RSiD
     belongs_to :room
     belongs_to :tile
 
-    def tile
-      Tile.where(uid: tile_uid).first
-    end
-
-    def room
-      Room.where(uid: room_uid).first
+    public
+    def draw_on_image(canvas)
+      if object = tile and object != Tile.default
+        object.draw_on_image(canvas, x * Tile::WIDTH, y * Tile::HEIGHT)
+      end
+      canvas
     end
   end
 end

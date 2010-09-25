@@ -9,6 +9,8 @@ module RSiD
 
     has_many :object_layers
     has_many :scenes, through: :object_layers
+
+    set_primary_key :uid
     
     WIDTH = Sprite::WIDTH * 13
     HEIGHT = Sprite::HEIGHT * 13
@@ -16,7 +18,7 @@ module RSiD
     CURRENT_VERSION = 3
 
     def num_layers
-      StateObjectLayer.where(state_object_uid: uid).count
+      sprite_layers.count
     end
 
     def self.current_version
@@ -48,12 +50,15 @@ module RSiD
       attributes[:layer_data] = data[offset, num_layers * layer_size]
       offset += num_layers * layer_size
 
+      attributes[:x_offset] = attributes[:y_offset] = 0
+
       super(data[offset..-1], attributes)
     end
 
     def self.default_attributes(attributes = {})
       attributes[:version] = CURRENT_VERSION
       attributes[:layer_data] = ''
+      attributes[:x_offset] = attributes[:y_offset] = 0
 
       super(attributes)
     end
@@ -93,27 +98,27 @@ module RSiD
     end
 
     def create_image
-      unless img = super
-        img = Image.create(WIDTH, HEIGHT)
+      img = Image.create(WIDTH, HEIGHT)
 
-        layers = SpriteLayer.where(state_object_uid: uid)
-        layers.each { |layer| layer.draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5) }
-        box = img.auto_crop_box
-        img = img.crop box
-        img.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
-      end
+      sprite_layers.each { |layer| layer.draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5) }
+      box = img.auto_crop_box
+      self.x_offset = box.x - Sprite::WIDTH * 6
+      self.y_offset = box.y - Sprite::HEIGHT * 10
+      img = img.crop box
+
+      save! # Ensure that the values for x/y offsets are updated.
 
       img
     end
 
-    def draw_on_image(canvas, offset_x, offset_y, opacity)
+    def draw_on_image(canvas, x, y, opacity)
       img = image
       if opacity < 255
         img = img.dup
         img.rect 0, 0, img.width - 1, img.height - 1, fill: true, color_control: { mult: [1, 1, 1, opacity  / 255.0], sync_mode: :no_sync }
       end
 
-      canvas.splice(img, offset_x - Sprite::WIDTH * 6, offset_y - Sprite::HEIGHT * 5, alpha_blend: true)
+      canvas.splice(img, x + x_offset, y + y_offset, alpha_blend: true)
     end
   end
 end

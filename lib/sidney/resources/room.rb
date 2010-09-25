@@ -10,16 +10,14 @@ module RSiD
     has_many :scenes
 
     set_primary_key :uid
-    attr_accessible :walls
-    serialize :walls
 
-    IMPORT_WIDTH, IMPORT_HEIGHT = 13, 13
+    IMPORT_WIDTH, IMPORT_HEIGHT = 13, 13 # = 208x208
     IMPORT_X_OFFSET, IMPORT_Y_OFFSET = 3, 1 # Move SiD objects 3 right and 1 down.
     IMPORT_AREA = IMPORT_WIDTH * IMPORT_HEIGHT
     IMPORT_WALLS = true # Walls for area outside of import.
 
 
-    GRID_WIDTH, GRID_HEIGHT = 20, 15
+    GRID_WIDTH, GRID_HEIGHT = 20, 15 # = 320x240
     GRID_AREA = GRID_WIDTH * GRID_HEIGHT
     WIDTH = GRID_WIDTH * Tile::WIDTH
     HEIGHT = GRID_HEIGHT * Tile::WIDTH
@@ -101,7 +99,7 @@ module RSiD
         (0...GRID_WIDTH).each do |x|
           tile_uid = tile_uids[x + y * GRID_WIDTH]
           wall = walls[x + y * GRID_WIDTH]
-          TileLayer.create!(room_uid: uid, tile_uid: tile_uid, x: x, y: y, blocked: wall)
+          TileLayer.create!(room_id: uid, tile_id: tile_uid, x: x, y: y, blocked: wall)
         end
       end
     end
@@ -111,11 +109,11 @@ module RSiD
     end
 
     def layer(x, y)
-      TileLayer.where(room_uid: uid, x: x, y: y).first
+      tile_layers.where(x: x, y: y).first
     end
 
     def layers_by_x_y
-      TileLayer.where(room_uid: uid).order(:x, :y)
+      tile_layers.order(:x, :y)
     end
 
     def tile(x, y)
@@ -146,16 +144,10 @@ module RSiD
     end
 
     def create_image
-      unless img = super
-        img = Image.create(WIDTH, HEIGHT)
+      img = Image.create(WIDTH, HEIGHT)
 
-        layers_by_x_y.each do |layer|
-          tile = Tile.load(layer.tile_uid)
-          unless tile == Tile.default
-            tile.draw_on_image(img, layer.x * Tile::WIDTH, layer.y * Tile::HEIGHT)
-          end
-        end
-        img.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
+      tile_layers.each do |layer|
+        layer.draw_on_image(img)
       end
 
       img

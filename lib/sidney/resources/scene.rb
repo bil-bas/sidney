@@ -9,16 +9,14 @@ module RSiD
 
     has_many :state_object_layers
     has_many :state_objects, through: :state_object_layers
-    
+
+    set_primary_key :uid
+
     CURRENT_VERSION = 2
     DEFAULT_OBJECT_ZERO_FROZEN = false
     DEFAULT_ROOM_ALPHA = 255
 
-    attr_accessible :room_uid, :room_alpha
-
-    def room
-      Room.load(room_uid)
-    end
+    attr_accessible :room_id, :room_alpha
 
     def self.current_version
       CURRENT_VERSION
@@ -38,7 +36,7 @@ module RSiD
     def create_or_update
       if @state_object_layers
          @state_object_layers.each do |layer|
-          layer.scene_uid = uid
+          layer.scene_id = uid
           layer.save!
         end
         @state_object_layers = nil
@@ -50,7 +48,7 @@ module RSiD
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
 
-      attributes[:room_uid] = data[offset, UID_NUM_BYTES].unpack(UID_PACK)[0]
+      attributes[:room_id] = data[offset, UID_NUM_BYTES].unpack(UID_PACK)[0]
       offset += UID_NUM_BYTES
 
 
@@ -77,26 +75,22 @@ module RSiD
     end
 
     def self.default_attributes(attributes = {})
-      attributes[:room_uid] = Room.default.id unless attributes[:room_uid]
+      attributes[:room_id] = Room.default.uid unless attributes[:room_id]
       attributes[:room_alpha] = DEFAULT_ROOM_ALPHA unless attributes[:room_alpha]
       attributes[:state_object_layers] = [] # TODO: create default player object.
       
       super(attributes)
     end
 
-    def state_object_layers
-      StateObjectLayer.where(scene_uid: uid).order(:z)
-    end
-
     def to_binary
-      layers = @state_object_layers ? @state_object_layers : state_object_layers
+      layers = @state_object_layers ? @state_object_layers : state_object_layers.order(:z)
 
       data = [
         MAGIC_CODE,
         CURRENT_VERSION,
-        room_uid,
+        room_id,
         room_alpha,
-        (state_object_layers.first and state_object_layers.first.locked) ? 1 : 0,
+        (layers.first and layers.first.locked) ? 1 : 0,
         layers.size
       ].pack("a*C#{UID_PACK}CCC")
 
@@ -106,20 +100,13 @@ module RSiD
     end
 
     def create_image
-      unless img = super
-        img = room.image.dup
+      img = room.image.dup rescue Image.create(Room::WIDTH, Room::HEIGHT)
 
-        layers = state_object_layers.all
+      layers = state_object_layers.order(:z).all
 
-        # Draw background objects.
-        layers.each { |layer| layer.draw_on_image(img) if layer.locked }
+      # Draw foreground objects.
+      layers.each { |layer| layer.draw_on_image(img) }
 
-        # Draw foreground objects.
-        layers.each { |layer| layer.draw_on_image(img) unless layer.locked }
-
-        img.save(File.join(IMAGE_CACHE_DIR, "#{uid}.png"))
-      end
-      
       img
     end
   end

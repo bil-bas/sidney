@@ -15,6 +15,26 @@ module RSiD
 
     DEFAULT_COLOR = [0, 0, 0, 0]
 
+    def self.attributes_from_color_data(color_data, mask_data)
+      image = Image.from_blob(color_data, WIDTH, HEIGHT, caching: true)
+
+      # Merge in the alpha values from the mask-data, if any.
+      mask_array = mask_data.unpack("C*")
+      image.each do |c, x, y|
+        # Mask is 1 for transparent; 0 for opaque.
+        if mask_array[x + y * WIDTH] == 1
+          c[0..3] = [0, 0, 0, 0]
+        end
+      end
+
+      crop_box = image.auto_crop_box(color: :alpha)
+      image = image.crop crop_box
+
+      @@tmp_image = image
+
+      { image: image, x_offset: crop_box.x, y_offset: crop_box.y }
+    end
+
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
 
@@ -25,20 +45,27 @@ module RSiD
       mask_data = data[offset, AREA]
       offset += AREA
 
-      attributes[:image] = image_from_color_data(color_data, mask_data)
+      attributes.merge! attributes_from_color_data(color_data, mask_data)
       
       super(data[offset..-1], attributes)
     end
 
+    def self.default_attributes(attributes = {})
+      attributes[:x_offset] = 0
+      attributes[:y_offset] = 0
+
+      super(attributes)
+    end
+
     public
-    def draw_on_image(canvas, offset_x, offset_y, opacity, glow)
+    def draw_on_image(canvas, x, y, opacity, glow)
       img = image
       if opacity < 255
         img = img.dup
         img.rect 0, 0, img.width - 1, img.height - 1, fill: true, color_control: { mult: [1, 1, 1, opacity  / 255.0], sync_mode: :no_sync}
       end
 
-      canvas.splice(img, offset_x, offset_y, :alpha_blend => true, :mode => glow ? :additive : :copy)
+      canvas.splice(img, x + x_offset, y + y_offset, :alpha_blend => true, :mode => glow ? :additive : :copy)
     end
 
     public

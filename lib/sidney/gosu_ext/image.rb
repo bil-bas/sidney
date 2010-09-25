@@ -110,8 +110,6 @@ class Image
     box_left, box_top = 0, 0
     box_right, box_bottom = width - 1, height - 1
 
-    clear(dest_select: :transparent)
-
     color = options[:color]
 
     # Find where the leftmost column with non-transparent pixels is.
@@ -196,16 +194,25 @@ class Image
     raise ArgumentError, "Must provide a block" unless block_given?
 
     devil_image = Devil.from_blob(Image.from_blob(to_blob, width, height).to_blob, width, height) # to_devil & to_blob are broken!.
-    yield devil_image
-    gosu_image = devil_image.to_gosu $window
+    devil_image.flip # TODO: Fix devil?
+    ret_val = yield devil_image
     devil_image.delete
     
-    gosu_image
+    ret_val
   end
 
-  public
-  def save(file_name)
-    as_devil {|devil| devil.flip.save(file_name) }
+  def mirror
+    as_devil do |devil|
+      devil.mirror
+      devil.to_gosu($window)
+    end
+  end
+
+  def flip
+    as_devil do |devil|
+      devil.flip
+      devil.to_gosu($window)
+    end
   end
 end
 end

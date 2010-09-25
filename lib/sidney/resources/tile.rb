@@ -3,12 +3,20 @@ require_relative "image_block_resource"
 module RSiD
   # A 16x16 image without transparency, that is contained within a room.
   class Tile < ImageBlockResource
-    has_many :tile_positions
-    has_many :rooms, through: :tile_positions
+    has_many :tile_layers
+    has_many :rooms, through: :tile_layers
 
     set_primary_key :uid
 
-    DEFAULT_COLOR = [0, 0, 0, 255]
+    DEFAULT_COLOR = [0, 0, 0, 1]
+
+    protected
+    def self.image_from_color_data(color_data)
+      image = Image.from_blob(color_data, WIDTH, HEIGHT)
+      @@tmp_image = image
+
+      image
+    end
 
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
@@ -21,8 +29,8 @@ module RSiD
     end
 
     public
-    def draw_on_image(canvas, offset_x, offset_y)
-      canvas.splice(image, offset_x, offset_y)
+    def draw_on_image(canvas, x, y)
+      canvas.splice(image, x, y)
     end
 
     public

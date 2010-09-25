@@ -128,7 +128,6 @@ class Grid
   public
   def save_frame(file_name)
     @scene.image.as_devil do |devil|
-      devil.flip
       if SAVE_ZOOM > 1
         devil.resize(WIDTH * SAVE_ZOOM, HEIGHT * SAVE_ZOOM, filter: Devil::NEAREST)
       end

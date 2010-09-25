@@ -11,8 +11,6 @@ require 'tile_layer'
 
 include RSiD
 
-RESOURCE_CLASSES = [Room, Scene, Sprite, SpriteLayer, StateObject, StateObjectLayer, Tile, TileLayer]
-
 share_examples_for "Resource" do
   before :each do
     @resource_file_read = File.join(CACHE_IN, described_class.type, @uid)

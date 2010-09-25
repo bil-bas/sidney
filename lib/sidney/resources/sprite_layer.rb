@@ -40,18 +40,18 @@ module RSiD
       
       glows = (glow_int == GLOW_ENABLED)
 
-      super(state_object_uid: state_object_uid, sprite_uid: sprite_uid, x: x, y: y, alpha: alpha, glows: glows)
+      super(state_object_id: state_object_uid, sprite_id: sprite_uid, x: x, y: y, alpha: alpha, glows: glows)
     end
 
     def to_binary
       glow_int = glows? ? GLOW_ENABLED : GLOW_DISABLED
-      [sprite_uid, x, y, alpha, glow_int].pack("H12ccCC")
+      [sprite_id, x, y, alpha, glow_int].pack("H12ccCC")
     end
 
     def draw_on_image(image, offset_x, offset_y)
-
-      sprite = Sprite.load(sprite_uid)
-      sprite.draw_on_image(image, x + offset_x, 208 - y - offset_y, alpha, glows)
+      if object = sprite
+        object.draw_on_image(image, x + offset_x, Room::HEIGHT - y - offset_y, alpha, glows)
+      end
       
       image
     end
