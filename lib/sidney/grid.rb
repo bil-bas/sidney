@@ -58,7 +58,7 @@ class Grid
 
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
 
-    @scene = RSiD::Scene.load('5807aa59e056')
+    @scene = RSiD::Scene.load('d252be6903bd')
   end
 
   # Returns the object that the mouse is over, otherwise nil

@@ -10,13 +10,13 @@ module RSiD
   def self.import_resources(path)
     RESOURCE_TYPES.each do |klass|
       files =  Dir.glob(File.join(path, klass.type, '*'))
-      puts "Importing #{files.size} #{klass} resources (#=10)"
+      puts "Importing #{files.size} #{klass} resources"
 
       start = Time.now.to_f
 
       files.each_with_index do |sid_data_file, i|
         klass.import(File.basename(sid_data_file).downcase, sid_data_file)
-        print "#" if i % 10 == 9
+        print "#"
       end
 
       duration = Time.now.to_f - start
