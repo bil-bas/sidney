@@ -59,13 +59,15 @@ module RSiD
 
     public
     def draw_on_image(canvas, x, y, opacity, glow)
+      return if opacity == 0
+
       img = image
       if opacity < 255
         img = img.dup
-        img.rect 0, 0, img.width - 1, img.height - 1, fill: true, color_control: { mult: [1, 1, 1, opacity  / 255.0], sync_mode: :no_sync}
+        img.rect 0, 0, img.width - 1, img.height - 1, fill: true, color_control: { mult: [1, 1, 1, opacity  / 255.0], sync_mode: :no_sync }
       end
 
-      canvas.splice(img, x + x_offset, y + y_offset, :alpha_blend => true, :mode => glow ? :additive : :copy)
+      canvas.splice(img, x + x_offset, y + y_offset, :alpha_blend => true)
     end
 
     public

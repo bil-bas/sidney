@@ -51,6 +51,7 @@ ActiveRecord::Schema.define do
 
     t.integer :x_offset, null: false
     t.integer :y_offset, null: false
+    t.boolean :glows, default: false
   end
 
   create_table :sprite_layers, id: false do |t|

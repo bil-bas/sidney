@@ -109,5 +109,11 @@ module RSiD
 
       img
     end
+
+    def draw(x, y)
+      @draw_color ||= Color.from_rgba(255, 255, 255, 255)
+      @draw_color.alpha = room_alpha
+      image.draw(x, y, Sidney::ZOrder::SCENE, 1, 1, @draw_color)
+    end
   end
 end

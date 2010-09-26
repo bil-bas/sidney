@@ -100,7 +100,16 @@ module RSiD
     def create_image
       img = Image.create(WIDTH, HEIGHT)
 
-      sprite_layers.each { |layer| layer.draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5) }
+      # Force glow only if ALL sprites glow (only change it if the object glow is unset).
+      set_glows = (not glows?)
+      sprite_layers.each do |layer|
+        layer.draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5)
+
+        set_glows &&= layer.glows?
+      end
+
+      self.glows = true if set_glows
+
       box = img.auto_crop_box
       self.x_offset = box.x - Sprite::WIDTH * 6
       self.y_offset = box.y - Sprite::HEIGHT * 10
@@ -112,13 +121,17 @@ module RSiD
     end
 
     def draw_on_image(canvas, x, y, opacity)
+      return if opacity == 0
+
+      drawing_mode = glows? ? :additive : :copy
+
       img = image
       if opacity < 255
         img = img.dup
         img.rect 0, 0, img.width - 1, img.height - 1, fill: true, color_control: { mult: [1, 1, 1, opacity  / 255.0], sync_mode: :no_sync }
       end
 
-      canvas.splice(img, x + x_offset, y + y_offset, alpha_blend: true)
+      canvas.splice(img, x + x_offset, y + y_offset, alpha_blend: true, mode: drawing_mode)
     end
   end
 end

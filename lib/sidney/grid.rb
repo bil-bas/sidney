@@ -95,7 +95,7 @@ class Grid
     $window.translate(@rect.x, @rect.y) do
       $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
         $window.scale(scale) do
-          @scene.image.draw(@offset_x, @offset_y, ZOrder::SCENE)
+          @scene.draw(@offset_x, @offset_y)
         end
 
         @overlay.draw(@offset_x * scale, @offset_y * scale)
