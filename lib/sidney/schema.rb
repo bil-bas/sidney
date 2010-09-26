@@ -10,19 +10,23 @@ require_relative 'database'
 #
 ActiveRecord::Schema.define do
   uid_length = 12
-  
+
+  # Tiles.
   create_table :tiles, id: false do |t|
-    t.string :uid, limit: uid_length, primary: true
+    t.string :uid, limit: uid_length, null: false
+    t.primary_key :uid
 
     t.string :name,  null: false
   end
 
+#  add_index :tiles, :uid, unique: true
+
+  # TileLayers (Room->Tiles)
   create_table :tile_layers, id: false do |t|
     t.string :room_id, limit: uid_length, null: false
     t.string :tile_id, limit: uid_length, null: false
 
-    t.integer :x, null: false
-    t.integer :y, null: false
+    t.integer :x, :y, null: false
     t.boolean :blocked, null: false
   end
 
@@ -30,30 +34,43 @@ ActiveRecord::Schema.define do
   add_index :tile_layers, :tile_id
   add_index :tile_layers, [:x, :y]
 
+  # Rooms.
   create_table :rooms, id: false do |t|
-    t.string :uid, limit: uid_length, primary: true
+    t.string :uid, limit: uid_length, null: false
+    t.primary_key :uid
 
     t.string :name, null: false
   end
 
+#  add_index :rooms, :uid, unique: true
+
+  # Sprites.
   create_table :sprites, id: false do |t|
-    t.string :uid, limit: uid_length, primary: true
+    t.string :uid, limit: uid_length, null: false
+    t.primary_key :uid
 
     t.string :name,  null: false
 
-    t.integer :x_offset, null: false
-    t.integer :y_offset, null: false
+    t.integer :x_offset, :y_offset, null: false
   end
 
+#  add_index :sprites, :uid, unique: true
+
+  # StateObjects.
   create_table :state_objects, id: false do |t|
-    t.string :uid, limit: uid_length, primary: true
+    t.string :uid, limit: uid_length, null: false
+    t.primary_key :uid
+
     t.string :name, null: false
 
-    t.integer :x_offset, null: false
-    t.integer :y_offset, null: false
+    t.integer :x_offset, :y_offset, null: false
+
     t.boolean :glows, default: false
   end
 
+#  add_index :state_objects, :uid, unique: true
+
+  # SpriteLayers (StateObject->Sprites)
   create_table :sprite_layers, id: false do |t|
     t.string :state_object_id, limit: uid_length, null: false
     t.string :sprite_id, limit: uid_length, null: false
@@ -61,26 +78,23 @@ ActiveRecord::Schema.define do
     t.integer :alpha, null: false
     t.boolean :glows, null: false
     
-    t.integer :x, null: false
-    t.integer :y, null: false
+    t.integer :x, :y, null: false
   end
 
   add_index :sprite_layers, :sprite_id
   add_index :sprite_layers, :state_object_id
 
+  # StateObjectLayers (Scene->StateObjects)
   create_table :state_object_layers, id: false do |t|
     t.string :scene_id, limit: uid_length, null: false
     t.string :state_object_id, limit: uid_length, null: false
     
-    t.integer :x, null: false
-    t.integer :y, null: false
-    t.integer :z, null: false
+    t.integer :x, :y, :z, null: false
 
     t.integer :alpha, null: false
     t.boolean :locked, null: false
 
-    t.integer :speech_offset_x, null: false
-    t.integer :speech_offset_y, null: false
+    t.integer :speech_offset_x, :speech_offset_y, null: false
     t.boolean :speech_flipped, null: false
     t.boolean :speech_box, null: false
   end
@@ -88,11 +102,16 @@ ActiveRecord::Schema.define do
   add_index :state_object_layers, :scene_id
   add_index :state_object_layers, :state_object_id
 
+  # Scenes.
   create_table :scenes, id: false do |t|
-    t.string :uid, limit: uid_length, primary: true
+    t.string :uid, limit: uid_length, null: false
+    t.primary_key :uid
+
     t.string :name, null: false
 
     t.string :room_id, null: false
     t.integer :room_alpha, null: false
   end
+
+#  add_index :scenes, :uid, unique: true
 end
