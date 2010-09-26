@@ -5,9 +5,10 @@ require_relative 'state_object'
 require_relative 'scene'
 
 module RSiD
+class Resource
   RESOURCE_TYPES = [Tile, Room, Sprite, StateObject, Scene]
 
-  def self.import_resources(path)
+  def self.import_sid(path)
     RESOURCE_TYPES.each do |klass|
       files =  Dir.glob(File.join(path, klass.type, '*'))
       puts "Importing #{files.size} #{klass} resources"
@@ -26,4 +27,5 @@ module RSiD
       puts
     end
   end
+end
 end
