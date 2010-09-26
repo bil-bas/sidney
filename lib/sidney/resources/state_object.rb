@@ -110,10 +110,12 @@ module RSiD
 
       self.glows = true if set_glows
 
-      box = img.auto_crop_box
-      self.x_offset = box.x - Sprite::WIDTH * 6
-      self.y_offset = box.y - Sprite::HEIGHT * 10
-      img = img.crop box
+      crop_box = img.auto_crop_box
+      crop_box.width = 1 if crop_box.width == 0
+      crop_box.height = 1 if crop_box.height == 0
+      self.x_offset = crop_box.x - Sprite::WIDTH * 6
+      self.y_offset = crop_box.y - Sprite::HEIGHT * 10
+      img = img.crop crop_box
 
       save! # Ensure that the values for x/y offsets are updated.
 

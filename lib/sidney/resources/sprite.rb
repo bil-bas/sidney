@@ -28,6 +28,8 @@ module RSiD
       end
 
       crop_box = image.auto_crop_box(color: :alpha)
+      crop_box.width = 1 if crop_box.width == 0
+      crop_box.height = 1 if crop_box.height == 0
       image = image.crop crop_box
 
       @@tmp_image = image
