@@ -6,8 +6,6 @@ module RSiD
     has_many :tile_layers
     has_many :rooms, through: :tile_layers
 
-    set_primary_key :uid
-
     DEFAULT_COLOR = [0, 0, 0, 1]
 
     protected
@@ -34,8 +32,13 @@ module RSiD
     end
 
     public
+    def draw(x, y)
+      image.draw x, y, 0
+    end
+
+    public
     def to_sprite
-      Sprite.generate(image: image, name: name, uid: uid)
+      Sprite.generate(image: image, name: name, id: id)
     end
   end
 end

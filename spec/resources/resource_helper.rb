@@ -13,15 +13,15 @@ include RSiD
 
 share_examples_for "Resource" do
   before :each do
-    @resource_file_read = File.join(CACHE_IN, described_class.type, @uid)
+    @resource_file_read = File.join(CACHE_IN, described_class.type, @id.upcase)
 
-    File.open(File.join(CACHE_IN, described_class.type, @uid), "rb") do |file|
+    File.open(@resource_file_read, "rb") do |file|
       @data = file.read
     end
 
     # Create an example resource.
-    @resource = described_class.load(@uid)
-    @imported_uid = @resource.uid # UID changes in Sid import into Sidney
+    @resource = described_class.load(@id)
+    @imported_id = @resource.id # UID changes in Sid import into Sidney
   end
 
   describe "#initialize" do
@@ -29,13 +29,13 @@ share_examples_for "Resource" do
       @resource.name.should == @name
     end
 
-    it "should store a uid" do
-      @resource.uid.should_not be_nil
+    it "should store a id" do
+      @resource.id.should_not be_nil
     end
 
-    it "should calculate the uid if not provided" do
-      @resource = described_class.generate(data: @data, uid: @uid)
-      @resource.uid.should == @imported_uid
+    it "should calculate the id if not provided" do
+      @resource = described_class.generate(data: @data, id: @id)
+      @resource.id.should == @imported_id
     end
   end
 
@@ -55,9 +55,9 @@ share_examples_for "Resource" do
 
   describe "restore from database" do
     it "should return an identical record as it saved" do
-      res = described_class.where(uid: @imported_uid).first
-      res.recalculate_uid
-      res.uid.should == @imported_uid
+      res = described_class.where(id: @imported_id).first
+      res.recalculate_id
+      res.id.should == @imported_id
     end
   end
 end

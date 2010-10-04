@@ -10,13 +10,9 @@ module RSiD
     has_many :state_object_layers
     has_many :state_objects, through: :state_object_layers
 
-    set_primary_key :uid
-
     CURRENT_VERSION = 2
     DEFAULT_OBJECT_ZERO_FROZEN = false
     DEFAULT_ROOM_ALPHA = 255
-
-    attr_accessible :room_id, :room_alpha
 
     def self.current_version
       CURRENT_VERSION
@@ -36,7 +32,7 @@ module RSiD
     def create_or_update
       if @state_object_layers
          @state_object_layers.each do |layer|
-          layer.scene_id = uid
+          layer.scene_id = id
           layer.save!
         end
         @state_object_layers = nil
@@ -75,7 +71,7 @@ module RSiD
     end
 
     def self.default_attributes(attributes = {})
-      attributes[:room_id] = Room.default.uid unless attributes[:room_id]
+      attributes[:room_id] = Room.default.id unless attributes[:room_id]
       attributes[:room_alpha] = DEFAULT_ROOM_ALPHA unless attributes[:room_alpha]
       attributes[:state_object_layers] = [] # TODO: create default player object.
       
@@ -100,20 +96,32 @@ module RSiD
     end
 
     def create_image
-      img = room.image.dup rescue Image.create(Room::WIDTH, Room::HEIGHT)
+      room.image.draw 0, 0, 0 rescue nil
 
-      layers = state_object_layers.order(:z).all
+      layers = state_object_layers.order(:z, :y).all
 
       # Draw foreground objects.
-      layers.each { |layer| layer.draw_on_image(img) }
+      layers.each { |layer| layer.draw }
 
-      img
+      $window.to_devil(0, 0, Room::WIDTH, Room::HEIGHT)
     end
 
     def draw(x, y)
       @draw_color ||= Color.from_rgba(255, 255, 255, 255)
       @draw_color.alpha = room_alpha
       image.draw(x, y, Sidney::ZOrder::SCENE, 1, 1, @draw_color)
+    end
+
+    def hit_object(x, y)
+      found = nil
+
+      state_object_layers.order(:z).reverse_each do |layer|
+        if layer.hit?(x, y) and (found.nil? or layer.y > found.y)
+          found = layer
+        end
+      end
+
+      found
     end
   end
 end

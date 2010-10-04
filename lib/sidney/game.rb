@@ -56,6 +56,9 @@ class Game < Window
   MAX_HEIGHT = Gosu::screen_width * 0.8
   # Any wider and Gosu will scale the whole window to fit.
   MAX_WIDTH = Gosu::screen_width * 0.9
+
+  CLEAR_COLOR = Color.from_rgb(0, 0, 0)
+  TRANSPARENT_COLOR = Color.from_rgba(0, 0, 0, 0)
   
   protected
   def initialize(full_screen)
@@ -132,6 +135,24 @@ class Game < Window
   public
   def holding_alt?
     holding_any? :left_alt, :right_alt
+  end
+
+  public
+  def to_devil(x, y, width, height, options = {})
+    options = { clear: true }.merge options
+
+    @blank_image ||= Gosu::Image.create(width, height)
+
+    @blank_image.draw(0, 0, -100000, 1, 1, Color::WHITE, :multiply)
+
+    blob = to_blob(x, self.height - height, width, height)
+
+    if options[:clear]
+      draw_box(x, y, width, height, 0, nil, CLEAR_COLOR)
+      flush
+    end
+
+    Devil.from_blob(blob, width, height)
   end
 
   public

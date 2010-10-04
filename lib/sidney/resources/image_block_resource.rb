@@ -13,7 +13,7 @@ module RSiD
     COLOR_DATA_SIZE = AREA * 4
 
     def to_binary
-      (uid ? image : @@tmp_image).to_blob + super
+      (id ? image : @@tmp_image).to_blob + super
     end
 
     def self.default_attributes(attributes = {})

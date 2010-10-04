@@ -24,10 +24,7 @@ module RSiD
 
     NAME_PACK = 'Z*'
 
-    attr_accessible :uid, :name
-
-#    validates_inclusion_of :in => [:uid, :name]
-    validates_format_of :uid, with: /\A[a-z0-9]{12}\Z/
+    validates_format_of :id, with: /\A[a-z0-9]{12}\Z/
     validates_length_of :name, in: 1..NAME_LENGTH
 
     def self.type
@@ -47,19 +44,19 @@ module RSiD
     # 3. Gives the default object if object not otherwise found.
     #
     # == Parameters
-    # :uid:  [String]
-    def self.load(uid)
-      if uid == default.uid
+    # :id:  [String]
+    def self.load(id)
+      if id == default.id
         default
       else
-        where(uid: uid).first || default
+        where(id: id).first || default
       end
     end
 
-    def self.import(uid, file_name)
+    def self.import(id, file_name)
       resource = if File.exist? file_name
         File.open(file_name, "rb") do |file|
-          generate(data: file.read, uid: uid)
+          generate(data: file.read, id: id)
         end
       else
         default # Failed to load...meh!
@@ -107,25 +104,23 @@ module RSiD
       attributes
     end
 
-    # - binary data, where uid is unknown (:data)
-    # - binary data along with a uid, such as when read from a disk (:data, :uid)
+    # - binary data, where id is unknown (:data)
+    # - binary data along with a id, such as when read from a disk (:data, :id)
     # - attributes (:att1..:attN)
     def self.generate(options = {})
       if options[:data]
-        options = attributes_from_data(options[:data], { uid: options[:uid] })
+        options = attributes_from_data(options[:data], { id: options[:id] })
       elsif options.empty?
         options = default_attributes(options)
       end
 
+      # Take out the image attribute, since it isn't stored in the database.
       image = options[:image]
-      options.delete image
+      options.delete :image
       created = new(options)
-      created.recalculate_uid unless created.uid
+      created.recalculate_id unless created.id
 
-      # Manual hack for no apparent reason!
-      created.x_offset = options[:x_offset] if options[:x_offset]
-      created.y_offset = options[:y_offset] if options[:y_offset]
-      created.save!
+      created.save! unless where(id: created.id).first
       created.cache_image(image) if image
       created
     end
@@ -142,16 +137,16 @@ module RSiD
       self.class.type
     end
 
-    def recalculate_uid
-      self.uid = calculate_uid
+    def recalculate_id
+      self.id = calculate_id
     end
 
-    def calculate_uid
+    def calculate_id
       Digest::SHA1.hexdigest(to_binary)[0...UID_NUM_NIBBLES]
     end
 
     def ==(other)
-      other.class == self.class and other.uid == uid
+      other.class == self.class and other.id == id
     end
 
     def to_binary

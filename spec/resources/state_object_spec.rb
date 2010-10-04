@@ -7,14 +7,14 @@ TexPlay.set_options(caching: false)
 
 describe StateObject do
   before :each do
-    @uid = '0037985b6c43'
+    @id = '0037985b6c43'
     @name = 'know tree'
   end
 
   it_should_behave_like "VisualResource"
 
   describe "initialize() default" do
-    subject { described_class.load(@uid) }
+    subject { described_class.load(@id) }
 
     before :each do
       subject = described_class.default

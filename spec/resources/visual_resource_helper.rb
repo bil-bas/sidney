@@ -11,11 +11,11 @@ share_examples_for 'VisualResource' do
   end
 
   before :each do
-    @png_created = File.join(GENERATED_DIR, "#{described_class.type}_images", "#{@name} - #{@uid}.png")
+    @png_created = File.join(GENERATED_DIR, "#{described_class.type}_images", "#{@name} - #{@id}.png")
     @default_png_created = File.join(GENERATED_DIR, "#{described_class.type}_images", "default.png")
   end
 
-  subject { described_class.load(@uid) }
+  subject { described_class.load(@id) }
   
   describe "#image" do
     it "should create a png image" do

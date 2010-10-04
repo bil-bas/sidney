@@ -13,5 +13,12 @@ module RSiD
       end
       canvas
     end
+
+    public
+    def draw
+      if object = tile and object != Tile.default
+        object.draw x * Tile::WIDTH, y * Tile::HEIGHT
+      end
+    end
   end
 end

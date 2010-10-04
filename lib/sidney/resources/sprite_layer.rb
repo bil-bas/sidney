@@ -25,9 +25,9 @@ module RSiD
       end
     end
 
-    def initialize(state_object_uid, version, data)
+    def initialize(state_object_id, version, data)
 
-      sprite_uid, x, y, alpha, glow_int = case version
+      sprite_id, x, y, alpha, glow_int = case version
       when 1
         data.unpack("H12cc") + [DEFAULT_ALPHA, DEFAULT_GLOW]
       when 2
@@ -40,7 +40,7 @@ module RSiD
       
       glows = (glow_int == GLOW_ENABLED)
 
-      super(state_object_id: state_object_uid, sprite_id: sprite_uid, x: x, y: y, alpha: alpha, glows: glows)
+      super(state_object_id: state_object_id, sprite_id: sprite_id, x: x, y: y, alpha: alpha, glows: glows)
     end
 
     def to_binary
@@ -54,6 +54,22 @@ module RSiD
       end
       
       image
+    end
+
+    def draw(offset_x, offset_y)
+      if object = sprite
+        object.draw x + offset_x, Room::HEIGHT - y - offset_y, alpha, glows
+      end
+
+      nil
+    end
+
+    def hit?(x, y)
+      if object = sprite
+        sprite.hit?(x + offset_x, Room::HEIGHT - y - offset_y)
+      else
+        false
+      end
     end
   end
 end

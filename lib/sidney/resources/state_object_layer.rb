@@ -5,6 +5,10 @@ module RSiD
     belongs_to :scene
     belongs_to :state_object
 
+    attr_writer :selected, :dragging
+    def dragging?; @dragging; end
+    def selected?; @selected; end
+
     def self.data_length(version)
       case version
         when 1
@@ -17,8 +21,8 @@ module RSiD
         end
     end
     
-    def initialize(scene_uid, version, data, z_depth)
-      state_object_uid = data.unpack(Resource::UID_PACK)[0]
+    def initialize(scene_id, version, data, z_depth)
+      state_object_id = data.unpack(Resource::UID_PACK)[0]
       offset = Resource::UID_NUM_BYTES
 
       z = z_depth
@@ -43,8 +47,8 @@ module RSiD
 
       alpha = data[offset].unpack("C")[0]
       
-      super(scene_id: scene_uid,
-            state_object_id: state_object_uid,
+      super(scene_id: scene_id,
+            state_object_id: state_object_id,
             alpha: alpha,
             locked: locked,
             x: x, y: y, z: z,
@@ -53,6 +57,11 @@ module RSiD
             speech_offset_x: speech_offset_x,
             speech_offset_y: speech_offset_y
       )
+    end
+
+    def post_create
+      @dragging = false
+      @selected = false
     end
 
     def to_binary
@@ -73,6 +82,18 @@ module RSiD
         object.draw_on_image(image, x, y, alpha)
       end
       image
+    end
+
+    public
+    def draw()
+      if object = state_object
+        object.draw(x, y, alpha)
+      end
+      nil
+    end
+
+    def hit?(x, y)
+      state_object.hit?(x - self.x, y - self.x)
     end
   end
 end

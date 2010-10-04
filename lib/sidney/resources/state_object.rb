@@ -9,8 +9,6 @@ module RSiD
 
     has_many :object_layers
     has_many :scenes, through: :object_layers
-
-    set_primary_key :uid
     
     WIDTH = Sprite::WIDTH * 13
     HEIGHT = Sprite::HEIGHT * 13
@@ -67,7 +65,7 @@ module RSiD
       if @version and @layer_data
         layer_size = SpriteLayer.data_size(@version)
         (0...@layer_data.size).step(layer_size) do |offset|
-          layer = SpriteLayer.new(uid, @version, @layer_data[offset, layer_size])
+          layer = SpriteLayer.new(id, @version, @layer_data[offset, layer_size])
           layer.save!
         end
         @version = @layer_data = nil
@@ -89,7 +87,7 @@ module RSiD
         data += [@layer_data.length / layer_size].pack("C")
         data += @layer_data
       else
-        layers = SpriteLayer.where(state_object_uid: uid)
+        layers = SpriteLayer.where(state_object_id: id)
         data += [layers.count].pack("C")
         data += layers.map { |layer| layer.to_binary }.join
       end
@@ -134,6 +132,20 @@ module RSiD
       end
 
       canvas.splice(img, x + x_offset, y + y_offset, alpha_blend: true, mode: drawing_mode)
+    end
+
+    def draw(x, y, opacity)
+      return if opacity == 0
+
+      color = Gosu::Color.from_rgba(255, 255, 255, opacity)
+      drawing_mode = glows? ? :additive : :default
+
+      image.draw x + x_offset, y + y_offset, 0, 1, 1, color, drawing_mode
+    end
+
+    def hit?(x, y)
+      pixel = image.get_pixel(x - x_offset, y - y_offset)
+      pixel and pixel[3] != 0
     end
   end
 end

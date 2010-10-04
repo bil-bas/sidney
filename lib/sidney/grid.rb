@@ -69,15 +69,7 @@ class Grid
     x, y = screen_to_grid(x, y)
     found = nil
 
-#    @scene.state_objects.reverse_each do |object|
-#      if object.hit?(x, y)
-#        if found.nil? or object.y > found.y
-#          found = object
-#        end
-#      end
-#    end
-
-    found
+    @scene.hit_object(x, y)
   end
 
   public

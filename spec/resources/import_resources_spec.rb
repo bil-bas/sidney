@@ -1,14 +1,14 @@
 require_relative '../helper'
 
+require 'game'
 require 'import_resources'
 
 include RSiD
 
 describe Resource do
   before :all do
-    $window = Gosu::Window.new(640, 480, false)
-
-    Resource.import_sid(CACHE_IN)
+    Sidney::Game.new(false)
+    RSiD::Resource.import_sid(CACHE_IN)
   end
 
   describe "#import_sid" do

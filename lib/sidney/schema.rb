@@ -13,13 +13,13 @@ ActiveRecord::Schema.define do
 
   # Tiles.
   create_table :tiles, id: false do |t|
-    t.string :uid, limit: uid_length, null: false
-    t.primary_key :uid
+    t.string :id, limit: uid_length, null: false
+    t.primary_key :id
 
     t.string :name,  null: false
   end
 
-#  add_index :tiles, :uid, unique: true
+  add_index :tiles, :id, unique: true
 
   # TileLayers (Room->Tiles)
   create_table :tile_layers, id: false do |t|
@@ -36,30 +36,30 @@ ActiveRecord::Schema.define do
 
   # Rooms.
   create_table :rooms, id: false do |t|
-    t.string :uid, limit: uid_length, null: false
-    t.primary_key :uid
+    t.string :id, limit: uid_length, null: false
+    t.primary_key :id
 
     t.string :name, null: false
   end
 
-#  add_index :rooms, :uid, unique: true
+  add_index :rooms, :id, unique: true
 
   # Sprites.
   create_table :sprites, id: false do |t|
-    t.string :uid, limit: uid_length, null: false
-    t.primary_key :uid
+    t.string :id, limit: uid_length, null: false
+    t.primary_key :id
 
     t.string :name,  null: false
 
     t.integer :x_offset, :y_offset, null: false
   end
 
-#  add_index :sprites, :uid, unique: true
+  add_index :sprites, :id, unique: true
 
   # StateObjects.
   create_table :state_objects, id: false do |t|
-    t.string :uid, limit: uid_length, null: false
-    t.primary_key :uid
+    t.string :id, limit: uid_length, null: false
+    t.primary_key :id
 
     t.string :name, null: false
 
@@ -68,7 +68,7 @@ ActiveRecord::Schema.define do
     t.boolean :glows, default: false
   end
 
-#  add_index :state_objects, :uid, unique: true
+  add_index :state_objects, :id, unique: true
 
   # SpriteLayers (StateObject->Sprites)
   create_table :sprite_layers, id: false do |t|
@@ -104,8 +104,8 @@ ActiveRecord::Schema.define do
 
   # Scenes.
   create_table :scenes, id: false do |t|
-    t.string :uid, limit: uid_length, null: false
-    t.primary_key :uid
+    t.string :id, limit: uid_length, null: false
+    t.primary_key :id
 
     t.string :name, null: false
 
@@ -113,5 +113,5 @@ ActiveRecord::Schema.define do
     t.integer :room_alpha, null: false
   end
 
-#  add_index :scenes, :uid, unique: true
+  add_index :scenes, :id, unique: true
 end

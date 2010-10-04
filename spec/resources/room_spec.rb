@@ -7,11 +7,11 @@ TexPlay.set_options(caching: false)
 
 describe Room do
   before :each do
-    @uid = '9c70e8396eeb'
+    @id = '9c70e8396eeb'
     @name = 'closet az'
   end
 
-  subject { described_class.load(@uid) }
+  subject { described_class.load(@id) }
 
   it_should_behave_like "VisualResource"
 

@@ -9,8 +9,6 @@ module RSiD
 
     has_many :scenes
 
-    set_primary_key :uid
-
     IMPORT_WIDTH, IMPORT_HEIGHT = 13, 13 # = 208x208
     IMPORT_X_OFFSET, IMPORT_Y_OFFSET = 3, 1 # Move SiD objects 3 right and 1 down.
     IMPORT_AREA = IMPORT_WIDTH * IMPORT_HEIGHT
@@ -26,15 +24,16 @@ module RSiD
     BLOCKED = 1
     DEFAULT_WALLS = false
 
-    # :name - Name of the room [String]
-    # :tile_uids - Array of uids [Array(169) of String]
-    # :walls - Array of blocking walls [Array(169) of Boolean]
+    # @param [Hash] options
+    # @option options [String] :name Name of the room
+    # @option options [Array<String>] :tile_ids List of uids
+    # @option options [Array<Boolean>] :walls List of blocking walls
     def initialize(options)
-      if options[:tile_uids] and options[:walls]
-        @tile_uids_tmp = options[:tile_uids]
+      if options[:tile_ids] and options[:walls]
+        @tile_ids_tmp = options[:tile_ids]
         @walls_tmp = options[:walls]
 
-        options.delete(:tile_uids)
+        options.delete(:tile_ids)
         options.delete(:walls)
       else
         raise ArgumentError.new
@@ -47,9 +46,9 @@ module RSiD
       success = super
 
       # If we save the room, then create the appropriate tile layers.
-      if success and @tile_uids_tmp and @walls_tmp
-        create_tile_layers(@tile_uids_tmp, @walls_tmp)
-        @tile_uids_tmp = @walls_tmp = nil
+      if success and @tile_ids_tmp and @walls_tmp
+        create_tile_layers(@tile_ids_tmp, @walls_tmp)
+        @tile_ids_tmp = @walls_tmp = nil
       end
 
       success
@@ -58,7 +57,7 @@ module RSiD
     def self.attributes_from_data(data, attributes = {})
       version, offset = read_version(data)
       
-      imported_tile_uids = data[offset, UID_NUM_BYTES * IMPORT_AREA].unpack(UID_PACK * IMPORT_AREA)
+      imported_tile_ids = data[offset, UID_NUM_BYTES * IMPORT_AREA].unpack(UID_PACK * IMPORT_AREA)
       offset = UID_NUM_BYTES * IMPORT_AREA
 
       # TODO: If there is enough data, read in walls, otherwise assume they are passable.
@@ -67,41 +66,46 @@ module RSiD
       offset += IMPORT_AREA
 
       # Convert the 13x13 SiD grid to 20x15 Sidney grid.
-      tile_uids = Array.new(GRID_AREA, Tile.default.uid)
+      tile_ids = Array.new(GRID_AREA, Tile.default.id)
       walls = Array.new(GRID_AREA, IMPORT_WALLS)
 
       (0...IMPORT_HEIGHT).each do |y|
         (0...IMPORT_WIDTH).each do |x|
           index = (x + IMPORT_X_OFFSET) + ((y + IMPORT_Y_OFFSET) * GRID_WIDTH)
-          tile_uids[index] = imported_tile_uids[x + y * IMPORT_WIDTH]
+          tile_ids[index] = imported_tile_ids[x + y * IMPORT_WIDTH]
           walls[index] = imported_walls[x + y * IMPORT_WIDTH]
         end
       end
 
-      attributes[:tile_uids] = tile_uids
+      attributes[:tile_ids] = tile_ids
       attributes[:walls] = walls
 
       super(data[offset..-1], attributes)
     end
 
     def self.default_attributes(attributes = {})
-      attributes[:tile_uids] = Array.new(GRID_AREA, Tile.default.uid) unless attributes[:tile_uids]
+      attributes[:tile_ids] = Array.new(GRID_AREA, Tile.default.id) unless attributes[:tile_ids]
       attributes[:walls] = Array.new(GRID_AREA, DEFAULT_WALLS) unless attributes[:walls]
       
       super(attributes)
     end
 
     # Create all the tiles layers required by this room.
-    # tile_uids:: [Array of UID] 
-    # walls:: [Array of Boolean]
-    def create_tile_layers(tile_uids, walls)
+    #
+    # @param [Array<String>] tile_ids
+    # @param [Array<Boolean>] walls
+    #
+    # @return [nil]
+    def create_tile_layers(tile_ids, walls)
       (0...GRID_HEIGHT).each do |y|
         (0...GRID_WIDTH).each do |x|
-          tile_uid = tile_uids[x + y * GRID_WIDTH]
+          tile_id = tile_ids[x + y * GRID_WIDTH]
           wall = walls[x + y * GRID_WIDTH]
-          TileLayer.create!(room_id: uid, tile_id: tile_uid, x: x, y: y, blocked: wall)
+          TileLayer.create!(room_id: id, tile_id: tile_id, x: x, y: y, blocked: wall)
         end
       end
+
+      nil
     end
 
     def blocked?(x, y)
@@ -125,32 +129,30 @@ module RSiD
       # If we haven't been saved to the database yet, then we are
       # just using the temporary values stored in the instance,
       # otherwise read the values in from the database.
-      if @tile_uids_tmp and @walls_tmp
-        tile_uids = @tile_uids_tmp
+      if @tile_ids_tmp and @walls_tmp
+        tile_ids = @tile_ids_tmp
         walls = @walls_tmp.map {|wall| wall ? BLOCKED : PASSABLE }
       else     
-        tile_uids = []
+        tile_ids = []
         walls = []
 
         layers_by_x_y.each do |layer|
-          tile_uids.push layer.tile_uid
+          tile_ids.push layer.tile_id
           walls.push(layer.blocked ? BLOCKED : PASSABLE)
         end
       end
 
-      tile_uids.pack(UID_PACK * GRID_AREA) +
+      tile_ids.pack(UID_PACK * GRID_AREA) +
         walls.pack("C#{GRID_AREA}") +
         super
     end
 
     def create_image
-      img = Image.create(WIDTH, HEIGHT)
-
       tile_layers.each do |layer|
-        layer.draw_on_image(img)
+        layer.draw
       end
 
-      img
+      $window.to_devil(0, 0, WIDTH, HEIGHT, clear: true)
     end
   end
 end

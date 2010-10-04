@@ -6,8 +6,6 @@ module RSiD
     has_many :sprite_layers
     has_many :state_objects, through: :sprite_layers
 
-    set_primary_key :uid
-
     TRANSPARENT = 1
     OPAQUE = 0
     
@@ -73,8 +71,20 @@ module RSiD
     end
 
     public
+    def draw(x, y, opacity, glow)
+      color = Gosu::Color.from_rgba(255, 255, 255, opacity)
+
+      image.draw x + x_offset, y + y_offset, 0, 1, 1, color
+    end
+
+    public
     def to_tile
-      Tile.generate(name: name, image: image, uid: uid)
+      Tile.generate(name: name, image: image, id: id)
+    end
+
+    def hit?(x, y)
+      pixel = sprite.image.get_pixel(x + x_offset, y + y_offset)
+      pixel and pixel[3] != 0
     end
   end
 end

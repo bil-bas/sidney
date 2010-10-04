@@ -7,7 +7,7 @@ TexPlay.set_options(caching: false)
 
 describe Scene do
   before :each do
-    @uid = 'fb7308b69631'
+    @id = 'fb7308b69631'
     @name = 'eve apple'
   end
 

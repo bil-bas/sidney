@@ -7,7 +7,7 @@ TexPlay.set_options(caching: false)
 
 describe Sprite do
   before :each do
-    @uid = '009a8897cf6b'
+    @id = '009a8897cf6b'
     @name = 'grapefruit'
   end
 
@@ -27,7 +27,7 @@ describe Sprite do
   end
 
   describe "#to_tile" do
-    subject { described_class.load(@uid) }
+    subject { described_class.load(@id) }
 
     before :each do
       @tile = subject.to_tile
@@ -37,8 +37,8 @@ describe Sprite do
       @tile.should be_a_kind_of Tile
     end
 
-    it "should have the same uid, name and image" do
-      @tile.uid.should == subject.uid
+    it "should have the same id, name and image" do
+      @tile.id.should == subject.id
       @tile.name.should == subject.name
       @tile.image.should == subject.image
     end

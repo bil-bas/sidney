@@ -118,9 +118,11 @@ class EditScene < GuiState
       if @selection.include? object
         if $window.holding_shift?
           @selection.remove object
+          @grid.scene.redraw
         end
       else
         @selection.add object
+        @grid.scene.redraw
       end
     end
 
@@ -139,6 +141,7 @@ class EditScene < GuiState
       else
         @selection.reset_drag
       end
+      @grid.scene.redraw
     end
 
     nil
@@ -201,6 +204,7 @@ class EditScene < GuiState
     copy
     @selection.each {|o| @grid.objects.delete(o) }
     @selection.clear
+    @grid.scene.redraw
 
     nil
   end
@@ -225,6 +229,8 @@ class EditScene < GuiState
       @grid.objects.push copy
       @selection.add copy
     end
+
+    @grid.scene.redraw
 
     nil
   end
@@ -264,7 +270,7 @@ class EditScene < GuiState
       x, y = 'x', 'y'
     end
 
-    @font.draw("(#{x}, #{y}) ('#{@grid.scene.name}' [#{@grid.scene.uid}] #{game_state_manager.current}", 0, $window.height - 25, ZOrder::GUI)
+    @font.draw("(#{x}, #{y}) ('#{@grid.scene.name}' [#{@grid.scene.id}] #{game_state_manager.current}", 0, $window.height - 25, ZOrder::GUI)
     super
   end
 end
