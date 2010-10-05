@@ -7,14 +7,6 @@ module RSiD
     belongs_to :tile
 
     public
-    def draw_on_image(canvas)
-      if object = tile and object != Tile.default
-        object.draw_on_image(canvas, x * Tile::WIDTH, y * Tile::HEIGHT)
-      end
-      canvas
-    end
-
-    public
     def draw
       if object = tile and object != Tile.default
         object.draw x * Tile::WIDTH, y * Tile::HEIGHT

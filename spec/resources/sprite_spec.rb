@@ -3,8 +3,6 @@ require_relative 'visual_resource_helper'
 require 'sprite'
 include RSiD
 
-TexPlay.set_options(caching: false)
-
 describe Sprite do
   before :each do
     @id = '009a8897cf6b'

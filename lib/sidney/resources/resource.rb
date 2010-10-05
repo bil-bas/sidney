@@ -117,7 +117,9 @@ module RSiD
       # Take out the image attribute, since it isn't stored in the database.
       image = options[:image]
       options.delete :image
+
       created = new(options)
+      created.id = options[:id] if options[:id] # Fudge because it doesn't like :id being mass assigned?
       created.recalculate_id unless created.id
 
       created.save! if where(id: created.id).count == 0

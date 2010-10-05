@@ -1,6 +1,7 @@
 require 'gosu'
 require 'chingu'
 require 'texplay'
+TexPlay.set_options(caching: false)
 
 module Gosu
 class Image
@@ -215,4 +216,103 @@ class Image
     end
   end
 end
+
+    class Window
+        # Render directly into an existing image, optionally only to a specific region of that image.
+        #
+        # Since this operation utilises the window's back buffer, the image (or clipped area, if specified) cannot be larger than the
+        # window itself. Larger images can be rendered to only in separate sections using :clip_to areas, each no larger
+        # than the window).
+        #
+        # @note *Warning!* This operation will corrupt an area of the screen, at the bottom left corner, equal in size to the image rendered to (or the clipped area), so should be performed in #draw _before_ any other rendering.
+        #
+        # @note The final alpha of the image will be 255, regardless of what it started with or what is drawn onto it.
+        #
+        # @example
+        #   class Gosu
+        #     class Window
+        #       def draw
+        #         # Always render images before regular drawing to the screen.
+        #         unless @rendered_image
+        #           @rendered_image = TexPlay.create_image(self, 300, 300, :color => :blue)
+        #           render_to_image(@rendered_image) do
+        #             @an_image.draw 0, 0, 0
+        #             @another_image.draw 130, 0, 0
+        #             draw_line(0, 0, Color.new(255, 0, 0, 0), 100, 100, Color.new(255, 0, 0, 0), 0)
+        #             @font.draw("Hello world!", 0, 50, 0)
+        #           end
+        #         end
+        #
+        #         # Perform regular screen rendering.
+        #         @rendered_image.draw 0, 0
+        #       end
+        #     end
+        #   end
+        #
+        #
+        # @param [Gosu::Image] image Existing image to render onto.
+        # @option options [Array<Integer>] :clip_to ([0, 0, image.width, image.height]) Area of the image to render into. This area cannot be larger than the window, though the image may be.
+        # @option options [Boolean] :clear (true) Whether to clear the screen again after rendering has occurred.
+        # @return [Gosu::Image] The image that has been rendered to.
+        # @yield to a block that renders to the image.
+        def render_to_image(image, options = {})
+            raise ArgumentError, "image parameter must be a Gosu::Image to be rendered to" unless image.is_a? Gosu::Image
+            raise ArgumentError, "rendering block required" unless block_given?
+
+            options = {
+                :clip_to => [0, 0, image.width, image.height],
+                :clear => true
+            }.merge options
+
+            texture_info = image.gl_tex_info
+            tex_name = texture_info.tex_name
+            x_offset = (texture_info.left * Gosu::MAX_TEXTURE_SIZE).to_i
+            y_offset = (texture_info.top * Gosu::MAX_TEXTURE_SIZE).to_i
+
+            raise ArgumentError, ":clip_to rectangle must contain exactly 4 elements" unless options[:clip_to].size == 4
+
+            left, top, width, height = *(options[:clip_to].map {|n| n.to_i })
+
+            raise ArgumentError, ":clip_to rectangle cannot be wider or taller than the window" unless width <= self.width and height <= self.height
+            raise ArgumentError, ":clip_to rectangle width and height must be positive" unless width > 0 and height > 0
+
+            right = left + width - 1
+            bottom = top + height - 1
+
+            unless (0...image.width).include? left and (0...image.width).include? right and
+                   (0...image.height).include? top and (0...image.height).include? bottom
+                raise ArgumentError, ":clip_to rectangle out of bounds of the image"
+            end
+
+            # Since to_texture copies an inverted copy of the screen, what the user renders needs to be inverted first.
+            scale(1, -1) do
+                translate(-left, -top - self.height) do
+                    # TODO: Once Gosu is fixed, we can just pass width/height to clip_to
+                    clip_to(left, top, width - 1, height - 1) do
+                        # Draw over the background (which is assumed to be blank) with the original image texture,
+                        # to get us to the base image.
+                        image.draw(0, 0, 0)
+                        flush
+
+                        # Allow the user to overwrite the texture.
+                        yield
+                    end
+
+                    # Copy the modified texture back from the screen buffer to the image.
+                    to_texture(tex_name, x_offset + left, y_offset + top, 0, 0, width, height)
+
+                    # Clear the clipped zone to black again, ready for the regular screen drawing.
+                    if options[:clear]
+                        clear = Gosu::Color.new(255, 0, 0, 0)
+                        draw_quad(left, top, clear,
+                                  right, top, clear,
+                                  right, bottom, clear,
+                                  left, bottom, clear)
+                    end
+                end
+            end
+
+            image
+        end
+    end
 end

@@ -27,11 +27,6 @@ module RSiD
     end
 
     public
-    def draw_on_image(canvas, x, y)
-      canvas.splice(image, x, y)
-    end
-
-    public
     def draw(x, y)
       image.draw x, y, 0
     end

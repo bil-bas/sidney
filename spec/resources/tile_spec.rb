@@ -3,8 +3,6 @@ require_relative 'visual_resource_helper'
 require 'tile'
 include RSiD
 
-TexPlay.set_options(caching: false)
-
 describe Tile do
   before :each do
     @id = '0d183059ae8b'

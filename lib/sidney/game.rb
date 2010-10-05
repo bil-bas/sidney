@@ -25,8 +25,6 @@ begin; gem 'chingu'; rescue Exception => ex; end
 require 'chingu'
 require 'devil'
 require 'devil/gosu'
-require 'texplay'
-TexPlay.set_options(caching: false) # Generally, we don't want caching.
 
 I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
 
@@ -135,24 +133,6 @@ class Game < Window
   public
   def holding_alt?
     holding_any? :left_alt, :right_alt
-  end
-
-  public
-  def to_devil(x, y, width, height, options = {})
-    options = { clear: true }.merge options
-
-    @blank_image ||= Gosu::Image.create(width, height)
-
-    @blank_image.draw(0, 0, -100000, 1, 1, Color::WHITE, :multiply)
-
-    blob = to_blob(x, self.height - height, width, height)
-
-    if options[:clear]
-      draw_box(x, y, width, height, 0, nil, CLEAR_COLOR)
-      flush
-    end
-
-    Devil.from_blob(blob, width, height)
   end
 
   public

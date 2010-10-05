@@ -48,17 +48,17 @@ module RSiD
       [sprite_id, x, y, alpha, glow_int].pack("H12ccCC")
     end
 
-    def draw_on_image(image, offset_x, offset_y)
+    def draw_on_image(image, x, y)
       if object = sprite
-        object.draw_on_image(image, x + offset_x, Room::HEIGHT - y - offset_y, alpha, glows)
+        object.draw_on_image(image, x + self.x, Room::HEIGHT - y - self.y, alpha, glows)
       end
       
       image
     end
 
-    def draw(offset_x, offset_y)
+    def draw(x, y)
       if object = sprite
-        object.draw x + offset_x, Room::HEIGHT - y - offset_y, alpha, glows
+        object.draw(x + self.x, Room::HEIGHT - y - self.y, alpha, glows)
       end
 
       nil
@@ -66,7 +66,7 @@ module RSiD
 
     def hit?(x, y)
       if object = sprite
-        sprite.hit?(x + offset_x, Room::HEIGHT - y - offset_y)
+        object.hit?(x + self.x, Room::HEIGHT - y - self.y)
       else
         false
       end

@@ -15,14 +15,16 @@ module RSiD
     FileUtils.mkdir_p THUMBNAIL_CACHE_DIR
     THUMBNAIL_SIZE = 16
 
+    IMAGE_EXTENSION = 'png'
+
     public
     def image_path
-      File.join(IMAGE_CACHE_DIR, "#{id}.png")
+      File.join(IMAGE_CACHE_DIR, type, "#{id}.#{IMAGE_EXTENSION}")
     end
 
     public
     def thumbnail_path
-      File.join(THUMBNAIL_CACHE_DIR, "#{id}.png")
+      File.join(THUMBNAIL_CACHE_DIR, type, "#{id}.#{IMAGE_EXTENSION}")
     end
 
     public
@@ -48,6 +50,9 @@ module RSiD
     # Caches the image and thumbnail onto the disk.
     public
     def cache_image(image)
+      FileUtils.mkdir_p File.dirname(image_path)
+      FileUtils.mkdir_p File.dirname(thumbnail_path)
+
       if image.is_a? Devil::Image
         @@cached_images[id] = image.flip.to_gosu($window)
         cache_devil_image(image.flip)

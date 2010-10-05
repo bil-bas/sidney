@@ -3,8 +3,6 @@ require_relative 'visual_resource_helper'
 require 'room'
 include RSiD
 
-TexPlay.set_options(caching: false)
-
 describe Room do
   before :each do
     @id = '9c70e8396eeb'

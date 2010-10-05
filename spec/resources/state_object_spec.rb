@@ -3,8 +3,6 @@ require_relative 'visual_resource_helper'
 require 'state_object'
 include RSiD
 
-TexPlay.set_options(caching: false)
-
 describe StateObject do
   before :each do
     @id = '0037985b6c43'

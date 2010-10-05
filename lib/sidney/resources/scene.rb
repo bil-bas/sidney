@@ -96,14 +96,14 @@ module RSiD
     end
 
     def create_image
-      room.image.draw 0, 0, 0 rescue nil
+      # Todo: Work out why Image.dup is broken.
+      image = Gosu::Image.from_blob(Gosu::Image.from_blob(room.image.to_blob, room.image.width, room.image.height).to_blob,room.image.width, room.image.height)
+      $window.render_to_image(image) do
+        layers = state_object_layers.order(:z, :y).all
 
-      layers = state_object_layers.order(:z, :y).all
-
-      # Draw foreground objects.
-      layers.each { |layer| layer.draw }
-
-      $window.to_devil(0, 0, Room::WIDTH, Room::HEIGHT)
+        # Draw foreground objects.
+        layers.each { |layer| layer.draw }
+      end
     end
 
     def draw(x, y)

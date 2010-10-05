@@ -115,7 +115,7 @@ module RSiD
       self.y_offset = crop_box.y - Sprite::HEIGHT * 10
       img = img.crop crop_box
 
-      update # Ensure that the values for x/y offsets are updated.
+      save! # Ensure that the values for x/y offsets are updated.
 
       img
     end

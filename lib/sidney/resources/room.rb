@@ -152,11 +152,14 @@ module RSiD
     end
 
     def create_image
-      tile_layers.each do |layer|
-        layer.draw
+      image = Gosu::Image.create(WIDTH, HEIGHT)
+      $window.render_to_image(image) do
+        tile_layers.each do |layer|
+          layer.draw
+        end
       end
 
-      $window.to_devil(0, 0, WIDTH, HEIGHT, clear: true)
+      image
     end
   end
 end
