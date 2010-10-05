@@ -8,7 +8,7 @@ module RSiD
 class Resource
   RESOURCE_TYPES = [Tile, Room, Sprite, StateObject, Scene]
 
-  def self.import_sid(path)
+  def self.import_sid_resource_cache(path)
     RESOURCE_TYPES.each do |klass|
       files =  Dir.glob(File.join(path, klass.type, '*'))
       puts "Importing #{files.size} #{klass} resources"
@@ -16,7 +16,7 @@ class Resource
       start = Time.now.to_f
 
       files.each_with_index do |sid_data_file, i|
-        klass.import(File.basename(sid_data_file).downcase, sid_data_file)
+        klass.import_sid_data(File.basename(sid_data_file).downcase, sid_data_file)
         print "#"
       end
 

@@ -8,7 +8,7 @@ include RSiD
 describe Resource do
   before :all do
     Sidney::Game.new(false)
-    RSiD::Resource.import_sid(CACHE_IN)
+    RSiD::Resource.import_sid_resource_cache(CACHE_IN)
   end
 
   describe "#import_sid" do

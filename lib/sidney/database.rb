@@ -1,4 +1,5 @@
 require 'active_record'
+require 'activerecord-import'
 require 'logger'
 require 'sqlite3'
 

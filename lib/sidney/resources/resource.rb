@@ -53,7 +53,7 @@ module RSiD
       end
     end
 
-    def self.import(id, file_name)
+    def self.import_sid_data(id, file_name)
       resource = if File.exist? file_name
         File.open(file_name, "rb") do |file|
           generate(data: file.read, id: id)
@@ -120,7 +120,7 @@ module RSiD
       created = new(options)
       created.recalculate_id unless created.id
 
-      created.save! unless where(id: created.id).first
+      created.save! if where(id: created.id).count == 0
       created.cache_image(image) if image
       created
     end

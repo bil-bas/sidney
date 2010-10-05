@@ -97,13 +97,17 @@ module RSiD
     #
     # @return [nil]
     def create_tile_layers(tile_ids, walls)
+      columns = [:room_id, :tile_id, :x, :y, :blocked]
+      data = []
       (0...GRID_HEIGHT).each do |y|
         (0...GRID_WIDTH).each do |x|
           tile_id = tile_ids[x + y * GRID_WIDTH]
           wall = walls[x + y * GRID_WIDTH]
-          TileLayer.create!(room_id: id, tile_id: tile_id, x: x, y: y, blocked: wall)
+          data << [id, tile_id, x, y, wall]
         end
       end
+
+      TileLayer.import columns, data
 
       nil
     end
