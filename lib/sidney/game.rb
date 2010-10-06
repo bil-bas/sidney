@@ -120,21 +120,38 @@ class Game < Window
     nil
   end
 
+  # Holding either shift key?
   public
   def holding_shift?
     holding_any? :left_shift, :right_shift
   end
 
+  # Holding either control key?
   public
   def holding_control?
     holding_any? :left_control, :right_control
   end
 
+  # Holding either alt key?
   public
   def holding_alt?
     holding_any? :left_alt, :right_alt
   end
 
+  # Close the window.
+  public
+  def close
+    log.info { "Closed window" }
+    super
+  end
+
+  # Exited the applications, for example by pressing the window-X.
+  public
+  def exited
+    log.info { "Exited application" }
+  end
+
+  # Run the application.
   public
   def self.run
     return if defined? Ocra
@@ -154,5 +171,5 @@ class Game < Window
 end
 end
 
-at_exit { puts Time.now }
+at_exit { $window.exited if $window }
 
