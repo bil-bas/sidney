@@ -209,7 +209,6 @@ class EditScene < GuiState
 
   protected
   def paste(x, y)
-    x, y = $window.cursor.x, $window.cursor.y
     return unless @grid.hit?(x, y)
 
     # Work out the overall bounding box for the items on the clipboard.
