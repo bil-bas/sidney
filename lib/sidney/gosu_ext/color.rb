@@ -3,23 +3,23 @@ require 'gosu'
 module Gosu
   class Color
     # RGB in 0..255 format (Alpha assumed 255)
-    def self.from_rgb(r, g, b)
-      new(255, r, g, b)
+    def self.rgb(red, green, blue)
+      new(255, red, green, blue)
     end
 
     # RGBA in 0..255 format
-    def self.from_rgba(r, g, b, a)
-      new(a, r, g, b)
+    def self.rgba(red, green, blue, alpha)
+      new(alpha, red, green, blue)
     end
 
-    # ARGB in 0..255 format (equivalent to new, but clearer)
-    def self.from_argb(a, r, g, b)
-      new(a, r, g, b)
+    # ARGB in 0..255 format (equivalent to Color.new, but explicit)
+    def self.argb(alpha, red, green, blue)
+      new(alpha, red, green, blue)
     end
 
     # Convert from a 0.0..1.0 RGBA array, as used by Texplay.
     def self.from_texplay(color)
-      from_rgba *color.map {|c| (c * 255).to_i }
+      rgba(*color.map {|c| (c * 255).to_i })
     end
 
     # Convert to a 0.0..1.0 RGBA array, as used by Texplay.

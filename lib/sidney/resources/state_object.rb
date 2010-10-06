@@ -121,7 +121,7 @@ module RSiD
     def draw(x, y, opacity)
       return if opacity == 0
 
-      color = Gosu::Color.from_rgba(255, 255, 255, opacity)
+      color = Gosu::Color.rgba(255, 255, 255, opacity)
       drawing_mode = glows? ? :additive : :default
 
       image.draw x + x_offset, y + y_offset, Sidney::ZOrder::SCENE, 1, 1, color, drawing_mode
@@ -132,9 +132,9 @@ module RSiD
     public
     def draw_outline(x, y)
       image.redraw_outline unless image.outline
-      image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, Color.from_rgba(255, 255, 0, 155))
+      image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, Color.rgba(255, 255, 0, 155))
 
-      $window.draw_box x, y + 16, 16, 1, Sidney::ZOrder::OUTLINE, nil, Color.from_rgba(0, 255, 0, 155)
+      $window.draw_box x, y + 16, 16, 1, Sidney::ZOrder::OUTLINE, nil, Color.rgba(0, 255, 0, 155)
 
       nil
     end

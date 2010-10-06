@@ -72,7 +72,7 @@ module RSiD
 
     public
     def draw(x, y, opacity, glow)
-      color = Gosu::Color.from_rgba(255, 255, 255, opacity)
+      color = Gosu::Color.rgba(255, 255, 255, opacity)
 
       image.draw x + x_offset, y + y_offset, 0, 1, 1, color
     end

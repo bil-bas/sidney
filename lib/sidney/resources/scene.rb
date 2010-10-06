@@ -21,7 +21,7 @@ module RSiD
     end
 
     def tint
-      Gosu::Color.from_rgba(*self[:tint])
+      Gosu::Color.rgba(*self[:tint])
     end
 
     def tint=(color)

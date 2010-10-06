@@ -55,8 +55,8 @@ class Game < Window
   # Any wider and Gosu will scale the whole window to fit.
   MAX_WIDTH = Gosu::screen_width * 0.9
 
-  CLEAR_COLOR = Color.from_rgb(0, 0, 0)
-  TRANSPARENT_COLOR = Color.from_rgba(0, 0, 0, 0)
+  CLEAR_COLOR = Color.rgb(0, 0, 0)
+  TRANSPARENT_COLOR = Color.rgba(0, 0, 0, 0)
   
   protected
   def initialize(full_screen)
