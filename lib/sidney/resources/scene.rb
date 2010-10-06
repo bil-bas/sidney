@@ -133,6 +133,7 @@ module RSiD
 
     public
     def reorder_layer_cache
+      return cached_layers unless @cached_layers
       @cached_layers = @cached_layers.sort_by.with_index {|k, i| [k.y, k.locked? ? 0 : 1, k.z, i] }
     end
 
