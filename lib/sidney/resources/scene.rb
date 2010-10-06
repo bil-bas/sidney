@@ -18,6 +18,7 @@ module RSiD
       CURRENT_VERSION
     end
 
+    protected
     def initialize(options)
       if options[:state_object_layers]
         @state_object_layers = options[:state_object_layers]
@@ -29,6 +30,7 @@ module RSiD
       super(options)
     end
 
+    public
     def create_or_update
       if @state_object_layers
          @state_object_layers.each do |layer|
@@ -78,6 +80,7 @@ module RSiD
       super(attributes)
     end
 
+    protected
     def to_binary
       layers = @state_object_layers ? @state_object_layers : state_object_layers.order(:z)
 
@@ -95,33 +98,58 @@ module RSiD
       data + super
     end
 
-    def create_image
-      # Todo: Work out why Image.dup is broken.
-      image = Gosu::Image.from_blob(Gosu::Image.from_blob(room.image.to_blob, room.image.width, room.image.height).to_blob,room.image.width, room.image.height)
-      $window.render_to_image(image) do
-        layers = state_object_layers.order(:z, :y).all
+    protected
+    def create_image()
+      image = Image.create(Room::WIDTH, Room::HEIGHT)
+      $window.render_to_image(image) { draw }
+    end
 
-        # Draw foreground objects.
-        layers.each { |layer| layer.draw }
+    # Layers is draw order (back to front).
+    public
+    def cached_layers
+      unless @cached_layers
+        @cached_layers = state_object_layers.includes(:state_object).all
+        reorder_layer_cache
       end
+
+      @cached_layers
     end
 
-    def draw(x, y)
-      @draw_color ||= Color.from_rgba(255, 255, 255, 255)
-      @draw_color.alpha = room_alpha
-      image.draw(x, y, Sidney::ZOrder::SCENE, 1, 1, @draw_color)
+    public
+    def clear_layer_cache
+      @cached_layers = nil
     end
 
+    public
+    def reorder_layer_cache
+      @cached_layers = @cached_layers.sort_by.with_index {|k, i| [k.y, k.locked? ? 0 : 1, k.z, i] }
+    end
+
+    public
+    def draw
+      background = room.image
+      background.draw(0, 0, Sidney::ZOrder::SCENE)
+
+      # Draw foreground objects.
+      cached_layers.each { |layer| layer.draw }
+
+      # Overlay a filter
+      if room_alpha < 255
+        @filter_color ||= Color.from_rgba(0, 0, 0, 255)
+        @filter_color.alpha = 255 - room_alpha
+        $window.draw_box(0, 0, background.width, background.height, Sidney::ZOrder::SCENE_FILTER, nil, @filter_color)
+      end
+
+      nil
+    end
+
+    public
     def hit_object(x, y)
-      found = nil
-
-      state_object_layers.order(:z).reverse_each do |layer|
-        if layer.hit?(x, y) and (found.nil? or layer.y > found.y)
-          found = layer
-        end
+      cached_layers.reverse_each do |layer|
+        return layer if layer.hit?(x, y)
       end
 
-      found
+      nil
     end
   end
 end

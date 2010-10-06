@@ -288,7 +288,7 @@ end
             scale(1, -1) do
                 translate(-left, -top - self.height) do
                     # TODO: Once Gosu is fixed, we can just pass width/height to clip_to
-                    clip_to(left, top, width - 1, height - 1) do
+                    clip_to(left, top, width, height) do
                         # Draw over the background (which is assumed to be blank) with the original image texture,
                         # to get us to the base image.
                         image.draw(0, 0, 0)

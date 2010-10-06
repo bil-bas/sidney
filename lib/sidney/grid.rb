@@ -67,16 +67,13 @@ class Grid
     return unless hit?(x, y)
 
     x, y = screen_to_grid(x, y)
-    found = nil
 
     @scene.hit_object(x, y)
   end
 
   public
   def update
-#    @scene.state_objects.each_with_index do |object, i|
-#      object.update(i)
-#    end
+    @scene.reorder_layer_cache
 
     nil
   end
@@ -87,7 +84,9 @@ class Grid
     $window.translate(@rect.x, @rect.y) do
       $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
         $window.scale(scale) do
-          @scene.draw(@offset_x, @offset_y)
+          $window.translate(@offset_x, @offset_y) do
+            @scene.draw
+          end
         end
 
         @overlay.draw(@offset_x * scale, @offset_y * scale)

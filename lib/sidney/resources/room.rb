@@ -153,13 +153,13 @@ module RSiD
 
     def create_image
       image = Gosu::Image.create(WIDTH, HEIGHT)
-      $window.render_to_image(image) do
-        tile_layers.each do |layer|
-          layer.draw
-        end
-      end
+      $window.render_to_image(image) { draw }
+    end
 
-      image
+    def draw
+      tile_layers.each do |layer|
+        layer.draw
+      end
     end
   end
 end

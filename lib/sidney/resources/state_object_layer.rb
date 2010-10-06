@@ -77,23 +77,35 @@ module RSiD
     end
 
     public
-    def draw_on_image(image)
-      if object = state_object
-        object.draw_on_image(image, x, y, alpha)
-      end
-      image
-    end
-
-    public
-    def draw()
+    def draw
       if object = state_object
         object.draw(x, y, alpha)
+        object.draw_outline(x, y) if @selected
       end
+
       nil
     end
 
+    def rect
+      rect = state_object.rect
+      rect.x += x
+      rect.y += y
+      rect
+   end
+
+    public
     def hit?(x, y)
-      state_object.hit?(x - self.x, y - self.x)
+      state_object.hit?(x - self.x, y - self.y)
+    end
+
+    def ==(other)
+      other.is_a? self.class and
+              scene_id == other.scene_id and
+              state_object_id == other.state_object_id and
+              x == other.x and y == other.y and z = other.z and
+              alpha == other.alpha and locked? == other.locked? and
+              speech_offset_x == other.speech_offset_x and speech_offset_y == other.speech_offset_y and
+              speech_flipped? == other.speech_flipped? and speech_box? == other.speech_box?
     end
   end
 end

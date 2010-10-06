@@ -99,8 +99,10 @@ class EditScene < GuiState
     if @grid.hit?(x, y)
       select(x, y)
 
-      x, y = @grid.screen_to_grid(x, y)
-      @selection.begin_drag(x, y)
+      unless @selection.empty?
+        x, y = @grid.screen_to_grid(x, y)
+        @selection.begin_drag(x, y)
+      end
     end
     
     nil
@@ -118,11 +120,9 @@ class EditScene < GuiState
       if @selection.include? object
         if $window.holding_shift?
           @selection.remove object
-          @grid.scene.redraw
         end
       else
         @selection.add object
-        @grid.scene.redraw
       end
     end
 
@@ -141,7 +141,6 @@ class EditScene < GuiState
       else
         @selection.reset_drag
       end
-      @grid.scene.redraw
     end
 
     nil
@@ -202,15 +201,17 @@ class EditScene < GuiState
   protected
   def delete
     copy
-    @selection.each {|o| @grid.objects.delete(o) }
+    @selection.each {|o| @grid.scene.cached_layers.delete(o) }
     @selection.clear
-    @grid.scene.redraw
 
     nil
   end
 
   protected
   def paste(x, y)
+    x, y = $window.cursor.x, $window.cursor.y
+    return unless @grid.hit?(x, y)
+
     # Work out the overall bounding box for the items on the clipboard.
     rects = @clipboard.items.map { |o| o.rect }
     rect = rects.first.union_all(rects[1..-1])
@@ -226,11 +227,10 @@ class EditScene < GuiState
       copy.x += offset_x
       copy.y += offset_y
       copy.selected = true
-      @grid.objects.push copy
+      copy.z = @grid.scene.cached_layers.size
+      @grid.scene.cached_layers.push copy
       @selection.add copy
     end
-
-    @grid.scene.redraw
 
     nil
   end
@@ -244,9 +244,9 @@ class EditScene < GuiState
 
   public
   def update
-    @grid.update
     x, y = $window.cursor.x, $window.cursor.y
     @selection.update_drag(*@grid.screen_to_grid(x, y)) if @selection.dragging?
+    @grid.update
 
     super
   end

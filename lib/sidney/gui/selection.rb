@@ -88,6 +88,8 @@ class Selection
 
   public
   def update_drag(x, y)
+    x, y = x.round, y.round
+
     # If the mouse has been dragged far enough from the initial click position, then 'pick up' the objects and drag.
     unless moved?
       if distance(@initial_x, @initial_y, x, y) > MIN_DRAG_DISTANCE

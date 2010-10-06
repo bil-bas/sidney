@@ -48,7 +48,8 @@ module RSiD
       attributes[:layer_data] = data[offset, num_layers * layer_size]
       offset += num_layers * layer_size
 
-      attributes[:x_offset] = attributes[:y_offset] = 0
+      attributes[:anchor_x] = Sprite::WIDTH * 6
+      attributes[:anchor_y] = Sprite::HEIGHT * 6
 
       super(data[offset..-1], attributes)
     end
@@ -56,7 +57,9 @@ module RSiD
     def self.default_attributes(attributes = {})
       attributes[:version] = CURRENT_VERSION
       attributes[:layer_data] = ''
-      attributes[:x_offset] = attributes[:y_offset] = 0
+
+      attributes[:anchor_x] = Sprite::WIDTH * 6
+      attributes[:anchor_y] = Sprite::HEIGHT * 6
 
       super(attributes)
     end
@@ -115,34 +118,39 @@ module RSiD
       self.y_offset = crop_box.y - Sprite::HEIGHT * 10
       img = img.crop crop_box
 
-      save! # Ensure that the values for x/y offsets are updated.
+      update # Ensure that the values for x/y offsets are updated.
 
       img
     end
 
-    def draw_on_image(canvas, x, y, opacity)
-      return if opacity == 0
-
-      drawing_mode = glows? ? :additive : :copy
-
-      img = image
-      if opacity < 255
-        img = img.dup
-        img.rect 0, 0, img.width - 1, img.height - 1, fill: true, color_control: { mult: [1, 1, 1, opacity  / 255.0], sync_mode: :no_sync }
-      end
-
-      canvas.splice(img, x + x_offset, y + y_offset, alpha_blend: true, mode: drawing_mode)
-    end
-
+    public
     def draw(x, y, opacity)
       return if opacity == 0
 
       color = Gosu::Color.from_rgba(255, 255, 255, opacity)
       drawing_mode = glows? ? :additive : :default
 
-      image.draw x + x_offset, y + y_offset, 0, 1, 1, color, drawing_mode
+      image.draw x + x_offset, y + y_offset, Sidney::ZOrder::SCENE, 1, 1, color, drawing_mode
+
+      nil
     end
 
+    public
+    def draw_outline(x, y)
+      image.redraw_outline unless image.outline
+      image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, Color.from_rgba(255, 255, 0, 155))
+
+      $window.draw_box x, y + 16, 16, 1, Sidney::ZOrder::OUTLINE, nil, Color.from_rgba(0, 255, 0, 155)
+
+      nil
+    end
+
+    public
+    def rect
+      Rect.new(x_offset, y_offset, image.width, image.height)
+    end
+
+    public
     def hit?(x, y)
       pixel = image.get_pixel(x - x_offset, y - y_offset)
       pixel and pixel[3] != 0
