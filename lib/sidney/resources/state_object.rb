@@ -48,18 +48,12 @@ module RSiD
       attributes[:layer_data] = data[offset, num_layers * layer_size]
       offset += num_layers * layer_size
 
-      attributes[:anchor_x] = Sprite::WIDTH * 6
-      attributes[:anchor_y] = Sprite::HEIGHT * 6
-
       super(data[offset..-1], attributes)
     end
 
     def self.default_attributes(attributes = {})
       attributes[:version] = CURRENT_VERSION
       attributes[:layer_data] = ''
-
-      attributes[:anchor_x] = Sprite::WIDTH * 6
-      attributes[:anchor_y] = Sprite::HEIGHT * 6
 
       super(attributes)
     end

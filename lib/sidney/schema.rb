@@ -110,7 +110,7 @@ ActiveRecord::Schema.define do
     t.string :name, null: false
 
     t.string :room_id, null: false
-    t.integer :room_alpha, null: false
+    t.string :tint, null: false
   end
 
   add_index :scenes, :id, unique: true

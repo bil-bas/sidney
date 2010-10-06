@@ -10,12 +10,27 @@ module RSiD
     has_many :state_object_layers
     has_many :state_objects, through: :state_object_layers
 
+    serialize :tint
+
     CURRENT_VERSION = 2
     DEFAULT_OBJECT_ZERO_FROZEN = false
-    DEFAULT_ROOM_ALPHA = 255
+    DEFAULT_TINT = [0, 0, 0, 0]
 
     def self.current_version
       CURRENT_VERSION
+    end
+
+    def tint
+      Gosu::Color.from_rgba(*self[:tint])
+    end
+
+    def tint=(color)
+      self[:tint] = case color
+      when Gosu::Color
+        [color.red, color.blue, color.green, color.alpha]
+      when Array
+        color
+      end
     end
 
     protected
@@ -50,9 +65,9 @@ module RSiD
       offset += UID_NUM_BYTES
 
 
-      room_alpha, object_zero_frozen, num_objects =  data[offset, 3].unpack("CCC")
+      room_alpha, object_zero_frozen, num_objects = data[offset, 3].unpack("CCC")
       offset += 3
-      attributes[:room_alpha] = room_alpha
+      attributes[:tint] = [0, 0, 0, 255 - room_alpha]
 
       object_data_length = StateObjectLayer.data_length(version)
 
@@ -74,7 +89,7 @@ module RSiD
 
     def self.default_attributes(attributes = {})
       attributes[:room_id] = Room.default.id unless attributes[:room_id]
-      attributes[:room_alpha] = DEFAULT_ROOM_ALPHA unless attributes[:room_alpha]
+      attributes[:tint] = DEFAULT_TINT unless attributes[:tint]
       attributes[:state_object_layers] = [] # TODO: create default player object.
       
       super(attributes)
@@ -85,13 +100,9 @@ module RSiD
       layers = @state_object_layers ? @state_object_layers : state_object_layers.order(:z)
 
       data = [
-        MAGIC_CODE,
-        CURRENT_VERSION,
         room_id,
-        room_alpha,
-        (layers.first and layers.first.locked) ? 1 : 0,
-        layers.size
-      ].pack("a*C#{UID_PACK}CCC")
+        tint.red, tint.green, tint.blue, tint.alpha,
+      ].pack("#{UID_PACK}CCCC")
 
       data += layers.map { |o| o.to_binary }.join
 
@@ -133,11 +144,9 @@ module RSiD
       # Draw foreground objects.
       cached_layers.each { |layer| layer.draw }
 
-      # Overlay a filter
-      if room_alpha < 255
-        @filter_color ||= Color.from_rgba(0, 0, 0, 255)
-        @filter_color.alpha = 255 - room_alpha
-        $window.draw_box(0, 0, background.width, background.height, Sidney::ZOrder::SCENE_FILTER, nil, @filter_color)
+      # Overlay a filter.
+      if tint.alpha > 0
+        $window.draw_box(0, 0, background.width, background.height, Sidney::ZOrder::SCENE_FILTER, nil, tint)
       end
 
       nil
