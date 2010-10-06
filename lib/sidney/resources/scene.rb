@@ -138,7 +138,8 @@ module RSiD
 
     public
     def draw
-      background = room.image
+      # TODO: Ensure that missing assets are shown properly.
+      background = room.image rescue Room.default.image
       background.draw(0, 0, Sidney::ZOrder::SCENE)
 
       # Draw foreground objects.
