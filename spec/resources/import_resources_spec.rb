@@ -13,24 +13,23 @@ describe Resource do
 
   describe "#import_sid" do
     it "should import the correct number of scenes" do
-      Scene.count.should == 2
+      Scene.count.should == 7
     end
 
     it "should import the correct number of rooms" do
-      Room.count.should == 2
+      Room.count.should == 3
     end
 
     it "should import the correct number of tiles" do
-      # Import says there are 13 imported, but it comes out 14. Odd.
-      Tile.count.should == 13
+      Tile.count.should == 21
     end
 
     it "should import the correct number of sprites" do
-      Sprite.count.should == 49
+      Sprite.count.should == 93
     end
 
     it "should import the correct number of state objects" do
-      StateObject.count.should == 27
+      StateObject.count.should == 47
     end
   end
 end
