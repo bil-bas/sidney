@@ -132,9 +132,14 @@ module RSiD
     public
     def draw_outline(x, y)
       image.redraw_outline unless image.outline
-      image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, Color.rgba(255, 255, 0, 155))
 
-      $window.draw_box x, y + 16, 16, 1, Sidney::ZOrder::OUTLINE, nil, Color.rgba(0, 255, 0, 155)
+      # Outline in yellow.
+      color = Color.rgba(255, 255, 0, ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i)
+      image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
+
+      # Anchor in green.
+      color.red = 0
+      $window.draw_box x, y + 16, 16, 1, Sidney::ZOrder::OUTLINE, nil, color
 
       nil
     end
