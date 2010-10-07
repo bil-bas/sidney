@@ -40,6 +40,7 @@ class EditScene < GuiState
       holding_up: -> { @grid.up },
       holding_down: -> { @grid.down },
       s: -> { save_frame if $window.holding_control? },
+      a: -> {select_all if $window.holding_control? },
       m: -> { @selection[0].mirror! if @selection.size == 1 and $window.holding_control? },
       n: -> { @selection[0].flip! if @selection.size == 1 and $window.holding_control? },
       escape: -> { @selection.reset_drag if @selection.dragging? },
@@ -125,6 +126,14 @@ class EditScene < GuiState
         @selection.add object
       end
     end
+
+    nil
+  end
+
+  public
+  def select_all
+    # TODO: Only select the items that are unlocked?
+    @grid.scene.cached_layers.each {|o| @selection.add o unless @selection.include? o }
 
     nil
   end
