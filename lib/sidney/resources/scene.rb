@@ -120,6 +120,8 @@ module RSiD
     def cached_layers
       unless @cached_layers
         @cached_layers = state_object_layers.includes(:state_object).all
+        # TODO: Properly ensure that the player floats to the top.
+        @cached_layers.first.z = 999999 unless @cached_layers.empty?
         reorder_layer_cache
       end
 
