@@ -12,6 +12,19 @@ module RSiD
     GLOW_DISABLED = 0
     DEFAULT_GLOW = GLOW_ENABLED
 
+    attr_writer :selected, :dragging
+    def dragging?; @dragging; end
+    def selected?; @selected; end
+    def hide!; @visible = false; end
+    def show!; @visible = true; end
+    def visible?; @visible; end
+
+    def post_create
+      @dragging = false
+      @selected = false
+      @visible = true
+    end
+
     def self.data_size(version)
       length = case version
       when 1
@@ -40,6 +53,8 @@ module RSiD
       
       glows = (glow_int == GLOW_ENABLED)
 
+      y = -y - 16
+
       super(state_object_id: state_object_id, sprite_id: sprite_id, x: x, y: y, alpha: alpha, glows: glows)
     end
 
@@ -50,26 +65,45 @@ module RSiD
 
     def draw_on_image(image, x, y)
       if object = sprite
-        object.draw_on_image(image, x + self.x, Room::HEIGHT - y - self.y, alpha, glows)
+        object.draw_on_image(image, x + self.x, y + self.y, alpha, glows)
       end
       
       image
     end
 
     def draw(x, y)
-      if object = sprite
-        object.draw(x + self.x, Room::HEIGHT - y - self.y, alpha, glows)
+      @visible = true unless defined? @visible
+      if @visible and object = sprite
+        object.draw(x + self.x, y + self.y, alpha, glows)
+        object.draw_outline(x + self.x, y + self.y) if @selected
       end
 
       nil
     end
 
+    public
+    def rect
+      rect = sprite.rect
+      rect.x += x
+      rect.y += y
+      rect
+   end
+
     def hit?(x, y)
       if object = sprite
-        object.hit?(x + self.x, Room::HEIGHT - y - self.y)
+        object.hit?(x - self.x, y - self.y)
       else
         false
       end
+    end
+
+    public
+    def ==(other)
+      other.is_a? self.class and
+        sprite_id == other.sprite_id and
+        state_object_id == other.state_object_id and
+        x == other.x and y == other.y and
+        glows? == other.glows? and alpha == other.alpha
     end
   end
 end

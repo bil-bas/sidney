@@ -15,6 +15,7 @@ module RSiD
     CURRENT_VERSION = 2
     DEFAULT_OBJECT_ZERO_FROZEN = false
     DEFAULT_TINT = [0, 0, 0, 0]
+    SAVE_ZOOM = 1 # Render to a image this many times larger.
 
     def self.current_version
       CURRENT_VERSION
@@ -163,6 +164,16 @@ module RSiD
       end
 
       nil
+    end
+
+    public
+    def save_frame(file_name)
+      image.as_devil do |devil|
+        if SAVE_ZOOM > 1
+          devil.resize(WIDTH * SAVE_ZOOM, HEIGHT * SAVE_ZOOM, filter: Devil::NEAREST)
+        end
+        devil.save(file_name)
+      end
     end
   end
 end

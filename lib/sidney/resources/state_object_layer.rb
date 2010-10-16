@@ -8,6 +8,9 @@ module RSiD
     attr_writer :selected, :dragging
     def dragging?; @dragging; end
     def selected?; @selected; end
+    def hide!; @visible = false; end
+    def show!; @visible = true; end
+    def visible?; @visible; end
 
     def self.data_length(version)
       case version
@@ -20,7 +23,8 @@ module RSiD
           raise Exception(version.to_s)
         end
     end
-    
+
+    protected
     def initialize(scene_id, version, data, z_depth)
       state_object_id = data.unpack(Resource::UID_PACK)[0]
       offset = Resource::UID_NUM_BYTES
@@ -29,10 +33,13 @@ module RSiD
 
       x, y = data[offset, 8].unpack("NN")
       x += Room::IMPORT_X_OFFSET * Tile::WIDTH
-      y = (Room::HEIGHT - y) + (Room::IMPORT_Y_OFFSET - 3) * Tile::HEIGHT
+      y = (Room::IMPORT_HEIGHT * Tile::HEIGHT) - y
+      y += Room::IMPORT_Y_OFFSET * Tile::HEIGHT
       offset += 8
+
       speech_offset_x, speech_offset_y = data[offset, 8].unpack("NN")
       offset += 8
+
       speech_flipped = data[offset].unpack("C")[0] == 1
       offset += 1
 
@@ -59,11 +66,14 @@ module RSiD
       )
     end
 
+    public
     def post_create
       @dragging = false
       @selected = false
+      @visible = true
     end
 
+    public
     def to_binary
       [
         state_object_id,
@@ -78,7 +88,8 @@ module RSiD
 
     public
     def draw
-      if object = state_object
+      @visible = true unless defined? @visible
+      if @visible and object = state_object
         object.draw(x, y, alpha)
         object.draw_outline(x, y) if @selected
       end
@@ -86,6 +97,14 @@ module RSiD
       nil
     end
 
+    public
+    def draw_layers
+      state_object.draw_layers(x, y)
+
+      nil
+    end
+
+    public
     def rect
       rect = state_object.rect
       rect.x += x
@@ -98,6 +117,12 @@ module RSiD
       state_object.hit?(x - self.x, y - self.y)
     end
 
+    public
+    def hit_sprite(x, y)
+      state_object.hit_sprite(x - self.x, y - self.y)
+    end
+
+    public
     def ==(other)
       other.is_a? self.class and
               scene_id == other.scene_id and

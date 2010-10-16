@@ -1,6 +1,4 @@
 require_relative 'grid_overlay'
-require_relative 'sprite'
-require_relative 'tile'
 
 module Sidney
 class Grid
@@ -10,10 +8,9 @@ class Grid
   HEIGHT = CELL_WIDTH * CELLS_HIGH
   SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
   MARGIN = 4
-  SAVE_ZOOM = 1 # Render to a image this many times larger.
 
   public
-  attr_reader :scale, :base_scale, :rect, :scene
+  attr_reader :scale, :base_scale, :rect
 
   attr_reader :offset_x, :offset_y
 
@@ -57,38 +54,25 @@ class Grid
     @overlay = GridOverlay.new(@rect.width, @rect.height, CELL_WIDTH * @scale)
 
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
-
-    @scene = RSiD::Scene.load('d252be6903bd')
-  end
-
-  # Returns the object that the mouse is over, otherwise nil
-  public
-  def hit_object(x, y)
-    return unless hit?(x, y)
-
-    x, y = screen_to_grid(x, y)
-
-    @scene.hit_object(x, y)
   end
 
   public
-  def update
-    @scene.reorder_layer_cache
-
-    nil
-  end
-
-  public
-  def draw
-    # Draw the buffer and the overlay.
+  def draw_with_respect_to
     $window.translate(@rect.x, @rect.y) do
       $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
         $window.scale(scale) do
           $window.translate(@offset_x, @offset_y) do
-            @scene.draw
+            yield
           end
         end
+      end
+    end
+  end
 
+  public
+  def draw
+    $window.translate(@rect.x, @rect.y) do
+      $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
         @overlay.draw(@offset_x * scale, @offset_y * scale)
       end
     end
@@ -114,17 +98,6 @@ class Grid
   public
   def grid_to_screen(x, y)
     [((x + @offset_x) * @scale) + @rect.x, ((y + @offset_y) * @scale) + @rect.y]
-  end
-
-  public
-  def save_frame(file_name)
-    @scene.image.as_devil do |devil|
-      if SAVE_ZOOM > 1
-        devil.resize(WIDTH * SAVE_ZOOM, HEIGHT * SAVE_ZOOM, filter: Devil::NEAREST)
-      end
-      devil.save(file_name)
-    end
-    nil
   end
 end
 end

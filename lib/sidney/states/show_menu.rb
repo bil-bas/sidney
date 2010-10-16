@@ -36,9 +36,14 @@ class ShowMenu < GuiState
   # Close the menu if the user clicks down outside the menu.
   public
   def mouse_button_down
-    game_state_manager.pop unless @menu.hit?($window.cursor.x, $window.cursor.y)
+    game_state_manager.pop unless @menu.hit?(cursor.x, cursor.y)
     
     nil
+  end
+
+  public
+  def cursor
+    $window.cursor
   end
 
   # Close the menu and register a click if the menu was clicked.
@@ -46,10 +51,16 @@ class ShowMenu < GuiState
   def mouse_button_up
     game_state_manager.pop # Close the menu.
 
-    x, y = $window.cursor.x, $window.cursor.y
+    x, y = cursor.x, cursor.y
     @menu.click(x, y) if @menu.hit?(x, y)
 
     nil
+  end
+
+  public
+  def update
+    $window.cursor.update
+    super
   end
 
   public
@@ -57,6 +68,9 @@ class ShowMenu < GuiState
     game_state_manager.previous.draw
 
     super
+
+    $window.cursor.draw
+    nil
   end
 end
 end

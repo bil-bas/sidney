@@ -7,6 +7,7 @@ module RSiD
     has_many :rooms, through: :tile_layers
 
     DEFAULT_COLOR = [0, 0, 0, 1]
+    HEIGHT = WIDTH = 16
 
     protected
     def self.image_from_color_data(color_data)

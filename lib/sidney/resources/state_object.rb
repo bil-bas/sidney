@@ -10,8 +10,8 @@ module RSiD
     has_many :object_layers
     has_many :scenes, through: :object_layers
     
-    WIDTH = Sprite::WIDTH * 13
-    HEIGHT = Sprite::HEIGHT * 13
+    WIDTH = Sprite::WIDTH * 20
+    HEIGHT = Sprite::HEIGHT * 15
 
     CURRENT_VERSION = 3
 
@@ -93,12 +93,12 @@ module RSiD
     end
 
     def create_image
-      img = Image.create(WIDTH, HEIGHT)
+      img = Image.create(WIDTH, WIDTH)
 
       # Force glow only if ALL sprites glow (only change it if the object glow is unset).
       set_glows = (not glows?)
       sprite_layers.each do |layer|
-        layer.draw_on_image(img, Sprite::WIDTH * 6, Sprite::HEIGHT * 5)
+        layer.draw_on_image(img, Sprite::WIDTH * 10, Sprite::WIDTH * 10)
 
         set_glows &&= layer.glows?
       end
@@ -108,13 +108,12 @@ module RSiD
       crop_box = img.auto_crop_box
       crop_box.width = 1 if crop_box.width == 0
       crop_box.height = 1 if crop_box.height == 0
-      self.x_offset = crop_box.x - Sprite::WIDTH * 6
-      self.y_offset = crop_box.y - Sprite::HEIGHT * 10
-      img = img.crop crop_box
+      self.x_offset = crop_box.x - Sprite::WIDTH * 10
+      self.y_offset = crop_box.y - Sprite::WIDTH * 10
 
       update # Ensure that the values for x/y offsets are updated.
 
-      img
+      img.crop crop_box
     end
 
     public
@@ -139,7 +138,7 @@ module RSiD
 
       # Anchor in green.
       color.red = 0
-      $window.draw_box x, y + 16, 16, 1, Sidney::ZOrder::OUTLINE, nil, color
+      $window.draw_box x, y, 16, 1, Sidney::ZOrder::OUTLINE, nil, color
 
       nil
     end
@@ -153,6 +152,25 @@ module RSiD
     def hit?(x, y)
       pixel = image.get_pixel(x - x_offset, y - y_offset)
       pixel and pixel[3] != 0
+    end
+
+    public
+    def cached_layers
+      @cached_layers ||= sprite_layers.includes(:sprite).all
+    end
+
+    public
+    def draw_layers(x, y)
+      cached_layers.each { |layer| layer.draw(x, y) }
+    end
+
+    public
+    def hit_sprite(x, y)
+      cached_layers.reverse_each do |layer|
+        return layer if layer.hit?(x - x_offset, y - y_offset)
+      end
+
+      nil
     end
   end
 end

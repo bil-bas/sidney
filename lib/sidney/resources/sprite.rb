@@ -13,11 +13,17 @@ module RSiD
 
     DEFAULT_COLOR = [0, 0, 0, 0]
 
+    public
+    def image=(image)
+      cache_image(image)
+    end
+
     def self.attributes_from_color_data(color_data, mask_data)
       image = Image.from_blob(color_data, WIDTH, HEIGHT, caching: true)
 
       # Merge in the alpha values from the mask-data, if any.
       mask_array = mask_data.unpack("C*")
+
       image.each do |c, x, y|
         # Mask is 1 for transparent; 0 for opaque.
         if mask_array[x + y * WIDTH] == 1
@@ -53,6 +59,8 @@ module RSiD
     def self.default_attributes(attributes = {})
       attributes[:x_offset] = 0
       attributes[:y_offset] = 0
+      attributes[:image] = Image.create(1, 1)
+      @@tmp_image = attributes[:image]
 
       super(attributes)
     end
@@ -78,13 +86,30 @@ module RSiD
     end
 
     public
+    def draw_outline(x, y)
+      image.redraw_outline unless image.outline
+
+      # Outline in yellow.
+      color = Color.rgba(255, 255, 0, ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i)
+      image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
+
+      nil
+    end
+
+    public
     def to_tile
       Tile.generate(name: name, image: image, id: id)
     end
 
+    public
     def hit?(x, y)
-      pixel = sprite.image.get_pixel(x + x_offset, y + y_offset)
+      pixel = image.get_pixel(x - x_offset, y - y_offset)
       pixel and pixel[3] != 0
+    end
+
+    public
+    def rect
+      Rect.new(x_offset, y_offset, image.width, image.height)
     end
   end
 end
