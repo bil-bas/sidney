@@ -1,7 +1,12 @@
 #!/usr/bin/env ruby
 
 begin
-  ROOT_PATH = File.dirname(ENV['OCRA_EXECUTABLE'] || File.dirname(File.expand_path(__FILE__)))
+  ROOT_PATH = if ENV['OCRA_EXECUTABLE']
+    File.dirname(File.expand_path(ENV['OCRA_EXECUTABLE']))
+  else
+    File.dirname(File.dirname(File.expand_path(__FILE__)))
+  end
+
   $LOAD_PATH.unshift File.join(ROOT_PATH, 'lib', 'sidney')
 
   LOG_PATH = File.join(ROOT_PATH, 'logs')
