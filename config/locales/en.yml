@@ -38,7 +38,7 @@ en:
 
       Ctrl-C => Copy selected objects.
 
-      Ctrl-V => Copy selected at mouse position.
+      Ctrl-V => Paste object(s) at mouse position.
 
       Ctrl-A => Select all objects.
 
@@ -57,10 +57,44 @@ en:
 
       {{general}}
 
+      LMB => Select sprite (click elsewhere to deselect).
+
+      RMB => Context menu.
+
+      Shift + LMB => Select/deselect sprite. Can multi-select.
+
+      Drag LMB => Move selected sprite (Press Escape to return them to their original positions).
+
+
+      Ctrl-X => Delete selected sprite.
+
+      Ctrl-C => Copy selected sprite.
+
+      Ctrl-V => Paste sprite(s) at mouse position.
+
+      Ctrl-A => Select all sprites.
+
+      Ctrl-E => Edit selected sprite.
+
+      Ctrl-N => Flip sprite vertically.
+
+      Ctrl-M => Mirror sprite horizontally.
+
+
+      Escape => Save and leave editing mode.
+
+  edit_sprite:
+    help:
+      === Editing sprite image ===
+
+
+      {{general}}
 
       LMB => Paint in current colour.
 
       RMB => Sample colour of pixel under mouse cursor.
-      
+
 
       Escape => Save and leave editing mode.
+
+
