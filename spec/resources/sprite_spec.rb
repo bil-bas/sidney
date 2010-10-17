@@ -5,8 +5,8 @@ include Sidney
 
 describe Sprite do
   before :each do
-    @id = '009a8897cf6b'
-    @name = 'grapefruit'
+    @id = '1b463f87d6fe'
+    @name = 'samurai wo'
   end
 
   it_should_behave_like "VisualResource"

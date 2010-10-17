@@ -5,8 +5,8 @@ include Sidney
 
 describe Tile do
   before :each do
-    @id = '0d183059ae8b'
-    @name = 'court'
+    @id = '617ae2c65c39'
+    @name = 'JPpath'
   end
 
   it_should_behave_like "VisualResource"

@@ -5,8 +5,8 @@ include Sidney
 
 describe Scene do
   before :each do
-    @id = 'fb7308b69631'
-    @name = 'eve apple'
+    @id = 'c108bf228e63'
+    @name = 'JPsa1hou2E'
   end
 
   it_should_behave_like "VisualResource"

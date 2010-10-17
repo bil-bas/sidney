@@ -5,8 +5,8 @@ include Sidney
 
 describe Room do
   before :each do
-    @id = '9c70e8396eeb'
-    @name = 'closet az'
+    @id = '3e6b0f7e9868'
+    @name = 'JPhouseTat'
   end
 
   subject { described_class.load(@id) }
