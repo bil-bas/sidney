@@ -22,7 +22,7 @@ module Sidney
     protected
     def edit_sprite
       @edit_sprite ||= EditSprite.new
-      @edit_sprite.sprite = @selection[0]
+      @edit_sprite.init(@selection[0], @object)
       push_game_state @edit_sprite
 
       nil

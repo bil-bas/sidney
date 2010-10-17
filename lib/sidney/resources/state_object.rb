@@ -167,7 +167,7 @@ module Sidney
     public
     def hit_sprite(x, y)
       cached_layers.reverse_each do |layer|
-        return layer if layer.hit?(x - x_offset, y - y_offset)
+        return layer if layer.hit?(x, y)
       end
 
       nil

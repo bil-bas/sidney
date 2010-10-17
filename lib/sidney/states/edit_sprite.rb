@@ -38,12 +38,12 @@ module Sidney
     end
 
     public
-    def sprite=(sprite)
-      @sprite = sprite
+    def init(sprite, object)
+      @sprite, @object = sprite, object
       @sprite.hide!
 
       @image = Image.create(MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT)
-      @image.splice(@sprite.sprite.image, @sprite.x + @sprite.sprite.x_offset - IMAGE_X, @sprite.y + @sprite.sprite.y_offset - IMAGE_Y)
+      @image.splice(@sprite.sprite.image, @object.x + @sprite.x + @sprite.sprite.x_offset - IMAGE_X, @object.y + @sprite.y + @sprite.sprite.y_offset - IMAGE_Y)
 
       @sprite
     end
@@ -125,8 +125,8 @@ module Sidney
 
       # Replace the old image with the temporary one.
       @sprite.sprite.image = @image
-      @sprite.sprite.x_offset = box.x + IMAGE_X - @sprite.x
-      @sprite.sprite.y_offset = box.y + IMAGE_Y - @sprite.y
+      @sprite.sprite.x_offset = box.x + IMAGE_X - @sprite.x - @object.x
+      @sprite.sprite.y_offset = box.y + IMAGE_Y - @sprite.y - @object.y
       #@sprite.sprite.update
 
       @image = nil
