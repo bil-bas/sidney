@@ -1,6 +1,6 @@
 require_relative 'tile'
 
-module RSiD
+module Sidney
   # Tile layer within a Room.
   class TileLayer < ActiveRecord::Base    
     belongs_to :room

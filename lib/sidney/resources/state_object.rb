@@ -2,7 +2,7 @@ require_relative 'visual_resource'
 
 require_relative 'sprite_layer'
 
-module RSiD
+module Sidney
   class StateObject < VisualResource   
     has_many :sprite_layers
     has_many :sprites, through: :sprite_layers

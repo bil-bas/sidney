@@ -1,7 +1,7 @@
 require_relative 'visual_resource_helper'
 
 require 'state_object'
-include RSiD
+include Sidney
 
 describe StateObject do
   before :each do

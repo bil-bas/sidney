@@ -1,7 +1,7 @@
 require_relative 'visual_resource_helper'
 
 require 'room'
-include RSiD
+include Sidney
 
 describe Room do
   before :each do

@@ -171,5 +171,5 @@ class Game < Window
 end
 end
 
-at_exit { $window.exited if $window }
+at_exit { $window.exited if $window and $window.is_a? Sidney::Game }
 

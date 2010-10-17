@@ -9,7 +9,7 @@ require 'state_object_layer'
 require 'tile'
 require 'tile_layer'
 
-include RSiD
+include Sidney
 
 share_examples_for "Resource" do
   before :each do

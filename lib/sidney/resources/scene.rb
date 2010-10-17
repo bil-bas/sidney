@@ -3,7 +3,7 @@ require_relative 'room'
 require_relative 'state_object_layer'
 
 
-module RSiD
+module Sidney
   class Scene < VisualResource  
     belongs_to :room
 

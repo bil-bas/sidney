@@ -3,12 +3,11 @@ require_relative '../helper'
 require 'game'
 require 'import_resources'
 
-include RSiD
-
+module Sidney
 describe Resource do
   before :all do
-    Sidney::Game.new(false)
-    RSiD::Resource.import_sid_resource_cache(CACHE_IN)
+    Game.new(false)
+    Resource.import_sid_resource_cache(CACHE_IN)
   end
 
   describe "#import_sid" do
@@ -32,4 +31,5 @@ describe Resource do
       StateObject.count.should == 47
     end
   end
+end
 end

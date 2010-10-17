@@ -1,6 +1,6 @@
 require_relative 'sprite'
 
-module RSiD
+module Sidney
   # Sprite layer within a StateObject.
   class SpriteLayer < ActiveRecord::Base    
     belongs_to :state_object

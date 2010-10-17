@@ -1,7 +1,7 @@
 require_relative 'visual_resource_helper'
 
 require 'tile'
-include RSiD
+include Sidney
 
 describe Tile do
   before :each do

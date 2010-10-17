@@ -1,6 +1,6 @@
 require_relative 'state_object'
 
-module RSiD
+module Sidney
   class StateObjectLayer < ActiveRecord::Base   
     belongs_to :scene
     belongs_to :state_object

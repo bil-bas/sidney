@@ -5,7 +5,7 @@ require_relative '../database'
 
 require_relative 'resource_manager'
 
-module RSiD
+module Sidney
   # A resource has both a name and a unique identifier based on its data.
   class Resource < ActiveRecord::Base
     @abstract_class = true

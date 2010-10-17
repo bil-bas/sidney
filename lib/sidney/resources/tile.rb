@@ -1,6 +1,6 @@
 require_relative "image_block_resource"
 
-module RSiD
+module Sidney
   # A 16x16 image without transparency, that is contained within a room.
   class Tile < ImageBlockResource
     has_many :tile_layers

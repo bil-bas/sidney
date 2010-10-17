@@ -4,7 +4,7 @@ require 'devil/gosu'
 
 require_relative 'visual_resource'
 
-module RSiD
+module Sidney
   class ImageBlockResource < VisualResource
     @abstract_class = true
 

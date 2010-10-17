@@ -1,7 +1,7 @@
 require_relative 'visual_resource_helper'
 
 require 'sprite'
-include RSiD
+include Sidney
 
 describe Sprite do
   before :each do

@@ -4,7 +4,7 @@ require_relative 'room'
 require_relative 'state_object'
 require_relative 'scene'
 
-module RSiD
+module Sidney
 class Resource
   RESOURCE_TYPES = [Tile, Room, Sprite, StateObject, Scene]
 

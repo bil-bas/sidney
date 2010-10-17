@@ -1,6 +1,6 @@
 require_relative "image_block_resource"
 
-module RSiD
+module Sidney
   # A 16x16 image with transparency, that is contained within an object.
   class Sprite < ImageBlockResource    
     has_many :sprite_layers
@@ -57,8 +57,6 @@ module RSiD
     end
 
     def self.default_attributes(attributes = {})
-      attributes[:x_offset] = 0
-      attributes[:y_offset] = 0
       attributes[:image] = Image.create(1, 1)
       @@tmp_image = attributes[:image]
 

@@ -51,7 +51,7 @@ ActiveRecord::Schema.define do
 
     t.string :name,  null: false
 
-    t.integer :x_offset, :y_offset, null: false
+    t.integer :x_offset, :y_offset, default: 0
   end
 
   add_index :sprites, :id, unique: true

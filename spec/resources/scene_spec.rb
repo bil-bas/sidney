@@ -1,7 +1,7 @@
 require_relative 'visual_resource_helper'
 
 require 'scene'
-include RSiD
+include Sidney
 
 describe Scene do
   before :each do

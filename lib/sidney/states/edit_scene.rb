@@ -39,7 +39,7 @@ module Sidney
       @clipboard = Clipboard.new
       @history = History.new
 
-      @scene = RSiD::Scene.load('d252be6903bd')
+      @scene = Scene.load('d252be6903bd')
 
       nil
     end

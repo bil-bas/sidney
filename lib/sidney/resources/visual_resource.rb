@@ -1,8 +1,8 @@
 require_relative 'resource'
 
 
-module RSiD 
-  class VisualResource < Resource
+module Sidney
+class VisualResource < Resource
     @abstract_class = true
 
     @@cached_images = Hash.new

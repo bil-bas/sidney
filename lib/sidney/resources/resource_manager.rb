@@ -1,7 +1,7 @@
 require 'singleton'
 require 'set'
 
-module RSiD
+module Sidney
   class ResourceManager
     include Singleton
     

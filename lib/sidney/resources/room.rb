@@ -2,7 +2,7 @@ require_relative 'visual_resource'
 require_relative 'tile'
 require_relative 'tile_layer'
 
-module RSiD
+module Sidney
   class Room < VisualResource  
     has_many :tile_layers
     has_many :tiles, :through => :tile_layers
