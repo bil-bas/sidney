@@ -46,6 +46,12 @@ module Sidney
 
     public
     def save_frame
+      # Redraw without any selection outlines shown.
+      selected_objects = @selection.to_a
+      @selection.clear
+      @scene.redraw
+      selected_objects.each {|o| @selection.add o }
+
       @frame_index ||= 0
       @frame_index += 1
       flip_book_dir = File.join(ROOT_PATH, 'flip_books')

@@ -97,7 +97,7 @@ module Sidney
 
       # Force glow only if ALL sprites glow (only change it if the object glow is unset).
       set_glows = (not glows?)
-      sprite_layers.each do |layer|
+      cached_layers.each do |layer|
         layer.draw_on_image(img, Sprite::WIDTH * 10, Sprite::WIDTH * 10)
 
         set_glows &&= layer.glows?

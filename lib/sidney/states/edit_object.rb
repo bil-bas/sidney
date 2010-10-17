@@ -98,7 +98,7 @@ module Sidney
     protected
     def delete
       copy
-      @selection.each {|o| object.cached_layers.delete(o) }
+      @selection.each {|o| object.state_object.cached_layers.delete(o) }
       @selection.clear
 
       nil
@@ -132,6 +132,9 @@ module Sidney
     public
     def save_changes
       # Save the current changes to the object being edited.
+      @selection.clear
+      @object.state_object.redraw
+
       @object.show!
       nil
     end
