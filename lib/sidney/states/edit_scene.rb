@@ -10,7 +10,7 @@ module Sidney
   class EditScene < EditSelectable
     include Log
 
-    attr_reader :grid, :zoom_box, :clipboard
+    attr_reader :grid, :zoom_box, :clipboard, :history
 
     protected
     def initialize
