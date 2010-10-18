@@ -79,7 +79,7 @@ module Sidney
       # Place all items from the clipboard down with the centre of the
       # bounding box at the mouse position.
       x, y = grid.screen_to_grid(x, y)
-      offset_x, offset_y = (x - rect.centerx).round, (y - rect.centery).round
+      offset_x, offset_y = (x - rect.centerx - @object.x).round, (y - rect.centery  - @object.y).round
       @selection.clear
 
       clipboard.items.each do |item|
@@ -87,7 +87,6 @@ module Sidney
         copy.x += offset_x
         copy.y += offset_y
         copy.selected = true
-        #copy.z = @object.cached_layers.size
         @object.state_object.cached_layers.push copy
         @selection.add copy
       end
