@@ -8,6 +8,7 @@ class Grid
   HEIGHT = CELL_WIDTH * CELLS_HIGH
   SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
   MARGIN = 4
+  VIEW_EDGE = 0.5 # Amount of screen to see over the edge.
 
   public
   attr_reader :scale, :base_scale, :rect
@@ -20,21 +21,48 @@ class Grid
   def scroll_step; zoom * 4; end
 
   # Move view-port right one step (scroll background left).
-  def right; if @offset_x > 0 then @offset_x -= scroll_step; end; end
-  def left; if @offset_x < WIDTH then @offset_x += scroll_step; end; end
-  def down; if @offset_y > 0 then @offset_y -= scroll_step; end; end
-  def up; if @offset_y < HEIGHT then @offset_y += scroll_step; end; end
+  def right; @offset_x -= scroll_step; limit_offset; end
+  def left; @offset_x += scroll_step; limit_offset; end
+  def down; @offset_y -= scroll_step; limit_offset; end
+  def up; @offset_y += scroll_step; limit_offset; end
 
   public
-  def scale=(n)
-    if @scale_range.include? n
-      @scale = n.to_f
+  def scale=(value)
+    if @scale_range.include? value
+      # If the mouse is inside the grid, then zoom on that. Otherwise, zoom around the centre of the screen.
+      mouse_x, mouse_y = $window.mouse_x, $window.mouse_y
+      screen_focus_x, screen_focus_y = if hit?(mouse_x, mouse_y)
+        [mouse_x, mouse_y]
+      else
+        [rect.center_x, rect.center_y]
+      end
+
+      old_grid_focus_x, old_grid_focus_y = screen_to_grid(screen_focus_x, screen_focus_y)
+
+      # Zoom in/out.
+      @scale = value.to_f
       @overlay.cell_width = CELL_WIDTH * @scale
+
+      # Scroll the screen until it centres properly.
+      new_grid_focus_x, new_grid_focus_y = screen_to_grid(screen_focus_x, screen_focus_y)
+      @offset_x += new_grid_focus_x - old_grid_focus_x
+      @offset_y += new_grid_focus_y - old_grid_focus_y
+
+      limit_offset
 
       @scale      
     else
       nil
     end
+  end
+
+  # Prevent users from scrolling off the edge of the viewable area.
+  protected
+  def limit_offset
+    @offset_x = [[-WIDTH * ((1 + VIEW_EDGE) - (zoom * @base_scale)), @offset_x].max, WIDTH * VIEW_EDGE].min
+    @offset_y = [[-HEIGHT * ((1 + VIEW_EDGE) - (zoom * @base_scale)), @offset_y].max, HEIGHT * VIEW_EDGE].min
+
+    nil
   end
 
   public

@@ -29,7 +29,7 @@ class GridOverlay
 
     if @visible
       # Single-pixel grid
-      if @width < cell_width * 4
+      if @width < cell_width * 8
         (offset_y..@height).step(@cell_width / 16) do |y|
           $window.draw_line(offset_x, y, PIXEL_COLOR, @width, y, PIXEL_COLOR, Z)
         end
