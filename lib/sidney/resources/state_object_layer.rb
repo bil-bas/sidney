@@ -91,7 +91,10 @@ module Sidney
       @visible = true unless defined? @visible
       if @visible and object = state_object
         object.draw(x, y, alpha)
-        object.draw_outline(x, y) if @selected
+        if @selected
+          object.draw_outline(x, y)
+          object.draw_anchor(x, y)
+        end
       end
 
       nil
@@ -100,6 +103,7 @@ module Sidney
     public
     def draw_layers
       state_object.draw_layers(x, y)
+      state_object.draw_anchor(x, y)
 
       nil
     end

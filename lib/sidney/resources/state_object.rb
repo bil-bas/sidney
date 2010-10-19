@@ -136,8 +136,13 @@ module Sidney
       color = Color.rgba(255, 255, 0, ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i)
       image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
 
+      nil
+    end
+
+    public
+    def draw_anchor(x, y)
       # Anchor in green.
-      color.red = 0
+      color = Color.rgba(0, 255, 0, ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i)
       $window.draw_box x, y, 16, 1, Sidney::ZOrder::OUTLINE, nil, color
 
       nil
