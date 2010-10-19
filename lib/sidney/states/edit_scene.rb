@@ -18,8 +18,12 @@ module Sidney
 
       @grid = Grid.new(($window.height / 300).floor)
 
-      zooms = {0.5 => "50%", 1 => "100%", 2 => "200%", 4 => "400%", 8 => "800%"}
-      @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 20 * @grid.scale, 8 * @grid.scale, 1)
+      values = t 'zoom_combi.values'
+      zooms = [0.5, 1, 2, 4, 8].inject({}) do |hash, value|
+        hash[value] = values[value][:text]
+        hash
+      end
+      @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 20 * @grid.scale, 8 * @grid.scale, 1, tip: t('zoom_combi.tip'))
       zooms.each_pair do |key, value|
         @zoom_box.add(key, value)
       end

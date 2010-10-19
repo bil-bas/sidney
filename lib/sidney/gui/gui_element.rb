@@ -1,17 +1,31 @@
+require_relative '../gosu_ext'
+
 module Sidney
 class GuiElement
   FONT_SIZE = 15
   FONT_NAME = File.join(ROOT_PATH, 'media', 'fonts', 'SFPixelate.ttf')
   PADDING_X, PADDING_Y = 10, 5
   
-  attr_reader :rect, :z
+  attr_reader :rect, :z, :tip
 
   def font; @@font; end
+  def x; rect.x; end
+  def x=(value); rect.x = value; end
+  def y; rect.y; end
+  def y=(value); rect.y = value; end
+  def width; rect.width; end
+  def height; rect.height; end
 
-  def initialize(x, y, width, height, z)
+  def initialize(x, y, width, height, z, options = {})
+    options = {
+      tip: ''
+    }.merge! options
+
     @rect = Rect.new(x, y, width, height)
 
     @z = z
+
+    @tip = options[:tip]
 
     @@font ||= Font.new($window, FONT_NAME, FONT_SIZE)
   end

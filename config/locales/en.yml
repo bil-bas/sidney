@@ -1,5 +1,24 @@
 en:
   window_title: 'Sidney: Story in a Box'
+
+  zoom_combi:
+    tip: Zoom in and out
+    values:
+      0.5:
+        text: 50%
+        tip: Show double size
+      1:
+        text: 100%
+        tip: Show full size
+      2:
+        text: 200%
+        tip: Show half size
+      4:
+        text: 400%
+        tip: Show quarter size
+      8:
+        text: 800%
+        tip: Show eighth size
   
   help: # General help, shown in every mode.
     (Escape to exit this help).
