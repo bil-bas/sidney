@@ -15,6 +15,10 @@ module Sidney
 
     CURRENT_VERSION = 3
 
+    OUTLINE_COLOR = Color.rgb(255, 255, 0) # Outline in yellow.
+    ANCHOR_WIDTH, ANCHOR_HEIGHT = 16, 5
+    ANCHOR_COLOR = Color.rgb(0, 100, 0) # Anchor in dark green.
+
     def num_layers
       sprite_layers.count
     end
@@ -132,8 +136,9 @@ module Sidney
     def draw_outline(x, y)
       image.redraw_outline unless image.outline
 
-      # Outline in yellow.
-      color = Color.rgba(255, 255, 0, ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i)
+
+      color = OUTLINE_COLOR.dup
+      color.alpha = ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i
       image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
 
       nil
@@ -141,9 +146,16 @@ module Sidney
 
     public
     def draw_anchor(x, y)
-      # Anchor in green.
-      color = Color.rgba(0, 255, 0, ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i)
-      $window.draw_box x, y, 16, 1, Sidney::ZOrder::OUTLINE, nil, color
+      # Colour fades down to nothing.
+      top_color = ANCHOR_COLOR.dup
+      top_color.alpha = ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i
+      bottom_color = ANCHOR_COLOR.dup
+      bottom_color.alpha = 0
+      $window.draw_quad(x, y, top_color,
+                        x + ANCHOR_WIDTH, y, top_color,
+                        x + ANCHOR_WIDTH, y + ANCHOR_HEIGHT, bottom_color,
+                        x, y + ANCHOR_HEIGHT, bottom_color,
+                        Sidney::ZOrder::OUTLINE)
 
       nil
     end
