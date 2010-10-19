@@ -4,54 +4,65 @@ require 'event'
 
 module Sidney
 describe Event do
-  before :each do
+  before :all do
     class EventTest
       include Event
-
-      event :pie
-
-      event :frog, :cheese
-    end
-
-    @object = EventTest.new
-  end
-
-  it "should have event publishers and handlers added" do
-    [:pie, :frog, :cheese].each do |event|
-      @object.should respond_to "on_#{event}"
-      @object.should respond_to "publish_#{event}"
     end
   end
 
-  describe "publish_*()" do
+  subject { EventTest.new }
+
+  describe "#subscribe" do
+    it "should add a handler as a block" do
+      subject.subscribe(:frog) { puts "hello" }
+    end
+
+    it "should add a handler as a method" do
+      subject.stub! :handler
+      subject.subscribe(:frog, subject.method(:handler))
+    end
+
+    it "should fail if neither a method or a block is passed" do
+      ->{ subject.subscribe(:frog) }.should raise_error ArgumentError
+    end
+
+    it "should fail if both a method and a block is passed" do
+      subject.stub! :handler
+      ->{ subject.subscribe(:frog, subject.method(:handler)) { } }.should raise_error ArgumentError
+    end
+  end
+
+  describe "#publish" do
     it "should do nothing if there are no handlers" do
-      @object.publish_frog # Just don't raise an error really
+      lambda { subject.send :publish, :frog }.should_not raise_error
     end
 
     it "should pass the object as the first parameter" do
-      @object.on_frog { |object| object.should == @object }
-      @object.publish_frog
+      subject.should_receive(:handler).with(subject)
+      subject.subscribe(:frog, subject.method(:handler))
+      subject.publish :frog
     end
 
-    it "should call all the appropriate handlers, once each" do
-      called = 0
-      @object.on_frog { called += 1 }
-      @object.on_frog { called += 8 }
-      called.should == 0
-      @object.publish_frog
-
-      called.should == 9
+    it "should call all the handlers, once each" do
+      subject.should_receive(:handler1).with(subject)
+      subject.should_receive(:handler2).with(subject)
+      subject.subscribe(:frog, subject.method(:handler1))
+      subject.subscribe(:frog, subject.method(:handler2))
+      subject.publish :frog
     end
 
     it "should pass parameters passed to it" do
-      called = 0
-      @object.on_frog do |object, x, y|
-        object.should == @object
-        called += x + y
-      end
-      @object.publish_frog(1, 2)
+      subject.should_receive(:handler).with(subject, 1, 2)
+      subject.subscribe(:frog, subject.method(:handler))
+      subject.publish :frog, 1, 2
+    end
 
-      called.should == 3
+    it "should only call the handlers requested" do
+      subject.should_receive(:handler1).with(subject)
+      subject.should_not_receive(:handler2)
+      subject.subscribe(:frog, subject.method(:handler1))
+      subject.subscribe(:fish, subject.method(:handler2))
+      subject.publish :frog
     end
   end
 end

@@ -6,8 +6,6 @@ module Sidney
 class CombiBox < GuiElement
   include Event
 
-  event :change
-
   public
   attr_accessor :index
 
@@ -20,7 +18,7 @@ class CombiBox < GuiElement
   def value=(value)
     if @value != value
       @value = value
-      publish_change(@value)
+      publish :change, @value
     end
   end
 
@@ -45,7 +43,7 @@ class CombiBox < GuiElement
     @hover_index = 0
 
     @menu = MenuPane.new(rect.left, rect.bottom + 1, z + 0.01) do |widget|
-      widget.on_select do |widget, value|
+      widget.subscribe :select do |widget, value|
         self.value = value
       end
     end

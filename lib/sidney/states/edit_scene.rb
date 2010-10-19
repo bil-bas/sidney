@@ -23,7 +23,7 @@ module Sidney
       zooms.each_pair do |key, value|
         @zoom_box.add(key, value)
       end
-      @zoom_box.on_change do |widget, value|
+      @zoom_box.subscribe :change do |widget, value|
         @grid.scale = value * @grid.base_scale
       end
 
@@ -106,7 +106,7 @@ module Sidney
           widget.add(:paste, 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not @clipboard.empty?))
           widget.add(:delete, 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
 
-          widget.on_select do |widget, value|
+          widget.subscribe :select do |widget, value|
             case value
               when :delete then delete
               when :copy   then copy

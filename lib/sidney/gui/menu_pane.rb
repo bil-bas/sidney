@@ -5,8 +5,6 @@ module Sidney
 class MenuPane < GuiElement
   include Event
 
-  event :select
-
   class Item
     attr_reader :text, :value, :shortcut
 
@@ -134,7 +132,7 @@ class MenuPane < GuiElement
 
   public
   def click(x, y)
-    publish_select(@items[@index].value) if hit?(x, y) and @items[@index].enabled?
+    publish(:select, @items[@index].value) if hit?(x, y) and @items[@index].enabled?
 
     nil
   end

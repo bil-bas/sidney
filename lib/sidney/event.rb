@@ -1,44 +1,45 @@
 module Sidney
 
-# Adds a method "event" to the class.
-# Usage:
-#   class Cheese
-#     include Event
-#     event :frog, :fish
+# Adds simple event handling methods to an object (subscribe/publish pattern).
 #
+# @example
+#   class JumpingBean
+#     include Event
 #   end
 #
-# Instances would then have public on_frog and on_fish methods (to register handlers) as well as protected
-# publish_frog and publish_fish methods to raise the event.
+#   bean = JumpingBean.new
+#   bean.subscribe :jump do |object, direction, distance|
+#     puts "#{object} jumped #{distance} metres #{direction}"
+#   end
+#
+#   bean.publish :jump, :up, 4
+#
 module Event
-  def self.included(target) # :nodoc:
-    # Add a list of events, by name (Symbol), to be handled by the object.
-    def target.event(*args)
-      args.each do |event|
-        instance_eval do
-          public
-          define_method :"on_#{event}" do |method = nil, &block|
-            raise "Expected proc or block for event handler" unless method or block
-            handlers = instance_variable_get(:"@_#{event}_handlers")
-            unless handlers
-              handlers = []
-              instance_variable_set("@_#{event}_handlers", handlers)
-            end
-            handlers.push(method ? method : block)
+  # @overload subscribe(event, method)
+  #   Add an event handler for an event, using a method.
+  #   @return nil
+  #
+  # @overload subscribe(event, &block)
+  #   Add an event handler for an event, using a block.
+  #   @return nil
+  public
+  def subscribe(event, method = nil, &block)
+    raise ArgumentError, "Expected method or block for event handler" unless !block.nil? ^ !method.nil?
+    @_event_handlers = Hash.new() { |hash, key| hash[key] = [] } unless @_event_handlers
+    @_event_handlers[event].push(method ? method : block)
 
-            nil
-          end
+    nil
+  end
 
-          protected
-          define_method :"publish_#{event}" do |*args|
-            handlers = instance_variable_get(:"@_#{event}_handlers")
-            handlers.each { |handler| handler.call(self, *args) } if handlers
-            
-            nil
-          end
-        end
-      end
-    end
+  # Publish an event to all previously added handlers.
+  # @param [Symbol] event Name of the event to publish.
+  # @param [Array] args Arguments to pass to the event handlers.
+  # @return nil
+  public
+  def publish(event, *args)
+    @_event_handlers[event].each { |handler| handler.call(self, *args) } if @_event_handlers
+
+    nil
   end
 end
 end
