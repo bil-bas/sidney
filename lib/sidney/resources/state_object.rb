@@ -19,6 +19,9 @@ module Sidney
     ANCHOR_WIDTH, ANCHOR_HEIGHT = 16, 5
     ANCHOR_COLOR = Color.rgb(0, 100, 0) # Anchor in dark green.
 
+    public
+    def has_outline?; true; end
+
     def num_layers
       sprite_layers.count
     end
@@ -134,12 +137,9 @@ module Sidney
 
     public
     def draw_outline(x, y)
-      image.redraw_outline unless image.outline
-
-
       color = OUTLINE_COLOR.dup
       color.alpha = ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i
-      image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
+      outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
 
       nil
     end

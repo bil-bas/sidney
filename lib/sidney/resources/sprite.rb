@@ -14,6 +14,9 @@ module Sidney
     DEFAULT_COLOR = [0, 0, 0, 0]
 
     public
+    def has_outline?; true; end
+
+    public
     def image=(image)
       cache_image(image)
     end
@@ -85,11 +88,9 @@ module Sidney
 
     public
     def draw_outline(x, y)
-      image.redraw_outline unless image.outline
-
       # Outline in yellow.
       color = Color.rgba(255, 255, 0, ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i)
-      image.outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
+      outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
 
       nil
     end
