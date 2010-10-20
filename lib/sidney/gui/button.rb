@@ -8,17 +8,17 @@ class Button < GuiElement
   DEFAULT_WIDTH = FONT_SIZE * 6
 
   protected
-  def initialize(x, y, text, options = {})
+  def initialize(parent, text, options = {})
     options = {
             width: DEFAULT_WIDTH
     }.merge! options
 
     @text = text
 
-    width, height = font.text_width(@text) + PADDING_X * 2, FONT_SIZE + PADDING_Y * 2
-    width = [width, options[:width]].max
+    options[:height] = FONT_SIZE + PADDING_Y * 2
+    options[:width] = [font.text_width(@text) + PADDING_X * 2, options[:width]].max
 
-    super(x, y, width, height, ZOrder::GUI, options)
+    super(parent, options)
   end
 
   public

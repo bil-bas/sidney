@@ -1,8 +1,7 @@
 # encoding: utf-8
 
 require_relative 'edit_base'
-require_relative '../gosu_ext/color'
-require_relative '../gui/history'
+require_relative '../gosu_ext'
 require_relative '../log'
 
 module Sidney
@@ -20,7 +19,7 @@ module Sidney
       super()
 
       add_inputs(
-        released_escape: ->{ save_changes; pop_game_state },
+        released_escape: ->{ save_changes; pop_game_state(:setup => false) },
         g: ->{ grid.toggle_overlay if $window.holding_control? },
         f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_sprite.help', general: t('help'))) },
         mouse_wheel_up: ->{ zoom_box.index += 1 },
@@ -28,12 +27,8 @@ module Sidney
         holding_left: ->{ grid.left },
         holding_right: ->{ grid.right },
         holding_up: ->{ grid.up },
-        holding_down: ->{ grid.down },
-        f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_sprite.help', general: t('help'))) }
+        holding_down: ->{ grid.down }
       )
-
-      add_element previous_game_state.grid
-      add_element previous_game_state.zoom_box
 
       @draw_color = INITIAL_DRAW_COLOR
 
@@ -54,7 +49,21 @@ module Sidney
     public
     def setup
       log.info { "Started editing sprite image" }
-      add_element(zoom_box) unless @elements.include? zoom_box
+      old_grid = previous_game_state.grid
+      @zoom_box.value = previous_game_state.zoom_box.value
+      @grid.offset_x = old_grid.offset_x
+      @grid.offset_y = old_grid.offset_y
+
+      nil
+    end
+
+    public
+    def finalize
+      old_grid = previous_game_state.grid
+      previous_game_state.zoom_box.value = @zoom_box.value
+      old_grid.offset_x = @grid.offset_x
+      old_grid.offset_y = @grid.offset_y
+
       nil
     end
 
@@ -80,11 +89,15 @@ module Sidney
       nil
     end
 
+    protected
+    def draw_background
+      @transparent_large.draw(((grid.offset_x % Grid::CELL_WIDTH) - Grid::CELL_WIDTH - grid.offset_x),
+                               ((grid.offset_y % Grid::CELL_HEIGHT) - Grid::CELL_HEIGHT - grid.offset_y),
+                               0, 4, 4, Color.rgba(255, 255, 255, 150))
+    end
+
     public
     def draw
-      previous_game_state.draw
-      $window.flush # Ensure that all assets drawn by the previous mode are rendered.
-
       unless @transparent_small
         row = [[80, 80, 80, 255], [120, 120, 120, 255]]
         blob = [row, row.reverse]
@@ -97,11 +110,17 @@ module Sidney
       end
 
       grid.draw_with_respect_to do
-        @transparent_large.draw(((grid.offset_x % Grid::CELL_WIDTH) - Grid::CELL_WIDTH - grid.offset_x),
-                               ((grid.offset_y % Grid::CELL_HEIGHT) - Grid::CELL_HEIGHT - grid.offset_y),
-                               100000, 4, 4, Color.rgba(255, 255, 255, 150))
+        previous_game_state.previous_game_state.scene.draw
+        flush
+        draw_background
+        flush
 
-        @image.draw(IMAGE_X, IMAGE_Y, 100001)
+        previous_game_state.object.draw_layers
+        flush
+        draw_background
+        flush
+
+        @image.draw(IMAGE_X, IMAGE_Y, 0)
       end
 
       # Draw a transparent checkerboard, then draw the colour on top of that.
@@ -109,6 +128,8 @@ module Sidney
       x, y = rect.right + 10, rect.top + 50
       @transparent_small.draw x, y, ZOrder::GUI, 25, 25
       $window.draw_box x, y, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_texplay(@draw_color)
+
+      GuiElement.font.draw("Sprite: '#{@sprite.sprite.name}' [#{@sprite.sprite.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end

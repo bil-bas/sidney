@@ -17,7 +17,7 @@ class ToolTip < GuiElement
     x = [x, $window.width - width - PADDING_X].min
     y = [y, $window.height - height - PADDING_Y].min
 
-    super(x, y, width, height, ZOrder::TOOL_TIP)
+    super(nil, x: x, y: y, width: width, height: height, z: ZOrder::TOOL_TIP)
   end
 
   public

@@ -16,18 +16,19 @@ class Grid < GuiElement
 
   attr_reader :offset_x, :offset_y
 
-  attr_writer :offset_x, :offset_y
-
   attr_writer :tip_proxy
 
   def zoom; 1.0 / @scale; end
   def scroll_step; zoom * 4; end
 
+  def offset_x=(value); @offset_x = value; limit_offset; end
+  def offset_y=(value); @offset_y = value; limit_offset; end
+
   # Move view-port right one step (scroll background left).
-  def right; @offset_x -= scroll_step; limit_offset; end
-  def left; @offset_x += scroll_step; limit_offset; end
-  def down; @offset_y -= scroll_step; limit_offset; end
-  def up; @offset_y += scroll_step; limit_offset; end
+  def right; self.offset_x -= scroll_step; end
+  def left; self.offset_x += scroll_step; end
+  def down; self.offset_y -= scroll_step; end
+  def up; self.offset_y += scroll_step; end
 
   public
   def scale=(value)
@@ -79,7 +80,7 @@ class Grid < GuiElement
   end
 
   protected
-  def initialize(scale)
+  def initialize(parent, scale)
     @base_scale = @scale = scale.to_f
 
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
@@ -90,7 +91,7 @@ class Grid < GuiElement
 
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
 
-    super(x, y, width, height, 0)
+    super(parent, x: x, y: y, width: width, height: height)
   end
 
   public

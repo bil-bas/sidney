@@ -87,7 +87,7 @@ class Image
   public
   def crop(box)
     if (box.width < width and box.height <= height) or (box.width <= width and box.height < height)
-      cropped = Image.create(box.width, box.height)
+      cropped = Image.create([box.width, 1].max, [box.height, 1].max)
       cropped.splice self, 0, 0, crop: [box.x, box.y, box.right, box.bottom]
       cropped
     else

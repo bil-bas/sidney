@@ -2,6 +2,8 @@ require_relative '../gosu_ext'
 require_relative '../event'
 
 module Sidney
+# An element within the GUI environment.
+# @abstract
 class GuiElement
   include Event
 
@@ -11,6 +13,8 @@ class GuiElement
   
   attr_reader :rect, :z, :tip
 
+  attr_accessor :parent
+
   def font; @@font; end
   def x; rect.x; end
   def x=(value); rect.x = value; end
@@ -18,19 +22,27 @@ class GuiElement
   def y=(value); rect.y = value; end
   def width; rect.width; end
   def height; rect.height; end
+  def self.font; @@font; end
 
-  def initialize(x, y, width, height, z, options = {})
+  def initialize(parent, options = {})
     options = {
+      x: 0,
+      y: 0,
+      z: 0,
+      width: 0,
+      height: 0,
       tip: ''
     }.merge! options
 
-    @rect = Rect.new(x, y, width, height)
+    @parent = parent
 
-    @z = z
-
+    @rect = Rect.new(options[:x], options[:y], options[:width], options[:height])
+    @z = options[:z]
     @tip = options[:tip]
 
     @@font ||= Font.new($window, FONT_NAME, FONT_SIZE)
+
+    @parent.add self if @parent
 
     yield self if block_given?
   end

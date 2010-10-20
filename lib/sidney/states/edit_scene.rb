@@ -1,9 +1,5 @@
 # encoding: utf-8
 
-require_relative '../gui/history'
-require_relative '../gui/clipboard'
-require_relative '../gui/button'
-
 require_relative 'edit_selectable'
 require_relative 'edit_object'
 
@@ -11,34 +7,11 @@ module Sidney
   class EditScene < EditSelectable
     include Log
 
-    INITIAL_ZOOM = 1
-
-    attr_reader :grid, :zoom_box, :clipboard, :history
+    attr_reader :clipboard, :history, :scene
 
     protected
     def initialize
       super
-
-      @grid = Grid.new(($window.height / 300).floor)
-      add_element @grid
-
-      values = t 'zoom_combi.values'
-      zooms = [0.5, 1, 2, 4, 8].inject({}) do |hash, value|
-        hash[value] = values[value][:text]
-        hash
-      end
-      @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, INITIAL_ZOOM, tip: t('zoom_combi.tip')) do |widget|
-        zooms.each_pair do |key, value|
-          widget.add(key, value)
-        end
-        widget.subscribe :change do |widget, value|
-          @grid.scale = value * @grid.base_scale
-        end
-
-        add_element(widget)
-      end
-
-      @font = Font.new($window, GuiElement::FONT_NAME, GuiElement::FONT_SIZE)
 
       add_inputs(
         s: ->{ save_frame if $window.holding_control? },
@@ -80,7 +53,7 @@ module Sidney
     def edit
       @edit_object ||= EditObject.new
       @edit_object.object = @selection[0]
-      push_game_state @edit_object
+      push_game_state @edit_object, finalize: false
 
       nil
     end
@@ -115,7 +88,7 @@ module Sidney
       return if @selection.dragging?
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
-        MenuPane.new(x, y) do |widget|
+        MenuPane.new(x: x, y: y) do |widget|
           widget.add(:edit, 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
           widget.add(:mirror, 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
           widget.add(:flip, 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
@@ -195,15 +168,7 @@ module Sidney
         end
       end
 
-      x, y = cursor.x, cursor.y
-      if grid.hit?(x, y)
-        x, y = grid.screen_to_grid(x, y)
-        x, y = x.to_i, y.to_i
-      else
-        x, y = 'x', 'y'
-      end
-
-      @font.draw("(#{x}, #{y}) ('#{@scene.name}' [#{@scene.id}] #{current_game_state}", 0, $window.height - 25, ZOrder::GUI)
+      GuiElement.font.draw("Scene: '#{@scene.name}' [#{@scene.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end

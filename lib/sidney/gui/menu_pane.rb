@@ -21,7 +21,9 @@ class MenuPane < GuiElement
     # * +:shortcut+ - [String]
     protected
     def initialize(value, text, options = {})
-      options = {enabled: true}.merge(options)
+      options = {
+        enabled: true
+      }.merge! options
 
       @value, @text = value, text
       @enabled = [true, false].include?(options[:enabled]) ? options[:enabled] : true
@@ -37,7 +39,11 @@ class MenuPane < GuiElement
   def line_height; FONT_SIZE + PADDING_Y * 2; end
   
   public
-  def initialize(x, y, options = {})
+  def initialize(options = {})
+    options = {
+      z: ZOrder::MENU
+    }.merge! options
+
     @items = []
 
     @background_color = 0xff333333
@@ -46,7 +52,7 @@ class MenuPane < GuiElement
     
     @index = nil # The index of the item hovered over.
 
-    super(x, y, 0, 0, ZOrder::MENU)
+    super(nil, options)
   end
 
   def index(value)

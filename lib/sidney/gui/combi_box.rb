@@ -28,27 +28,33 @@ class CombiBox < GuiElement
     end
   end
 
+  # @option options [] :width
+  # @option options [] :value
   protected
-  def initialize(x, y, initial_value, options = {})
+  def initialize(parent, options = {})
     options = {
-            width: DEFAULT_WIDTH
+      x: 0,
+      y: 0,
+      height: FONT_SIZE + PADDING_Y * 2,
+      width: 0
     }.merge! options
 
-    @value = initial_value
+    options[:width] = [options[:width], DEFAULT_WIDTH].max
+
+    @value = options[:value]
 
     @border_color = 0xffffffff
     @background_color = 0xff666666
     
     @hover_index = 0
 
-    height = FONT_SIZE + PADDING_Y * 2
-    @menu = MenuPane.new(x, y + height) do |widget|
+    @menu = MenuPane.new do |widget|
       widget.subscribe :select do |widget, value|
         self.value = value
       end
     end
 
-    super(x, y, options[:width], height, ZOrder::GUI, options)
+     super(parent, options)
   end
 
   public
@@ -58,18 +64,18 @@ class CombiBox < GuiElement
 
   public
   def draw
-    $window.draw_box(rect.x, rect.y, rect.width, rect.height, z, @border_color, @background_color)
-    font.draw(text, rect.x + PADDING_X, rect.y + ((rect.height - FONT_SIZE) / 2).floor, z)
+    $window.draw_box(x, y, width, height, z, @border_color, @background_color)
+    font.draw(text, x + PADDING_X, y + ((height - FONT_SIZE) / 2).floor, z)
 
     nil
   end
 
   public
   def click
-    p "clicking #{@menu} #{@menu.height}"
-    p $window.game_state_manager.current_game_state
+    @menu.x = x
+    @menu.y = y + height + 1
     $window.game_state_manager.current_game_state.show_menu @menu
-    p "clicked"
+
     nil
   end
 end

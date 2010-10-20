@@ -1,4 +1,4 @@
-require_relative "../gui/tool_tip"
+require_relative '../gui'
 
 module Sidney
   class GuiState < GameState
@@ -9,7 +9,7 @@ module Sidney
       :mouse_wheel_up, :mouse_wheel_down,
     ]
 
-    attr_reader :elements
+    attr_reader :container
 
     # Will implement these later.
     private
@@ -26,7 +26,8 @@ module Sidney
 
     protected
     def initialize
-      @elements = []
+      @container = VerticalPacker.new(nil)
+
       @mouse_x, @mouse_y = 0, 0
 
       super()
@@ -39,18 +40,6 @@ module Sidney
       @mouse_moved_at = Time.now
     end
 
-    public
-    def add_element(element)
-      @elements << element
-      nil
-    end
-
-    public
-    def remove_element(element)
-      @elements.delete element
-      nil
-    end
-
     # Internationalisation helper.
     public
     def t(*args); I18n.t(*args); end
@@ -61,7 +50,11 @@ module Sidney
 
       # Maintain a record of which element we are hovering over, so we
       # can send enter/leave events.
-      new_mouse_over = @elements.reverse.find { |element| element.hit? x, y }
+      if @menu
+        new_mouse_over = @menu if @menu.hit? x, y
+      end
+
+      new_mouse_over = @container.hit_element(x, y) unless new_mouse_over
 
       if new_mouse_over
         new_mouse_over.enter if new_mouse_over != @mouse_over
@@ -77,7 +70,6 @@ module Sidney
         if @mouse_over and (not @tool_tip) and (Time.now - @mouse_moved_at) > tool_tip_delay
           if text = @mouse_over.tip and not text.empty?
             @tool_tip = ToolTip.new(text)
-            add_element @tool_tip
           end
         end
       else
@@ -87,14 +79,18 @@ module Sidney
 
       @mouse_x, @mouse_y = x, y
 
-      @elements.each { |e| e.update }
+      @container.update
+      @menu.update if @menu
+      @tool_tip.update if @tool_tip
 
       super
     end
 
     public
     def draw
-      @elements.each { |e| e.draw }
+      @container.draw
+      @menu.draw if @menu
+      @tool_tip.draw if @tool_tip
 
       nil
     end
@@ -113,21 +109,17 @@ module Sidney
     public
     def show_menu(menu)
       hide_menu if @menu
-
       @menu = menu
-      add_element menu
 
       nil
     end
 
-    # @return [MenuPane, nil] Menu that was hidden, if any.
+    # @return nil
     public
     def hide_menu
-      remove_element @menu
-      menu = @menu
       @menu = nil
 
-      menu
+      nil
     end
 
     public
@@ -159,11 +151,14 @@ module Sidney
     # Hide the tool-tip, if any.
     protected
     def clear_tip
-      remove_element @tool_tip if @tool_tip
       @tool_tip = nil
       @mouse_moved_at = Time.now
 
       nil
+    end
+
+    def flush
+      $window.flush
     end
   end
 end

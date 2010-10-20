@@ -18,26 +18,21 @@ module Sidney
         f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) }
       )
 
-      add_element previous_game_state.grid
-      add_element previous_game_state.zoom_box
-
-      @save_button = Sidney::Button.new(662, 120, t('edit_object.save_button.text'),
+      @save_button = Sidney::Button.new(side_bar, t('edit_object.save_button.text'),
                                         tip: t('edit_object.save_button.tip')) do |button|
         button.subscribe :click, method(:save)
-        add_element(button)
       end
 
-      @save_copy_button = Sidney::Button.new(662, 150, t('edit_object.save_copy_button.text'),
+      @save_copy_button = Sidney::Button.new(side_bar, t('edit_object.save_copy_button.text'),
                                              tip: t('edit_object.save_copy_button.tip')) do |button|
         button.subscribe :click, method(:save_copy)
-        add_element(button)
       end
     end
 
     protected
     def save(*args)
       save_changes
-      pop_game_state
+      pop_game_state(:setup => false)
     end
 
     protected
@@ -49,7 +44,7 @@ module Sidney
     def edit
       @edit_sprite ||= EditSprite.new
       @edit_sprite.init(@selection[0], @object)
-      push_game_state @edit_sprite
+      push_game_state @edit_sprite, finalize: false
 
       nil
     end
@@ -67,7 +62,7 @@ module Sidney
       return if @selection.dragging?
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
-        MenuPane.new(x, y) do |widget|
+        MenuPane.new(x: x, y: y) do |widget|
           widget.add(:edit, 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
           widget.add(:mirror, 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
           widget.add(:flip, 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
@@ -132,7 +127,21 @@ module Sidney
     public
     def setup
       log.info { "Started editing object" }
-      add_element(zoom_box) unless @elements.include? zoom_box
+      old_grid = previous_game_state.grid
+      @zoom_box.value = previous_game_state.zoom_box.value
+      @grid.offset_x = old_grid.offset_x
+      @grid.offset_y = old_grid.offset_y
+
+      nil
+    end
+
+    public
+    def finalize
+      old_grid = previous_game_state.grid
+      previous_game_state.zoom_box.value = @zoom_box.value
+      old_grid.offset_x = @grid.offset_x
+      old_grid.offset_y = @grid.offset_y
+
       nil
     end
 
@@ -176,12 +185,12 @@ module Sidney
     # @return nil
     public
     def draw
-      previous_game_state.draw
-      $window.flush # Ensure that all assets drawn by the previous mode are rendered.
-
       grid.draw_with_respect_to do
+        previous_game_state.scene.draw
         @object.draw_layers
       end
+
+      GuiElement.font.draw("Object: '#{@object.state_object.name}' [#{@object.state_object.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end
