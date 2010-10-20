@@ -9,6 +9,9 @@ module Sidney
   # A resource has both a name and a unique identifier based on its data.
   class Resource < ActiveRecord::Base
     @abstract_class = true
+
+    RESOURCE_DIR = File.join(ROOT_PATH, 'resources')
+    CACHE_DIR = File.join(ROOT_PATH, 'cache')
     
     NAME_LENGTH = 10
     DEFAULT_NAME = "default"

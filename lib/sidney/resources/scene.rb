@@ -21,6 +21,9 @@ module Sidney
       CURRENT_VERSION
     end
 
+    public
+    def composed_image?; true; end
+
     def tint
       Gosu::Color.rgba(*self[:tint])
     end

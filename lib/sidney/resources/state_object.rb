@@ -22,6 +22,9 @@ module Sidney
     public
     def has_outline?; true; end
 
+    public
+    def composed_image?; true; end
+
     def num_layers
       sprite_layers.count
     end

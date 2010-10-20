@@ -24,6 +24,9 @@ module Sidney
     BLOCKED = 1
     DEFAULT_WALLS = false
 
+    public
+    def composed_image?; true; end
+
     # @param [Hash] options
     # @option options [String] :name Name of the room
     # @option options [Array<String>] :tile_ids List of uids

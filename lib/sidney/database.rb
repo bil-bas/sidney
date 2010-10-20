@@ -2,6 +2,7 @@ require 'active_record'
 require 'activerecord-import'
 require 'logger'
 require 'sqlite3'
+require 'fileutils'
 
 require_relative 'log'
 
@@ -10,6 +11,7 @@ ActiveRecord::LogSubscriber.colorize_logging = false
 ActiveRecord::Base.logger.level = Logger::INFO # Or ::DEBUG
 
 file = File.join(ROOT_PATH, 'resources', 'database.sqlite3')
+FileUtils.mkdir_p File.dirname(file)
 database_exists = File.exists? file
 
 ActiveRecord::Base.establish_connection(
