@@ -1,7 +1,8 @@
+require_relative 'gui/gui_element'
 require_relative 'grid_overlay'
 
 module Sidney
-class Grid
+class Grid < GuiElement
   CELLS_WIDE, CELLS_HIGH = 20, 15
   CELL_WIDTH = CELL_HEIGHT = 16
   WIDTH = CELL_WIDTH * CELLS_WIDE
@@ -16,6 +17,8 @@ class Grid
   attr_reader :offset_x, :offset_y
 
   attr_writer :offset_x, :offset_y
+
+  attr_writer :tip_proxy
 
   def zoom; 1.0 / @scale; end
   def scroll_step; zoom * 4; end
@@ -66,6 +69,11 @@ class Grid
   end
 
   public
+  def tip
+    $window.current_game_state.grid_tip
+  end
+
+  public
   def hit?(x, y)
     @rect.collide_point?(x, y)
   end
@@ -78,10 +86,11 @@ class Grid
 
     x, y = (@base_scale * MARGIN).to_i, (@base_scale * MARGIN).to_i
     width, height = (WIDTH * @base_scale).to_i, (HEIGHT * @base_scale).to_i
-    @rect = Rect.new(x, y, width, height)
-    @overlay = GridOverlay.new(@rect.width, @rect.height, CELL_WIDTH * @scale)
+    @overlay = GridOverlay.new(width, height, CELL_WIDTH * @scale)
 
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
+
+    super(x, y, width, height, 0)
   end
 
   public

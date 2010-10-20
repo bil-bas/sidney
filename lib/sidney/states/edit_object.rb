@@ -14,13 +14,39 @@ module Sidney
       super
 
       add_inputs(
-        released_escape: ->{ save_changes; pop_game_state },
+        released_escape: :save,
         f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) }
       )
+
+      add_element previous_game_state.grid
+      add_element previous_game_state.zoom_box
+
+      @save_button = Sidney::Button.new(662, 120, t('edit_object.save_button.text'),
+                                        tip: t('edit_object.save_button.tip')) do |button|
+        button.subscribe :click, method(:save)
+        add_element(button)
+      end
+
+      @save_copy_button = Sidney::Button.new(662, 150, t('edit_object.save_copy_button.text'),
+                                             tip: t('edit_object.save_copy_button.tip')) do |button|
+        button.subscribe :click, method(:save_copy)
+        add_element(button)
+      end
     end
 
     protected
-    def edit_sprite
+    def save(*args)
+      save_changes
+      pop_game_state
+    end
+
+    protected
+    def save_copy(*args)
+      save # TODO: Actually make this do something different.
+    end
+
+    protected
+    def edit
       @edit_sprite ||= EditSprite.new
       @edit_sprite.init(@selection[0], @object)
       push_game_state @edit_sprite
@@ -41,7 +67,7 @@ module Sidney
       return if @selection.dragging?
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
-        MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
+        MenuPane.new(x, y) do |widget|
           widget.add(:edit, 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
           widget.add(:mirror, 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
           widget.add(:flip, 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
@@ -55,13 +81,13 @@ module Sidney
               when :delete then delete
               when :copy   then copy
               when :paste  then paste(x, y) # Paste at position the menu was opened, not where the mouse was just clicked.
-              when :edit   then edit_sprite
+              when :edit   then edit
               when :flip   then @selection[0].flip!
               when :mirror then @selection[0].mirror!
             end
           end
 
-          push_game_state ShowMenu.new(widget)
+          show_menu widget
         end
       end
 
@@ -106,7 +132,7 @@ module Sidney
     public
     def setup
       log.info { "Started editing object" }
-
+      add_element(zoom_box) unless @elements.include? zoom_box
       nil
     end
 
@@ -136,6 +162,15 @@ module Sidney
 
       @object.show!
       nil
+    end
+
+    public
+    def grid_tip
+      if sprite_layer = hit_object(cursor.x, cursor.y)
+        sprite_layer.sprite.name
+      else
+        nil
+      end
     end
 
     # @return nil

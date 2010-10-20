@@ -1,6 +1,5 @@
 require_relative '../gui/selection'
 require_relative 'gui_state'
-require_relative 'show_menu'
 
 module Sidney
   # @abstract
@@ -14,10 +13,10 @@ module Sidney
 
       add_inputs(
         g: -> { grid.toggle_overlay if $window.holding_control? },
-        holding_left: -> { grid.left },
-        holding_right: -> { grid.right },
-        holding_up: -> { grid.up },
-        holding_down: -> { grid.down },
+        holding_left: -> { clear_tip; grid.left },
+        holding_right: -> { clear_tip; grid.right },
+        holding_up: -> { clear_tip; grid.up },
+        holding_down: -> { clear_tip; grid.down },
         m: -> { @selection[0].mirror! if @selection.size == 1 and $window.holding_control? },
         n: -> { @selection[0].flip! if @selection.size == 1 and $window.holding_control? },
         z: lambda do
@@ -30,6 +29,11 @@ module Sidney
            end
         end
       )
+    end
+
+    public
+    def grid_tip
+      nil
     end
 
     public

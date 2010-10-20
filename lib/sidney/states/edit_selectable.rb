@@ -2,7 +2,6 @@ require_relative '../gui/combi_box'
 require_relative '../gui/selection'
 
 require_relative 'edit_base'
-require_relative 'show_menu'
 
 module Sidney
   # @abstract
@@ -20,7 +19,7 @@ module Sidney
         a: -> { select_all if $window.holding_control? },
         escape: -> { @selection.reset_drag if @selection.dragging? },
         delete: -> { delete unless @selection.empty? },
-        e: -> { edit_object if $window.holding_control? and @selection.size == 1 },
+        e: -> { edit if $window.holding_control? and @selection.size == 1 },
         x: -> { delete if $window.holding_control? and not @selection.empty? },
         c: -> { copy if $window.holding_control? and not @selection.empty? },
         v: -> { paste($window.mouse_x, $window.mouse_y) if $window.holding_control? and not clipboard.empty? }
@@ -31,6 +30,8 @@ module Sidney
 
     public
     def left_mouse_button
+      return if super == :handled
+
       x, y = cursor.x, cursor.y
       if grid.hit?(x, y)
         select(x, y)
@@ -46,9 +47,9 @@ module Sidney
 
     public
     def released_left_mouse_button
-      x, y = cursor.x, cursor.y
+      super
 
-      zoom_box.click(x, y)
+      x, y = cursor.x, cursor.y
 
       if @selection.dragging?
         if grid.hit?(x, y)
@@ -89,10 +90,6 @@ module Sidney
       select(x, y) if grid.hit?(x, y)
 
       nil
-    end
-
-    public
-    def holding_right_mouse_button
     end
 
     protected

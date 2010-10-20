@@ -32,6 +32,9 @@ module Sidney
         f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_sprite.help', general: t('help'))) }
       )
 
+      add_element previous_game_state.grid
+      add_element previous_game_state.zoom_box
+
       @draw_color = INITIAL_DRAW_COLOR
 
       nil
@@ -51,7 +54,7 @@ module Sidney
     public
     def setup
       log.info { "Started editing sprite image" }
-
+      add_element(zoom_box) unless @elements.include? zoom_box
       nil
     end
 

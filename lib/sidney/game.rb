@@ -34,7 +34,7 @@ include Chingu
 module Sidney
 # Z-order of all elements of the game.
 module ZOrder
-  SCENE, GUI, SCENE_FILTER, OUTLINE, GRID_OVERLAY, DIALOG, FPS, TOOL_TIP, CURSOR = (0..1000).to_a
+  SCENE, GUI, SCENE_FILTER, OUTLINE, GRID_OVERLAY, DIALOG, MENU, FPS, TOOL_TIP, CURSOR = (0..1000).to_a
 end
 
 require_relative 'log'

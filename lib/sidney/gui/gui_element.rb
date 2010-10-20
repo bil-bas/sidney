@@ -1,7 +1,10 @@
 require_relative '../gosu_ext'
+require_relative '../event'
 
 module Sidney
 class GuiElement
+  include Event
+
   FONT_SIZE = 15
   FONT_NAME = File.join(ROOT_PATH, 'media', 'fonts', 'SFPixelate.ttf')
   PADDING_X, PADDING_Y = 10, 5
@@ -28,6 +31,8 @@ class GuiElement
     @tip = options[:tip]
 
     @@font ||= Font.new($window, FONT_NAME, FONT_SIZE)
+
+    yield self if block_given?
   end
 
   # Check if a point (screen coordinates) is over the element.
@@ -53,7 +58,7 @@ class GuiElement
   end
 
   # Clicked the mouse button (usually only the left one) on the element.
-  def click(x, y) 
+  def click
     nil
   end
 

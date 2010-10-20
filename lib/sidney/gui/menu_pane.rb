@@ -1,10 +1,7 @@
 require_relative 'gui_element'
-require_relative '../event'
 
 module Sidney
 class MenuPane < GuiElement
-  include Event
-
   class Item
     attr_reader :text, :value, :shortcut
 
@@ -40,9 +37,7 @@ class MenuPane < GuiElement
   def line_height; FONT_SIZE + PADDING_Y * 2; end
   
   public
-  def initialize(x, y, z, options = {})
-    super(x, y, 0, 0, z)
-
+  def initialize(x, y, options = {})
     @items = []
 
     @background_color = 0xff333333
@@ -51,7 +46,7 @@ class MenuPane < GuiElement
     
     @index = nil # The index of the item hovered over.
 
-    yield self if block_given?
+    super(x, y, 0, 0, ZOrder::MENU)
   end
 
   def index(value)
@@ -131,8 +126,11 @@ class MenuPane < GuiElement
   end
 
   public
-  def click(x, y)
-    publish(:select, @items[@index].value) if hit?(x, y) and @items[@index].enabled?
+  def click
+    if @items[@index].enabled?
+      $window.game_state_manager.current_game_state.hide_menu
+      publish(:select, @items[@index].value)
+    end
 
     nil
   end

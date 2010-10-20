@@ -2,6 +2,7 @@
 
 require_relative '../gui/history'
 require_relative '../gui/clipboard'
+require_relative '../gui/button'
 
 require_relative 'edit_selectable'
 require_relative 'edit_object'
@@ -10,6 +11,8 @@ module Sidney
   class EditScene < EditSelectable
     include Log
 
+    INITIAL_ZOOM = 1
+
     attr_reader :grid, :zoom_box, :clipboard, :history
 
     protected
@@ -17,21 +20,23 @@ module Sidney
       super
 
       @grid = Grid.new(($window.height / 300).floor)
+      add_element @grid
 
       values = t 'zoom_combi.values'
       zooms = [0.5, 1, 2, 4, 8].inject({}) do |hash, value|
         hash[value] = values[value][:text]
         hash
       end
-      @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, 20 * @grid.scale, 8 * @grid.scale, 1, tip: t('zoom_combi.tip'))
-      zooms.each_pair do |key, value|
-        @zoom_box.add(key, value)
-      end
-      @zoom_box.subscribe :change do |widget, value|
-        @grid.scale = value * @grid.base_scale
-      end
+      @zoom_box = CombiBox.new(@grid.rect.right + 12, 12, INITIAL_ZOOM, tip: t('zoom_combi.tip')) do |widget|
+        zooms.each_pair do |key, value|
+          widget.add(key, value)
+        end
+        widget.subscribe :change do |widget, value|
+          @grid.scale = value * @grid.base_scale
+        end
 
-      add_element(@zoom_box)
+        add_element(widget)
+      end
 
       @font = Font.new($window, GuiElement::FONT_NAME, GuiElement::FONT_SIZE)
 
@@ -72,12 +77,21 @@ module Sidney
     end
 
     protected
-    def edit_object
+    def edit
       @edit_object ||= EditObject.new
       @edit_object.object = @selection[0]
       push_game_state @edit_object
 
       nil
+    end
+
+    public
+    def grid_tip
+      if object_layer = hit_object(cursor.x, cursor.y)
+        object_layer.state_object.name
+      else
+        nil
+      end
     end
 
     public
@@ -101,7 +115,7 @@ module Sidney
       return if @selection.dragging?
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
-        MenuPane.new(x, y, ZOrder::DIALOG) do |widget|
+        MenuPane.new(x, y) do |widget|
           widget.add(:edit, 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
           widget.add(:mirror, 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
           widget.add(:flip, 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
@@ -115,13 +129,13 @@ module Sidney
               when :delete then delete
               when :copy   then copy
               when :paste  then paste(x, y) # Paste at position the menu was opened, not where the mouse was just clicked.
-              when :edit   then edit_object
+              when :edit   then edit
               when :flip   then @selection[0].flip!
               when :mirror then @selection[0].mirror!
             end
           end
 
-          push_game_state ShowMenu.new(widget)
+          show_menu widget
         end
       end
 
@@ -173,8 +187,6 @@ module Sidney
 
     public
     def draw
-      grid.draw
-
       grid.draw_with_respect_to do
         @scene.draw
 
@@ -191,7 +203,7 @@ module Sidney
         x, y = 'x', 'y'
       end
 
-      @font.draw("(#{x}, #{y}) ('#{@scene.name}' [#{@scene.id}] #{game_state_manager.current}", 0, $window.height - 25, ZOrder::GUI)
+      @font.draw("(#{x}, #{y}) ('#{@scene.name}' [#{@scene.id}] #{current_game_state}", 0, $window.height - 25, ZOrder::GUI)
 
       super
     end

@@ -1,10 +1,9 @@
 require_relative 'gui_element'
 require_relative 'menu_pane'
-require_relative '../event'
 
 module Sidney
 class CombiBox < GuiElement
-  include Event
+  DEFAULT_WIDTH = FONT_SIZE * 6
 
   public
   attr_accessor :index
@@ -29,11 +28,11 @@ class CombiBox < GuiElement
     end
   end
 
-  def rect; @rect.dup; end
-
   protected
-  def initialize(x, y, width, height, initial_value, options = {})
-    super(x, y, width, height, ZOrder::GUI, options)
+  def initialize(x, y, initial_value, options = {})
+    options = {
+            width: DEFAULT_WIDTH
+    }.merge! options
 
     @value = initial_value
 
@@ -42,23 +41,19 @@ class CombiBox < GuiElement
     
     @hover_index = 0
 
-    @menu = MenuPane.new(rect.left, rect.bottom + 1, z + 0.01) do |widget|
+    height = FONT_SIZE + PADDING_Y * 2
+    @menu = MenuPane.new(x, y + height) do |widget|
       widget.subscribe :select do |widget, value|
         self.value = value
       end
     end
 
-    yield self if block_given?
+    super(x, y, options[:width], height, ZOrder::GUI, options)
   end
 
   public
   def add(*args)
     @menu.add(*args)
-  end
-
-  public
-  def update
-    nil
   end
 
   public
@@ -70,18 +65,12 @@ class CombiBox < GuiElement
   end
 
   public
-  def menu_clicked(widget, value)
-    self.value = value
-  end
-
-  public
-  def click(x, y)
-    hit = hit?(x, y)
-    if hit
-      $window.game_state_manager.push ShowMenu.new(@menu)
-    end
-
-    hit
+  def click
+    p "clicking #{@menu} #{@menu.height}"
+    p $window.game_state_manager.current_game_state
+    $window.game_state_manager.current_game_state.show_menu @menu
+    p "clicked"
+    nil
   end
 end
 end
