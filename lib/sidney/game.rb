@@ -51,6 +51,9 @@ class Game < Window
   include Log
   attr_reader :cursor
 
+  # Allow others to read my private method!
+  public :milliseconds
+
   # Any taller and Gosu will scale the whole window to fit.
   MAX_HEIGHT = Gosu::screen_width * 0.8
   # Any wider and Gosu will scale the whole window to fit.

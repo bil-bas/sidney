@@ -23,6 +23,12 @@ module Sidney
 
       @scene = Scene.load('d252be6903bd')
 
+      TextArea.new(side_bar, width: 120,
+              text: "T'was brillig and the Slithy toves gyred and gimbled across the wabe.\nAll mimsy were the borro1234567890goves and the mome-raths outgrabe!")
+
+      TextArea.new(side_bar, width: 120,
+              text: "Meh!")
+
       nil
     end
 

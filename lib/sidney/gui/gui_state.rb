@@ -10,6 +10,7 @@ module Sidney
     ]
 
     attr_reader :container
+    attr_accessor :focus
 
     # Will implement these later.
     private
@@ -29,6 +30,7 @@ module Sidney
       @container = VerticalPacker.new(nil)
 
       @mouse_x, @mouse_y = 0, 0
+      @focus = nil
 
       super()
       add_inputs *DEFAULT_INPUTS
@@ -131,6 +133,11 @@ module Sidney
         else
           hide_menu
         end
+      end
+
+      if @focus and @mouse_over != @focus
+        @focus.blur
+        @focus = nil
       end
 
       nil

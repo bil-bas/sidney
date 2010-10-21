@@ -9,7 +9,7 @@ module Gui
     PADDING_X, PADDING_Y = 5, 5
 
     # Recalculate the size of the container.
-    protected
+    public
     def recalc
       nil
     end
