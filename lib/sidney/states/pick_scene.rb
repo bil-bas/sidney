@@ -1,6 +1,8 @@
+require_relative '../gui'
+
 module Sidney
   # Pick a scene. Enter from editing a scene.
-  class PickScene < GameState
+  class PickScene < GuiState
     #Code here
   end
 end

@@ -1,7 +1,7 @@
-require_relative '../gui'
+require 'chingu'
 
 module Sidney
-  class GuiState < GameState
+  class GuiState < Chingu::GameState
     DEFAULT_INPUTS = [
       :left_mouse_button, :right_mouse_button,
       :holding_left_mouse_button, :holding_right_mouse_button,
@@ -157,6 +157,7 @@ module Sidney
       nil
     end
 
+    public
     def flush
       $window.flush
     end

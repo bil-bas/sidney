@@ -21,7 +21,7 @@ module Sidney
       add_inputs(
         released_escape: ->{ save_changes; pop_game_state(:setup => false) },
         g: ->{ grid.toggle_overlay if $window.holding_control? },
-        f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_sprite.help', general: t('help'))) },
+        f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_sprite.help', general: t('help'))) },
         mouse_wheel_up: ->{ zoom_box.index += 1 },
         mouse_wheel_down: ->{ zoom_box.index -= 1 },
         holding_left: ->{ grid.left },
@@ -129,7 +129,7 @@ module Sidney
       @transparent_small.draw x, y, ZOrder::GUI, 25, 25
       $window.draw_box x, y, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_texplay(@draw_color)
 
-      GuiElement.font.draw("Sprite: '#{@sprite.sprite.name}' [#{@sprite.sprite.id}]", 10, $window.height - 25, ZOrder::GUI)
+      Element.font.draw("Sprite: '#{@sprite.sprite.name}' [#{@sprite.sprite.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end

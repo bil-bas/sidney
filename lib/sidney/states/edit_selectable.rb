@@ -1,6 +1,3 @@
-require_relative '../gui/combi_box'
-require_relative '../gui/selection'
-
 require_relative 'edit_base'
 
 module Sidney

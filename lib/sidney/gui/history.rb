@@ -1,4 +1,5 @@
 module Sidney
+module Gui
 # Manages a history of actions, along with doing, undoing and redoing those actions.
 class History
   # Maximum number of actions in the History before Actions are deleted.
@@ -89,5 +90,6 @@ class History
 
     nil
   end
+end
 end
 end

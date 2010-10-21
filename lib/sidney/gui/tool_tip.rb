@@ -1,7 +1,8 @@
-require_relative 'gui_element'
+require_relative 'element'
 
 module Sidney
-class ToolTip < GuiElement
+module Gui
+class ToolTip < Element
   BACKGROUND_COLOR = Color.rgb(25, 25, 25)
   BORDER_COLOR = Color.rgb(255, 255, 255)
   TEXT_COLOR = Color.rgb(255, 255, 255)
@@ -29,5 +30,6 @@ class ToolTip < GuiElement
     nil
   end
 
+end
 end
 end

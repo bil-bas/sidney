@@ -36,15 +36,16 @@ module Sidney
 module ZOrder
   SCENE, GUI, SCENE_FILTER, OUTLINE, GRID_OVERLAY, DIALOG, MENU, FPS, TOOL_TIP, CURSOR = (0..1000).to_a
 end
+end
 
 require_relative 'log'
 require_relative 'database'
 require_relative 'fps_display'
-require_relative 'gui/cursor'
 require_relative 'grid'
 require_relative 'states/edit_scene'
 require_relative 'resources'
 
+module Sidney
 # Main game window.
 class Game < Window
   include Log

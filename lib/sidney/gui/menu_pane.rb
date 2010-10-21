@@ -1,7 +1,8 @@
-require_relative 'gui_element'
+require_relative 'element'
 
 module Sidney
-class MenuPane < GuiElement
+module Gui
+class MenuPane < Element
   class Item
     attr_reader :text, :value, :shortcut
 
@@ -140,5 +141,6 @@ class MenuPane < GuiElement
 
     nil
   end
+end
 end
 end

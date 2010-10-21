@@ -15,7 +15,7 @@ module Sidney
 
       add_inputs(
         s: ->{ save_frame if $window.holding_control? },
-        f1: ->{ push_game_state Chingu::GameStates::Popup.new(text: t('edit_scene.help', general: t('help'))) }
+        f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_scene.help', general: t('help'))) }
       )
 
       @clipboard = Clipboard.new
@@ -168,7 +168,7 @@ module Sidney
         end
       end
 
-      GuiElement.font.draw("Scene: '#{@scene.name}' [#{@scene.id}]", 10, $window.height - 25, ZOrder::GUI)
+      Element.font.draw("Scene: '#{@scene.name}' [#{@scene.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end

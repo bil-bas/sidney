@@ -1,4 +1,5 @@
 module Sidney
+module Gui
 class Clipboard
   # Items held in the clipboard.
   attr_reader :items
@@ -24,5 +25,6 @@ class Clipboard
   def empty?
     @items.empty?
   end
+end
 end
 end

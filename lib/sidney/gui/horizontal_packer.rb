@@ -1,6 +1,7 @@
 require_relative 'container'
 
 module Sidney
+module Gui
   # A vertically aligned element packing container.
   class HorizontalPacker < Container
     protected
@@ -21,4 +22,5 @@ module Sidney
       super
     end
   end
+end
 end

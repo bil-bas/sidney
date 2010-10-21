@@ -1,8 +1,9 @@
-require_relative 'gui_element'
+require_relative 'element'
 require_relative 'menu_pane'
 
 module Sidney
-class CombiBox < GuiElement
+module Gui
+class CombiBox < Element
   DEFAULT_WIDTH = FONT_SIZE * 6
 
   public
@@ -78,5 +79,6 @@ class CombiBox < GuiElement
 
     nil
   end
+end
 end
 end

@@ -1,5 +1,4 @@
-require_relative '../gui/selection'
-require_relative 'gui_state'
+require_relative '../gui'
 
 module Sidney
   # @abstract
@@ -84,7 +83,7 @@ module Sidney
         x, y = 'x', 'y'
       end
 
-      GuiElement.font.draw("(#{x}, #{y})", 10, $window.height - 40, ZOrder::GUI)
+      Element.font.draw("(#{x}, #{y})", 10, $window.height - 40, ZOrder::GUI)
 
       cursor.draw
       nil

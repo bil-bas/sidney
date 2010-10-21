@@ -2,9 +2,10 @@ require_relative '../gosu_ext'
 require_relative '../event'
 
 module Sidney
+module Gui
 # An element within the GUI environment.
 # @abstract
-class GuiElement
+class Element
   include Event
 
   FONT_SIZE = 15
@@ -83,5 +84,6 @@ class GuiElement
   def update
     nil
   end
+end
 end
 end

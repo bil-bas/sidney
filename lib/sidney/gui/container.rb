@@ -1,9 +1,10 @@
-require_relative 'gui_element'
+require_relative 'element'
 
 module Sidney
+module Gui
   # A container that contains GuiElements.
   # @abstract
-  class Container < GuiElement
+  class Container < Element
     SPACING_X, SPACING_Y = 5, 5
     PADDING_X, PADDING_Y = 5, 5
 
@@ -77,4 +78,5 @@ module Sidney
       nil
     end
   end
+end
 end

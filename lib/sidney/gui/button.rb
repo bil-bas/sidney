@@ -1,7 +1,8 @@
-require_relative 'gui_element'
+require_relative 'element'
 
 module Sidney
-class Button < GuiElement
+module Gui
+class Button < Element
   BACKGROUND_COLOR = Color.rgb(100, 100, 100)
   BORDER_COLOR = Color.rgb(150, 150, 150)
   TEXT_COLOR = Color.rgb(255, 255, 255)
@@ -36,5 +37,6 @@ class Button < GuiElement
 
     nil
   end
+end
 end
 end

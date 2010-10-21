@@ -1,8 +1,8 @@
-require_relative 'gui/gui_element'
+require_relative 'gui'
 require_relative 'grid_overlay'
 
 module Sidney
-class Grid < GuiElement
+class Grid < Element
   CELLS_WIDE, CELLS_HIGH = 20, 15
   CELL_WIDTH = CELL_HEIGHT = 16
   WIDTH = CELL_WIDTH * CELLS_WIDE

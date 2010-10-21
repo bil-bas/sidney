@@ -1,4 +1,5 @@
 module Sidney
+module Gui
 class Cursor < GameObject
   protected
   def initialize(options = {})
@@ -27,5 +28,6 @@ class Cursor < GameObject
     # Prevent system and game mouse from being shown at the same time.
     super if inside_window?
   end
+end
 end
 end

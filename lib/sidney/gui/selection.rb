@@ -1,4 +1,5 @@
 module Sidney
+module Gui
 class Selection
   MIN_DRAG_DISTANCE = 2
 
@@ -109,5 +110,6 @@ class Selection
 
     self
   end
+end
 end
 end
