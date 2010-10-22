@@ -96,18 +96,18 @@ module Sidney
 
     public
     def toggle_speech_bubble
-      if @bubble
-        if @bubble.text.empty?
-          @bubble.blur
-          @bubble = nil
-        end
-      else
+      unless @bubble
         @bubble = TextArea.new(nil, width: BUBBLE_INITIAL_WIDTH, font_size: BUBBLE_FONT_SIZE,
                                padding_x: BUBBLE_PADDING_X, padding_y: BUBBLE_PADDING_Y,
                                line_spacing: BUBBLE_LINE_SPACING, editable: true)
       end
 
-      @bubble.focus if @bubble
+      if @bubble.focused?
+        @bubble.blur
+        @bubble = nil if @bubble.text.empty?
+      else
+        @bubble.focus
+      end
 
       nil
     end

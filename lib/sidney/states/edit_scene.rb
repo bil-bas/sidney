@@ -16,7 +16,7 @@ module Sidney
       add_inputs(
         s: ->{ save_frame if $window.holding_control? },
         f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_scene.help', general: t('help'))) },
-        return: ->{ speak if @selection.size == 1 }
+        [:return, :enter] => ->{ speak if @selection.size == 1 }
       )
 
       @clipboard = Clipboard.new
