@@ -7,6 +7,9 @@ module Sidney
 
     BUBBLE_FONT_SIZE = 8
     BUBBLE_INITIAL_WIDTH = 50
+    BUBBLE_PADDING_X = 3
+    BUBBLE_PADDING_Y = 2
+    BUBBLE_LINE_SPACING = -1
 
     attr_writer :selected, :dragging
     def dragging?; @dragging; end
@@ -99,7 +102,9 @@ module Sidney
           @bubble = nil
         end
       else
-        @bubble = TextArea.new(nil, width: BUBBLE_INITIAL_WIDTH, font_size: BUBBLE_FONT_SIZE, editable: true)
+        @bubble = TextArea.new(nil, width: BUBBLE_INITIAL_WIDTH, font_size: BUBBLE_FONT_SIZE,
+                               padding_x: BUBBLE_PADDING_X, padding_y: BUBBLE_PADDING_Y,
+                               line_spacing: BUBBLE_LINE_SPACING, editable: true)
       end
 
       @bubble.focus if @bubble

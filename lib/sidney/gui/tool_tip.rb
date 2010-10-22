@@ -16,10 +16,10 @@ class ToolTip < Element
     x = $window.cursor.x
     y = $window.cursor.y + $window.cursor.height # Place the tip beneath the cursor.
 
-    width, height = font.text_width(@text) + PADDING_X * 2, font_size + PADDING_Y * 2
+    width, height = font.text_width(@text) + padding_x * 2, font_size + padding_y * 2
     # Ensure the tip can't go other the edge of the screen.
-    rect.x = [x, $window.width - width - PADDING_X].min
-    rect.y = [y, $window.height - height - PADDING_Y].min
+    rect.x = [x, $window.width - width - padding_x].min
+    rect.y = [y, $window.height - height - padding_y].min
     rect.width = width
     rect.height = height
 
@@ -30,7 +30,7 @@ class ToolTip < Element
   def draw
     $window.draw_box(x, y, width, height, z, BORDER_COLOR, BACKGROUND_COLOR)
 
-    font.draw(@text, x + PADDING_X, y + PADDING_Y, z, 1, 1, TEXT_COLOR)
+    font.draw(@text, x + padding_x, y + padding_y, z, 1, 1, TEXT_COLOR)
 
     nil
   end

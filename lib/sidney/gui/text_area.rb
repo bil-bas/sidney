@@ -7,10 +7,13 @@ module Gui
     SELECTION_COLOR = Color.rgb(100, 100, 100)
     CARET_PERIOD = 500 # ms
 
-    # @return [Integer]
+    # @return [Number]
     attr_reader :min_height
-    # @return [Integer]
+    # @return [Number]
     attr_reader :max_height
+
+    # @return [Number]
+    attr_reader :line_spacing
 
     # @param [Boolean] value
     # @return [Boolean]
@@ -85,14 +88,17 @@ module Gui
     # @option options [Integer] :height Sets both min and max height at once.
     # @option options [Integer] :min_height
     # @option options [Integer] :max_height (Infinite)
+    # @option options [Number] :line_spacing (0)
     def initialize(parent, options = {}, &block)
       options = {
         editable: false,
         text: '',
-        max_height: Float::INFINITY
+        max_height: Float::INFINITY,
+        line_spacing: 0
       }.merge! options
 
       @editable = options[:editable]
+      @line_spacing = options[:line_spacing]
       @lines = [''] # List of lines of wrapped text.
       @text_positions = [[0, 0, 0]] # [x, y, width] of each character.
       @text_input = TextInput.new
@@ -104,14 +110,14 @@ module Gui
 
       super(parent, options)
 
-      min_height = (PADDING_Y * 2) + font_size
+      min_height = (padding_y * 2) + font_size
       if options[:height]
         @max_height = @min_height = [options[:height], min_height].max
       else
         @max_height = [options[:max_height], min_height].max
         @min_height = options[:min_height] ? [options[:min_height], min_height].max : min_height
       end
-      rect.height = [(PADDING_Y * 2) + font_size, @min_height].max
+      rect.height = [(padding_y * 2) + font_size, @min_height].max
       recalc
 
       post_init &block
@@ -123,7 +129,7 @@ module Gui
       focus unless focused?
 
       # Move caret to position the user clicks on.
-      mouse_x, mouse_y = $window.cursor.x - x - PADDING_X, $window.cursor.y - y - PADDING_Y
+      mouse_x, mouse_y = $window.cursor.x - x - padding_x, $window.cursor.y - y - padding_y
       @text_positions.each.with_index do |data, index|
         x, y, width = data
         if mouse_x.between?(x, x + width) and mouse_y.between?(y, y + font_size)
@@ -162,6 +168,12 @@ module Gui
       nil
     end
 
+    # y position of the
+    protected
+    def y_at_line(lines_number)
+      lines_number * (font_size + line_spacing)
+    end
+
     protected
     # Helper for #recalc
     # @return [Integer]
@@ -169,7 +181,7 @@ module Gui
       word.each_char do |c|
         char_width = font.text_width(c)
         line_width += char_width
-        @text_positions.push [line_width, @lines.size * font_size, char_width]
+        @text_positions.push [line_width, y_at_line(@lines.size), char_width]
       end
 
       line_width
@@ -189,7 +201,7 @@ module Gui
       @text_positions = [[0, 0, 0]] # Position 0 is before the first character.
 
       space_width = font.text_width ' '
-      max_width = width - PADDING_X * 2 - space_width
+      max_width = width - padding_x * 2 - space_width
 
       line = ''
       line_width = 0
@@ -225,7 +237,7 @@ module Gui
             # A new-line ends the word and puts it on the line.
             line += word
             line_width = position_letters_in_word(word, line_width)
-            @text_positions.push [line_width, @lines.size * font_size, 0]
+            @text_positions.push [line_width, y_at_line(@lines.size), 0]
             @lines.push line
             word = ''
             word_width = 0
@@ -237,7 +249,7 @@ module Gui
             line += word + char
             line_width = position_letters_in_word(word, line_width)
             line_width += space_width
-            @text_positions.push [line_width, @lines.size * font_size, space_width]
+            @text_positions.push [line_width, y_at_line(@lines.size), space_width]
 
             word = ''
             word_width = 0
@@ -245,7 +257,7 @@ module Gui
           else
             # If there was a previous line and we start a new line, put the caret pos on the current line.
             if line.empty?
-              @text_positions.last[0..1] = [0, @lines.size * font_size]
+              @text_positions.last[0..1] = [0, y_at_line(@lines.size)]
             end
 
             # Start building up a new word.
@@ -263,7 +275,7 @@ module Gui
       @lines.push line if @lines.empty? or not line.empty?
 
       # Roll back if the height is too long.
-      new_height = (PADDING_Y * 2) + (font_size * @lines.size)
+      new_height = (padding_y * 2) + y_at_line(@lines.size)
       if new_height <= max_height
         @old_text = text
         rect.height = [new_height, @min_height].max
@@ -307,19 +319,19 @@ module Gui
       # Draw the selection.
       selection_range.each do |i|
         char_x, char_y = @text_positions[i]
-        left, top = x + PADDING_X + char_x, y + PADDING_Y + char_y
+        left, top = x + padding_x + char_x, y + padding_y + char_y
         $window.draw_box left, top, font.text_width(text[i]), font_size,
                        z, nil, SELECTION_COLOR
       end
 
       # Draw text.
       @lines.each_with_index do |line, index|
-        font.draw(line, x + PADDING_X, y + PADDING_Y + font_size * index, z)
+        font.draw(line, x + padding_x, y + padding_y + y_at_line(index), z)
       end
 
       # Draw the caret.
       if focused? and ((milliseconds / CARET_PERIOD) % 2 == 0)
-        left, top = x + PADDING_X + caret_x, y + PADDING_Y + caret_y
+        left, top = x + padding_x + caret_x, y + padding_y + caret_y
         $window.draw_line left, top, CARET_COLOR, left, top + font_size, CARET_COLOR, z
       end
     end

@@ -48,8 +48,8 @@ class CombiBox < Element
 
     super(parent, options)
 
-    rect.height = [height, font_size + PADDING_Y * 2].max
-    rect.width = [width, font_size * 4 + PADDING_X * 2].max
+    rect.height = [height, font_size + padding_y * 2].max
+    rect.width = [width, font_size * 4 + padding_x * 2].max
 
     post_init &block
   end
@@ -62,7 +62,7 @@ class CombiBox < Element
   public
   def draw
     $window.draw_box(x, y, width, height, z, @border_color, @background_color)
-    font.draw(text, x + PADDING_X, y + ((height - font_size) / 2).floor, z)
+    font.draw(text, x + padding_x, y + ((height - font_size) / 2).floor, z)
 
     nil
   end

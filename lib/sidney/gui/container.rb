@@ -5,8 +5,9 @@ module Gui
   # A container that contains GuiElements.
   # @abstract
   class Container < Element
-    SPACING_X, SPACING_Y = 5, 5
-    PADDING_X, PADDING_Y = 5, 5
+    DEFAULT_SPACING_X, DEFAULT_SPACING_Y = 5, 5
+
+    attr_reader :spacing_x, :spacing_y
 
     # Recalculate the size of the container.
     public
@@ -35,6 +36,13 @@ module Gui
 
     protected
     def initialize(parent, options = {})
+      options = {
+        spacing_x: DEFAULT_SPACING_X,
+        spacing_y: DEFAULT_SPACING_Y,
+      }
+
+      @spacing_x = options[:spacing_x]
+      @spacing_y = options[:spacing_y]
       @children = []
 
       super(parent, options)

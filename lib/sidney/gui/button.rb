@@ -16,8 +16,8 @@ class Button < Element
     
     super(parent, options)
 
-    rect.height = [font_size + PADDING_Y * 2, height].max
-    rect.width = [font.text_width(@text) + PADDING_X * 2, width].max
+    rect.height = [font_size + padding_y * 2, height].max
+    rect.width = [font.text_width(@text) + padding_x * 2, width].max
 
     post_init &block
   end
@@ -26,7 +26,7 @@ class Button < Element
   def draw
     $window.draw_box(x, y, width, height, z, BORDER_COLOR, BACKGROUND_COLOR)
 
-    font.draw(@text, x + PADDING_X, y + PADDING_Y, z, 1, 1, TEXT_COLOR)
+    font.draw(@text, x + padding_x, y + padding_y, z, 1, 1, TEXT_COLOR)
 
     nil
   end

@@ -37,7 +37,7 @@ class MenuPane < Element
 
   attr_reader :items, :index
 
-  def line_height; font_size + PADDING_Y * 2; end
+  def line_height; font_size + padding_y * 2; end
   
   public
   def initialize(options = {}, &block)
@@ -94,7 +94,7 @@ class MenuPane < Element
     @items.each do |item|
       text = item.text
       text += "  (#{item.shortcut})" if item.shortcut
-      rect.width = [rect.width, font.text_width(text) + PADDING_X * 2].max
+      rect.width = [rect.width, font.text_width(text) + padding_x * 2].max
     end
 
     @items.size
@@ -112,10 +112,10 @@ class MenuPane < Element
       end
 
       color = item.enabled? ? 0xffffffff : 0xff888888
-      font.draw(item.text, rect.x + PADDING_X, y + ((line_height - font_size) / 2).floor, z, 1, 1, color)
+      font.draw(item.text, rect.x + padding_x, y + ((line_height - font_size) / 2).floor, z, 1, 1, color)
 
       if item.shortcut
-        font.draw_rel("(#{item.shortcut})", rect.right - PADDING_X, y + ((line_height - font_size) / 2).floor, z, 1, 0, 1, 1, color)
+        font.draw_rel("(#{item.shortcut})", rect.right - padding_x, y + ((line_height - font_size) / 2).floor, z, 1, 0, 1, 1, color)
       end
     end
 

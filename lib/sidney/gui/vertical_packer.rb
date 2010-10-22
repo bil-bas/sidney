@@ -12,18 +12,18 @@ module Gui
 
     public
     def recalc
-      rect.width = (@children.map {|c| c.width }.max || 0) + (PADDING_X * 2)
+      rect.width = (@children.map {|c| c.width }.max || 0) + (padding_x * 2)
 
       rect.height = @children.inject(0) {|total, c| total + c.height } +
-                 (PADDING_Y * 2) + (SPACING_Y * [@children.size - 1, 0].max)
+                 (padding_y * 2) + (spacing_y * [@children.size - 1, 0].max)
 
       super
     end
 
     public
     def add(element)
-      element.x = x + PADDING_X
-      element.y = y + height - PADDING_Y + SPACING_Y
+      element.x = x + padding_x
+      element.y = y + height - padding_y + spacing_y
 
       super
     end

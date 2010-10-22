@@ -10,10 +10,10 @@ class Element
 
   DEFAULT_FONT_SIZE = 15
   FONT_NAME = File.join(ROOT_PATH, 'media', 'fonts', 'SFPixelate.ttf')
-  PADDING_X, PADDING_Y = 10, 5
+  DEFAULT_PADDING_X, DEFAULT_PADDING_Y = 6, 4
   BACKGROUND_COLOR = Color.rgb(0, 0, 0)
   
-  attr_reader :rect, :z, :tip, :font_size
+  attr_reader :rect, :z, :tip, :font_size, :padding_x, :padding_y
 
   attr_accessor :parent
 
@@ -30,6 +30,7 @@ class Element
   def width; rect.width; end
   def height; rect.height; end
 
+  protected
   def initialize(parent, options = {}, &block)
     options = {
       x: 0,
@@ -38,9 +39,13 @@ class Element
       width: 0,
       height: 0,
       tip: '',
-      font_size: DEFAULT_FONT_SIZE
+      font_size: DEFAULT_FONT_SIZE,
+      padding_x: DEFAULT_PADDING_X,
+      padding_y: DEFAULT_PADDING_Y
     }.merge! options
 
+    @padding_x = options[:padding_x]
+    @padding_y = options[:padding_y]
     @parent = parent
 
     @rect = Rect.new(options[:x], options[:y], options[:width], options[:height])
