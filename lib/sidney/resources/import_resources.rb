@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'tile'
 require_relative 'sprite'
 require_relative 'room'

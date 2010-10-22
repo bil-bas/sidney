@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Sidney
 module Gui
 # Manages a history of actions, along with doing, undoing and redoing those actions.

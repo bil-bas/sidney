@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Sidney
 
 # Adds simple event handling methods to an object (subscribe/publish pattern).

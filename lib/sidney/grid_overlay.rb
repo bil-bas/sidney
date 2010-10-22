@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Sidney
 class GridOverlay
   PIXEL_COLOR = Color.new(0x66888888) # ARGB

@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'gui'
 require_relative 'grid_overlay'
 

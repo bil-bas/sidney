@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'gui/button'
 require_relative 'gui/clipboard'
 require_relative 'gui/combi_box'

@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'visual_resource'
 require_relative 'tile'
 require_relative 'tile_layer'

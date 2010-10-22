@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'edit_base'
 
 module Sidney

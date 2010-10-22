@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Sidney
 class FPSDisplay
   TEXT = 'FPS: '
