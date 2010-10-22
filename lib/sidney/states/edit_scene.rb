@@ -170,10 +170,6 @@ module Sidney
     def draw
       grid.draw_with_respect_to do
         @scene.draw
-
-        if @selection.dragging?
-          @selection.each { |o| o.draw }
-        end
       end
 
       Element.font.draw("Scene: '#{@scene.name}' [#{@scene.id}]", 10, $window.height - 25, ZOrder::GUI)
