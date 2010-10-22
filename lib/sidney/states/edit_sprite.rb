@@ -127,7 +127,7 @@ module Sidney
       rect = grid.rect
       x, y = rect.right + 10, rect.top + 50
       @transparent_small.draw x, y, ZOrder::GUI, 25, 25
-      $window.draw_box x, y, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_texplay(@draw_color)
+      $window.draw_box x, y, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_tex_play(@draw_color)
 
       Element.font.draw("Sprite: '#{@sprite.sprite.name}' [#{@sprite.sprite.id}]", 10, $window.height - 25, ZOrder::GUI)
 
