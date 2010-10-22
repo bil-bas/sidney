@@ -35,7 +35,19 @@ module Gui
 
     public
     def click
-      focus
+      focus unless focused?
+
+      # Move caret to position the user clicks on.
+      mouse_x, mouse_y = $window.cursor.x - x - PADDING_X, $window.cursor.y - y - PADDING_Y
+      @text_positions.each.with_index do |data, index|
+        x, y, width = data
+        if mouse_x.between?(x, x + width) and mouse_y.between?(y, y + FONT_SIZE)
+          @text_input.caret_pos = @text_input.selection_start = index
+          break
+        end
+      end
+
+      nil
     end
 
     public
@@ -60,7 +72,7 @@ module Gui
       old_num_lines = @lines.size
 
       @lines.clear
-      @text_positions = [[0, 0]] # Position 0 is before the first character.
+      @text_positions = [[0, 0, 0]] # Position 0 is before the first character.
 
       max_width = width - PADDING_X * 2
       space_width = font.text_width ' '
@@ -72,8 +84,9 @@ module Gui
 
       position_letters_in_word = lambda {
         word.each_char do |c|
-          line_width += font.text_width(c)
-          @text_positions.push [line_width, @lines.size * FONT_SIZE]
+          char_width = font.text_width(c)
+          line_width += char_width
+          @text_positions.push [line_width, @lines.size * FONT_SIZE, char_width]
         end
       }
 
@@ -106,7 +119,7 @@ module Gui
             # A new-line ends the word and puts it on the line.
             line += word
             position_letters_in_word.call
-            @text_positions.push [line_width, @lines.size * FONT_SIZE]
+            @text_positions.push [line_width, @lines.size * FONT_SIZE, 0]
             @lines.push line
             word = ''
             word_width = 0
@@ -118,7 +131,7 @@ module Gui
             line += word + char
             position_letters_in_word.call
             line_width += space_width
-            @text_positions.push [line_width, @lines.size * FONT_SIZE]
+            @text_positions.push [line_width, @lines.size * FONT_SIZE, space_width]
 
             word = ''
             word_width = 0
