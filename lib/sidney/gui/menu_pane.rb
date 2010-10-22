@@ -37,10 +37,10 @@ class MenuPane < Element
 
   attr_reader :items, :index
 
-  def line_height; FONT_SIZE + PADDING_Y * 2; end
+  def line_height; font_size + PADDING_Y * 2; end
   
   public
-  def initialize(options = {})
+  def initialize(options = {}, &block)
     options = {
       z: ZOrder::MENU
     }.merge! options
@@ -54,6 +54,8 @@ class MenuPane < Element
     @index = nil # The index of the item hovered over.
 
     super(nil, options)
+
+    post_init &block
   end
 
   def index(value)
@@ -110,10 +112,10 @@ class MenuPane < Element
       end
 
       color = item.enabled? ? 0xffffffff : 0xff888888
-      font.draw(item.text, rect.x + PADDING_X, y + ((line_height - FONT_SIZE) / 2).floor, z, 1, 1, color)
+      font.draw(item.text, rect.x + PADDING_X, y + ((line_height - font_size) / 2).floor, z, 1, 1, color)
 
       if item.shortcut
-        font.draw_rel("(#{item.shortcut})", rect.right - PADDING_X, y + ((line_height - FONT_SIZE) / 2).floor, z, 1, 0, 1, 1, color)
+        font.draw_rel("(#{item.shortcut})", rect.right - PADDING_X, y + ((line_height - font_size) / 2).floor, z, 1, 0, 1, 1, color)
       end
     end
 

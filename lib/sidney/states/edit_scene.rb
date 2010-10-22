@@ -15,7 +15,8 @@ module Sidney
 
       add_inputs(
         s: ->{ save_frame if $window.holding_control? },
-        f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_scene.help', general: t('help'))) }
+        f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_scene.help', general: t('help'))) },
+        return: ->{ speak if @selection.size == 1 }
       )
 
       @clipboard = Clipboard.new
@@ -31,6 +32,13 @@ module Sidney
       TextArea.new(side_bar, width: 120, min_height: 60, max_height: 120, editable: true,
               text: "")
 
+      nil
+    end
+
+    protected
+    def speak
+      speaker = @selection[0]
+      speaker.toggle_speech_bubble
       nil
     end
 

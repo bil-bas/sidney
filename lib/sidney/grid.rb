@@ -80,7 +80,7 @@ class Grid < Element
   end
 
   protected
-  def initialize(parent, scale)
+  def initialize(parent, scale, &block)
     @base_scale = @scale = scale.to_f
 
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
@@ -92,6 +92,8 @@ class Grid < Element
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
 
     super(parent, x: x, y: y, width: width, height: height)
+
+    post_init &block
   end
 
   public

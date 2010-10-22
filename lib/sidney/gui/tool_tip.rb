@@ -8,17 +8,22 @@ class ToolTip < Element
   TEXT_COLOR = Color.rgb(255, 255, 255)
 
   protected
-  def initialize(text)
+  def initialize(text, &block)
     @text = text
+
+    super(nil, z: ZOrder::TOOL_TIP)
 
     x = $window.cursor.x
     y = $window.cursor.y + $window.cursor.height # Place the tip beneath the cursor.
-    width, height = font.text_width(@text) + PADDING_X * 2, FONT_SIZE + PADDING_Y * 2
-    # Ensure the tip can't go other the edge of the screen.
-    x = [x, $window.width - width - PADDING_X].min
-    y = [y, $window.height - height - PADDING_Y].min
 
-    super(nil, x: x, y: y, width: width, height: height, z: ZOrder::TOOL_TIP)
+    width, height = font.text_width(@text) + PADDING_X * 2, font_size + PADDING_Y * 2
+    # Ensure the tip can't go other the edge of the screen.
+    rect.x = [x, $window.width - width - PADDING_X].min
+    rect.y = [y, $window.height - height - PADDING_Y].min
+    rect.width = width
+    rect.height = height
+
+    post_init &block
   end
 
   public

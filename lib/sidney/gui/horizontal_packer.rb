@@ -4,6 +4,12 @@ module Sidney
 module Gui
   # A vertically aligned element packing container.
   class HorizontalPacker < Container
+    protected
+    def initialize(options = {}, &block)
+      super
+      post_init &block
+    end
+
     public
     def recalc
       rect.width = @children.inject(0) {|total, c| total + c.width } +

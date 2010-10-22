@@ -6,20 +6,20 @@ class Button < Element
   BACKGROUND_COLOR = Color.rgb(100, 100, 100)
   BORDER_COLOR = Color.rgb(150, 150, 150)
   TEXT_COLOR = Color.rgb(255, 255, 255)
-  DEFAULT_WIDTH = FONT_SIZE * 6
 
   protected
-  def initialize(parent, text, options = {})
+  def initialize(parent, text, options = {}, &block)
     options = {
-            width: DEFAULT_WIDTH
     }.merge! options
 
     @text = text
-
-    options[:height] = FONT_SIZE + PADDING_Y * 2
-    options[:width] = [font.text_width(@text) + PADDING_X * 2, options[:width]].max
-
+    
     super(parent, options)
+
+    rect.height = [font_size + PADDING_Y * 2, height].max
+    rect.width = [font.text_width(@text) + PADDING_X * 2, width].max
+
+    post_init &block
   end
 
   public

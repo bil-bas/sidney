@@ -5,12 +5,16 @@ module Sidney
     belongs_to :scene
     belongs_to :state_object
 
+    BUBBLE_FONT_SIZE = 8
+    BUBBLE_INITIAL_WIDTH = 50
+
     attr_writer :selected, :dragging
     def dragging?; @dragging; end
     def selected?; @selected; end
     def hide!; @visible = false; end
     def show!; @visible = true; end
     def visible?; @visible; end
+    def speaking?; not @bubble.nil?; end
 
     def self.data_length(version)
       case version
@@ -71,6 +75,7 @@ module Sidney
       @dragging = false
       @selected = false
       @visible = true
+      @bubble = false
     end
 
     public
@@ -87,10 +92,31 @@ module Sidney
     end
 
     public
+    def toggle_speech_bubble
+      if @bubble
+        if @bubble.text.empty?
+          @bubble.blur
+          @bubble = nil
+        end
+      else
+        @bubble = TextArea.new(nil, width: BUBBLE_INITIAL_WIDTH, font_size: BUBBLE_FONT_SIZE, editable: true)
+      end
+
+      @bubble.focus if @bubble
+
+      nil
+    end
+
+    public
     def draw
       @visible = true unless defined? @visible
       if @visible and object = state_object
         object.draw(x, y, alpha)
+        if speaking?
+          $window.translate(x + object.image.width * 2, y - object.image.height * 2) do
+            @bubble.draw
+          end
+        end
         if @selected
           object.draw_outline(x, y)
           object.draw_anchor(x, y)

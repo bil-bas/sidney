@@ -4,8 +4,6 @@ require_relative 'menu_pane'
 module Sidney
 module Gui
 class CombiBox < Element
-  DEFAULT_WIDTH = FONT_SIZE * 6
-
   public
   attr_accessor :index
 
@@ -29,18 +27,11 @@ class CombiBox < Element
     end
   end
 
-  # @option options [] :width
   # @option options [] :value
   protected
-  def initialize(parent, options = {})
+  def initialize(parent, options = {}, &block)
     options = {
-      x: 0,
-      y: 0,
-      height: FONT_SIZE + PADDING_Y * 2,
-      width: 0
     }.merge! options
-
-    options[:width] = [options[:width], DEFAULT_WIDTH].max
 
     @value = options[:value]
 
@@ -55,7 +46,12 @@ class CombiBox < Element
       end
     end
 
-     super(parent, options)
+    super(parent, options)
+
+    rect.height = [height, font_size + PADDING_Y * 2].max
+    rect.width = [width, font_size * 4 + PADDING_X * 2].max
+
+    post_init &block
   end
 
   public
@@ -66,7 +62,7 @@ class CombiBox < Element
   public
   def draw
     $window.draw_box(x, y, width, height, z, @border_color, @background_color)
-    font.draw(text, x + PADDING_X, y + ((height - FONT_SIZE) / 2).floor, z)
+    font.draw(text, x + PADDING_X, y + ((height - font_size) / 2).floor, z)
 
     nil
   end
