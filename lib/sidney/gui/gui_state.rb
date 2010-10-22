@@ -28,7 +28,7 @@ module Sidney
 
     public
     def tool_tip_delay
-      0.5 # TODO: configure this.
+      500 # TODO: configure this.
     end
 
     protected
