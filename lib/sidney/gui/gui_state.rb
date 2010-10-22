@@ -10,7 +10,7 @@ module Sidney
     ]
 
     attr_reader :container
-    attr_accessor :focus
+    attr_reader :focus
 
     # Will implement these later.
     private
@@ -18,6 +18,12 @@ module Sidney
       define_method handler do
         nil
       end
+    end
+
+    public
+    def focus=(focus)
+      @focus.blur if @focus and focus
+      @focus = focus
     end
 
     public

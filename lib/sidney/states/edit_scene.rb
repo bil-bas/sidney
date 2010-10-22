@@ -23,11 +23,13 @@ module Sidney
 
       @scene = Scene.load('d252be6903bd')
 
-      TextArea.new(side_bar, width: 120,
+      TextArea.new(side_bar, width: 120, height: 300, editable: true,
               text: "T'was brillig and the Slithy toves gyred and gimbled across the wabe.\nAll mimsy were the borro1234567890goves and the mome-raths outgrabe!")
 
-      TextArea.new(side_bar, width: 120,
-              text: "Meh!")
+      TextArea.new(side_bar, width: 120, height: 80,
+              text: "You can't edit this one.")
+      TextArea.new(side_bar, width: 120, min_height: 60, max_height: 120, editable: true,
+              text: "")
 
       nil
     end

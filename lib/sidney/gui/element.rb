@@ -11,6 +11,7 @@ class Element
   FONT_SIZE = 15
   FONT_NAME = File.join(ROOT_PATH, 'media', 'fonts', 'SFPixelate.ttf')
   PADDING_X, PADDING_Y = 10, 5
+  BACKGROUND_COLOR = Color.rgb(0, 0, 0)
   
   attr_reader :rect, :z, :tip
 
