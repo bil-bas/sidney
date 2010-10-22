@@ -19,6 +19,10 @@ en:
       8:
         text: 800%
         tip: Show eighth size
+
+  centre_button:
+    text: Centre
+    tip: Centre the game window and reset scale to 100%
   
   help: # General help, shown in every mode.
     (Escape to exit this help).

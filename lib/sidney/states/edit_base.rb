@@ -54,6 +54,14 @@ module Sidney
               @grid.scale = value * @grid.base_scale
             end
           end
+
+          @centre_button = Button.new(packer, t('centre_button.text'),
+                                        tip: t('centre_button.tip')) do |button|
+            button.subscribe :click do
+              @zoom_box.value = 1
+              @grid.offset_x = @grid.offset_y = 0
+            end
+          end
         end
       end
     end
