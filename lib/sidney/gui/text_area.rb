@@ -67,6 +67,17 @@ module Gui
       $window.text_input = nil if $window.text_input == @text_input
     end
 
+    # Helper for #recalc
+    protected
+    def position_letters_in_word(word, line_width)
+        word.each_char do |c|
+          char_width = font.text_width(c)
+          line_width += char_width
+          @text_positions.push [line_width, @lines.size * FONT_SIZE, char_width]
+        end
+      line_width
+     end
+
     public
     def recalc
       old_num_lines = @lines.size
@@ -74,31 +85,23 @@ module Gui
       @lines.clear
       @text_positions = [[0, 0, 0]] # Position 0 is before the first character.
 
-      max_width = width - PADDING_X * 2
       space_width = font.text_width ' '
+      max_width = width - PADDING_X * 2 - space_width
 
       line = ''
       line_width = 0
       word = ''
       word_width = 0
 
-      position_letters_in_word = lambda {
-        word.each_char do |c|
-          char_width = font.text_width(c)
-          line_width += char_width
-          @text_positions.push [line_width, @lines.size * FONT_SIZE, char_width]
-        end
-      }
-
       text.each_char do |char|
         char_width = font.text_width(char)
 
         overall_width = line_width + (line_width == 0 ? 0 : space_width) + word_width + char_width
-        if overall_width > max_width
+        if overall_width > max_width and char != ' '
           if line.empty?
             # The current word is longer than the whole word, so split it.
             # Go back and set all the character positions we have.
-            position_letters_in_word.call
+            position_letters_in_word(word, line_width)
             line_width = 0
 
             # Push as much of the current word as possible as a complete line.
@@ -118,7 +121,7 @@ module Gui
           when "\n"
             # A new-line ends the word and puts it on the line.
             line += word
-            position_letters_in_word.call
+            line_width = position_letters_in_word(word, line_width)
             @text_positions.push [line_width, @lines.size * FONT_SIZE, 0]
             @lines.push line
             word = ''
@@ -129,7 +132,7 @@ module Gui
           when ' '
             # A space ends a word and puts it on the line.
             line += word + char
-            position_letters_in_word.call
+            line_width = position_letters_in_word(word, line_width)
             line_width += space_width
             @text_positions.push [line_width, @lines.size * FONT_SIZE, space_width]
 
@@ -150,7 +153,7 @@ module Gui
 
       # Add any remaining word on the last line.
       unless word.empty?
-        position_letters_in_word.call
+        position_letters_in_word(word, line_width)
         line += word
       end
 
