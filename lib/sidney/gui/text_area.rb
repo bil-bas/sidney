@@ -188,7 +188,7 @@ module Gui
       end
 
       # Draw the caret.
-      if focused? and (($window.milliseconds / CARET_PERIOD) % 2 == 0)
+      if focused? and ((milliseconds / CARET_PERIOD) % 2 == 0)
         left, top = x + PADDING_X + caret_x, y + PADDING_Y + caret_y
         $window.draw_line left, top, CARET_COLOR, left, top + FONT_SIZE, CARET_COLOR, z
       end

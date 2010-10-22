@@ -39,7 +39,7 @@ module Sidney
     protected
     def setup
       @mouse_over = nil # Element the mouse is hovering over.
-      @mouse_moved_at = Time.now
+      @mouse_moved_at = milliseconds
     end
 
     # Internationalisation helper.
@@ -69,14 +69,14 @@ module Sidney
 
       # Check if the mouse has moved, and no menu is shown, so we can show a tooltip.
       if [x, y] == [@mouse_x, @mouse_y] and (not @menu)
-        if @mouse_over and (not @tool_tip) and (Time.now - @mouse_moved_at) > tool_tip_delay
+        if @mouse_over and (not @tool_tip) and (milliseconds - @mouse_moved_at) > tool_tip_delay
           if text = @mouse_over.tip and not text.empty?
             @tool_tip = ToolTip.new(text)
           end
         end
       else
         clear_tip
-        @mouse_moved_at = Time.now
+        @mouse_moved_at = milliseconds
       end
 
       @mouse_x, @mouse_y = x, y
@@ -159,7 +159,7 @@ module Sidney
     protected
     def clear_tip
       @tool_tip = nil
-      @mouse_moved_at = Time.now
+      @mouse_moved_at = milliseconds
 
       nil
     end

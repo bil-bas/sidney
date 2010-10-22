@@ -141,7 +141,7 @@ module Sidney
     public
     def draw_outline(x, y)
       color = OUTLINE_COLOR.dup
-      color.alpha = ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i
+      color.alpha = ((Math.sin(milliseconds / 250.0) * 75 + 100)).to_i
       outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
 
       nil
@@ -151,7 +151,7 @@ module Sidney
     def draw_anchor(x, y)
       # Colour fades down to nothing.
       top_color = ANCHOR_COLOR.dup
-      top_color.alpha = ((Math.sin(Time.now.to_f * 4) * 75 + 100)).to_i
+      top_color.alpha = ((Math.sin(milliseconds / 250.0) * 75 + 100)).to_i
       bottom_color = ANCHOR_COLOR.dup
       bottom_color.alpha = 0
       $window.draw_quad(x, y, top_color,
