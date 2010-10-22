@@ -24,16 +24,14 @@ module Gui
 
     public
     def x=(value)
-      rect.x = value
-      difference = value - rect.x
-      each {|c| c.x += difference }
+      each {|c| c.x += value - x }
+      super(value)
     end
 
     public
     def y=(value)
-      rect.y = value
-      difference = value - rect.y
-      each {|c| c.y += difference }
+      each {|c| c.y += value - y }
+      super(value)
     end
 
     protected
@@ -41,7 +39,7 @@ module Gui
       options = {
         spacing_x: DEFAULT_SPACING_X,
         spacing_y: DEFAULT_SPACING_Y,
-      }
+      }.merge! options
 
       @spacing_x = options[:spacing_x]
       @spacing_y = options[:spacing_y]

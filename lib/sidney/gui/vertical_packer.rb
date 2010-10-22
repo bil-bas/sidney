@@ -7,27 +7,32 @@ module Gui
   # A vertically aligned element packing container.
   class VerticalPacker < Container
     protected
-    def initialize(options = {}, &block)
+    def initialize(parent, options = {}, &block)
       super
       post_init &block
     end
 
     public
     def recalc
+      old_width, old_height = width, height
+
+      total_height = padding_y
+
+      @children.each.with_index do |child, index|
+        child.x = x + padding_x
+        child.y = y + total_height
+        total_height += child.height
+        total_height += spacing_y unless index == @children.size - 1
+      end
+
+      rect.height = total_height + padding_y
       rect.width = (@children.map {|c| c.width }.max || 0) + (padding_x * 2)
 
-      rect.height = @children.inject(0) {|total, c| total + c.height } +
-                 (padding_y * 2) + (spacing_y * [@children.size - 1, 0].max)
-
       super
-    end
 
-    public
-    def add(element)
-      element.x = x + padding_x
-      element.y = y + height - padding_y + spacing_y
+      parent.recalc if parent and (width != old_width or height != old_height)
 
-      super
+      nil
     end
   end
 end

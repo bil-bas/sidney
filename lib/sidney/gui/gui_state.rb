@@ -35,7 +35,7 @@ module Sidney
 
     protected
     def initialize
-      @container = VerticalPacker.new(nil)
+      @container = VerticalPacker.new(nil, padding_x: 0, padding_y: 0)
 
       @mouse_x, @mouse_y = 0, 0
       @focus = nil

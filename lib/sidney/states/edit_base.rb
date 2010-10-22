@@ -35,18 +35,18 @@ module Sidney
         end
       )
 
-      HorizontalPacker.new(container) do |packer|
+      HorizontalPacker.new(container, padding_x: 2, padding_y: 2) do |packer|
         # The grid contains the actual game state.
         @grid = Grid.new(packer, ($window.height / 300).floor)
 
-        # The zoomer allows the user to change the zoom.
-        values = t 'zoom_combi.values'
-        zooms = [0.5, 1, 2, 4, 8].inject({}) do |hash, value|
-          hash[value] = values[value][:text]
-          hash
-        end
+        @side_bar = VerticalPacker.new(packer, padding_y: 0, padding_x: 0) do |packer|
+          # The zoomer allows the user to change the zoom.
+          values = t 'zoom_combi.values'
+          zooms = [0.5, 1, 2, 4, 8].inject({}) do |hash, value|
+            hash[value] = values[value][:text]
+            hash
+          end
 
-        @side_bar = VerticalPacker.new(packer) do |packer|
           @zoom_box = CombiBox.new(packer, value: INITIAL_ZOOM, tip: t('zoom_combi.tip')) do |widget|
             zooms.each_pair do |key, value|
               widget.add(key, value)
