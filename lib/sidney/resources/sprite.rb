@@ -89,8 +89,9 @@ module Sidney
     public
     def draw_outline(x, y)
       # Outline in yellow.
-      color = Color.rgba(255, 255, 0, ((Math.sin(milliseconds / 250.0) * 75 + 100)).to_i)
-      outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
+      color = OUTLINE_COLOR.dup
+      color.alpha = ((Math.sin(milliseconds / 250.0) * 75 + 100)).to_i
+      outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color, :additive)
 
       nil
     end

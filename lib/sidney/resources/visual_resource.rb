@@ -5,6 +5,8 @@ module Sidney
 class VisualResource < Resource
     @abstract_class = true
 
+    OUTLINE_COLOR = Color.rgb(200, 200, 0) # Outline in yellow.
+
     # Folder for storing data images.
     IMAGE_DIR = File.join(RESOURCE_DIR, 'images')
 

@@ -15,9 +15,8 @@ module Sidney
 
     CURRENT_VERSION = 3
 
-    OUTLINE_COLOR = Color.rgb(255, 255, 0) # Outline in yellow.
     ANCHOR_WIDTH, ANCHOR_HEIGHT = 16, 5
-    ANCHOR_COLOR = Color.rgb(0, 100, 0) # Anchor in dark green.
+    ANCHOR_COLOR = Color.rgb(0, 175, 0) # Anchor in dark green.
 
     public
     def has_outline?; true; end
@@ -142,7 +141,7 @@ module Sidney
     def draw_outline(x, y)
       color = OUTLINE_COLOR.dup
       color.alpha = ((Math.sin(milliseconds / 250.0) * 75 + 100)).to_i
-      outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color)
+      outline.draw(x_offset + x - 1, y_offset + y - 1, Sidney::ZOrder::OUTLINE, 1, 1, color, :additive)
 
       nil
     end
@@ -158,7 +157,7 @@ module Sidney
                         x + ANCHOR_WIDTH, y, top_color,
                         x + ANCHOR_WIDTH, y + ANCHOR_HEIGHT, bottom_color,
                         x, y + ANCHOR_HEIGHT, bottom_color,
-                        Sidney::ZOrder::OUTLINE)
+                        Sidney::ZOrder::OUTLINE, :additive)
 
       nil
     end
