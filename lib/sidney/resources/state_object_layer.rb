@@ -8,7 +8,7 @@ module Sidney
     belongs_to :state_object
 
     BUBBLE_FONT_SIZE = 8
-    BUBBLE_INITIAL_WIDTH = 50
+    BUBBLE_INITIAL_WIDTH = 80
     BUBBLE_PADDING_X = 3
     BUBBLE_PADDING_Y = 2
     BUBBLE_LINE_SPACING = -1

@@ -18,10 +18,10 @@ module Sidney
 
       add_inputs(
         g: -> { grid.toggle_overlay if $window.holding_control? },
-        holding_left: -> { clear_tip; grid.left },
-        holding_right: -> { clear_tip; grid.right },
-        holding_up: -> { clear_tip; grid.up },
-        holding_down: -> { clear_tip; grid.down },
+        holding_left: -> { clear_tip; grid.left unless focus },
+        holding_right: -> { clear_tip; grid.right unless focus },
+        holding_up: -> { clear_tip; grid.up unless focus },
+        holding_down: -> { clear_tip; grid.down unless focus },
         m: -> { @selection[0].mirror! if @selection.size == 1 and $window.holding_control? },
         n: -> { @selection[0].flip! if @selection.size == 1 and $window.holding_control? },
         z: lambda do
