@@ -5,7 +5,7 @@ require_relative 'menu_pane'
 
 module Sidney
 module Gui
-class CombiBox < Element
+class ComboBox < Element
   public
   attr_accessor :index
 
