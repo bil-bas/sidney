@@ -3,9 +3,18 @@
 module Sidney
 module Gui
 class Cursor < GameObject
+  ARROW = 'arrow.png'
+  HAND = 'hand.png'
+
   protected
   def initialize(options = {})
-    super({image: Image["mouse.png"], center: 0, zorder: ZOrder::CURSOR}.merge(options))
+    options = {
+      image: Image[ARROW],
+      center: 0,
+      zorder: ZOrder::CURSOR
+    }.merge!(options)
+
+    super(options)
 
     nil
   end

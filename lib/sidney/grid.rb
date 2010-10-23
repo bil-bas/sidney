@@ -12,6 +12,7 @@ class Grid < Element
   SCALE_RANGE = (0.5)..8 # From double zoom to 1/8 zoom.
   MARGIN = 4
   VIEW_EDGE = 0.5 # Amount of screen to see over the edge.
+  BORDER_COLOR = Color.new(0xffffffff)
 
   public
   attr_reader :scale, :base_scale, :rect
@@ -88,7 +89,7 @@ class Grid < Element
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
 
     x, y = (@base_scale * MARGIN).to_i, (@base_scale * MARGIN).to_i
-    width, height = (WIDTH * @base_scale).to_i, (HEIGHT * @base_scale).to_i
+    width, height = (WIDTH * @base_scale + 2).to_i, (HEIGHT * @base_scale + 2).to_i
     @overlay = GridOverlay.new(width, height, CELL_WIDTH * @scale)
 
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
@@ -98,8 +99,8 @@ class Grid < Element
 
   public
   def draw_with_respect_to
-    $window.translate(@rect.x, @rect.y) do
-      $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
+    $window.translate(@rect.x + 1, @rect.y + 1) do
+      $window.clip_to(0, 0, @rect.width - 2, @rect.height - 2) do
         $window.scale(scale) do
           $window.translate(@offset_x, @offset_y) do
             yield
@@ -112,9 +113,9 @@ class Grid < Element
   public
   def draw
     $window.translate(@rect.x, @rect.y) do
-      $window.clip_to(-1, 0, @rect.width + 1, @rect.height + 1) do
-        @overlay.draw(@offset_x * scale, @offset_y * scale)
-      end
+      @overlay.draw(@offset_x * scale, @offset_y * scale)
+
+      $window.draw_box(1, 0, width, height, z, BORDER_COLOR)
     end
 
     nil
@@ -131,13 +132,13 @@ class Grid < Element
   # Convert screen coordinates to pixellised coordinates.
   public
   def screen_to_grid(x, y)
-    [((x - @rect.x) / @scale) - @offset_x, ((y - @rect.y) / @scale) - @offset_y]
+    [((x - @rect.x - 1) / @scale) - @offset_x, ((y - @rect.y - 1) / @scale) - @offset_y]
   end
 
   # Convert pixellised coordinates into screen coordinates.
   public
   def grid_to_screen(x, y)
-    [((x + @offset_x) * @scale) + @rect.x, ((y + @offset_y) * @scale) + @rect.y]
+    [((x + @offset_x) * @scale) + @rect.x + 1, ((y + @offset_y) * @scale) + @rect.y + 1]
   end
 end
 end

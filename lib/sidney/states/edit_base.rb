@@ -57,7 +57,7 @@ module Sidney
             end
           end
 
-          @centre_button = Button.new(packer, t('centre_button.text'),
+          @centre_button = Button.new(packer, icon: Image['center.png'],
                                         tip: t('centre_button.tip')) do |button|
             button.subscribe :click do
               @zoom_box.value = 1

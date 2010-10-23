@@ -106,16 +106,16 @@ class Game < Window
   def draw_box(x, y, width, height, z, border_color = nil, fill_color = nil)
     if fill_color
       draw_quad(x, y, fill_color,
-                        x + width, y, fill_color,
-                        x + width, y + height, fill_color,
-                        x, y + height, fill_color, z)
+                x + width - 1, y, fill_color,
+                x + width - 1, y + height - 1, fill_color,
+                x, y + height - 1, fill_color, z)
     end
 
     if border_color
-      draw_line(x, y, border_color, x, y + height, border_color, z) # left
-      draw_line(x, y, border_color, x + width, y, border_color, z) # top
-      draw_line(x + width, y, border_color, x + width, y + height,  border_color, z) # right
-      draw_line(x, y + height, border_color, x + width, y + height,  border_color, z) # bottom
+      draw_line(x, y, border_color, x, y + height - 1, border_color, z) # left
+      draw_line(x, y, border_color, x + width - 1, y, border_color, z) # top
+      draw_line(x + width - 1, y, border_color, x + width - 1, y + height - 1,  border_color, z) # right
+      draw_line(x, y + height - 1, border_color, x + width - 1, y + height - 1,  border_color, z) # bottom
     end
 
     nil

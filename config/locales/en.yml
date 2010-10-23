@@ -21,7 +21,6 @@ en:
         tip: Show eighth size
 
   centre_button:
-    text: Centre
     tip: Centre the game window and reset scale to 100%
   
   help: # General help, shown in every mode.
@@ -75,11 +74,9 @@ en:
 
   edit_object:
     save_button:
-      text: Save
       tip: Save the object and go back to editing the scene
 
     save_copy_button:
-      text: Save copy
       tip: Copy the object, save it and go back to editing the scene
 
     help:

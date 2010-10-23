@@ -18,12 +18,12 @@ module Sidney
         f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) }
       )
 
-      @save_button = Button.new(side_bar, t('edit_object.save_button.text'),
+      @save_button = Button.new(side_bar, icon: Image['save.png'],
                                         tip: t('edit_object.save_button.tip')) do |button|
         button.subscribe :click, method(:save)
       end
 
-      @save_copy_button = Button.new(side_bar, t('edit_object.save_copy_button.text'),
+      @save_copy_button = Button.new(side_bar, icon: Image['copy_and_save.png'],
                                              tip: t('edit_object.save_copy_button.tip')) do |button|
         button.subscribe :click, method(:save_copy)
       end
