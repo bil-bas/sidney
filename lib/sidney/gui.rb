@@ -2,6 +2,7 @@
 
 require_relative 'gui/button'
 require_relative 'gui/clipboard'
+require_relative 'gui/color_well'
 require_relative 'gui/combo_box'
 require_relative 'gui/cursor'
 require_relative 'gui/gui_state'

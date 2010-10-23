@@ -34,7 +34,7 @@ class Element
 
   @@debug_mode = false
   def self.debug_mode?; @@debug_mode; end
-  def self.debug_mode(value); @@debug_mode = value; end
+  def self.debug_mode=(value); @@debug_mode = value; end
 
   protected
   def debug_mode?; @@debug_mode; end
