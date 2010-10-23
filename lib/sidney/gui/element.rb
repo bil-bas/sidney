@@ -32,6 +32,24 @@ class Element
   def width; rect.width; end
   def height; rect.height; end
 
+  @@debug_mode = false
+  def self.debug_mode?; @@debug_mode; end
+  def self.debug_mode(value); @@debug_mode = value; end
+
+  protected
+  def debug_mode?; @@debug_mode; end
+
+  class << self
+    alias_method :original_new, :new
+
+    public
+    def new(*args, &block)
+      obj = original_new(*args) # Block should be ignored.
+      obj.send :post_init, &block
+      obj
+    end
+  end
+
   protected
   def initialize(parent, options = {}, &block)
     options = {
@@ -43,12 +61,14 @@ class Element
       tip: '',
       font_size: DEFAULT_FONT_SIZE,
       padding_x: DEFAULT_PADDING_X,
-      padding_y: DEFAULT_PADDING_Y
+      padding_y: DEFAULT_PADDING_Y,
+      debug: false
     }.merge! options
 
     @padding_x = options[:padding_x]
     @padding_y = options[:padding_y]
     @parent = parent
+    @debug = options[:debug]
 
     @rect = Rect.new(options[:x], options[:y], options[:width], options[:height])
     @z = options[:z]
@@ -56,9 +76,10 @@ class Element
     @font_size = options[:font_size]
   end
 
-  # Called by decendents when all inititialization is complete.
+  # Called when all initialization is complete.
   protected
   def post_init(&block)
+    recalc if respond_to? :recalc
     @parent.add self if @parent
     yield self if block_given?
   end

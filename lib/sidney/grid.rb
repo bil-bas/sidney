@@ -94,8 +94,6 @@ class Grid < Element
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
 
     super(parent, x: x, y: y, width: width, height: height)
-
-    post_init &block
   end
 
   public

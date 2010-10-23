@@ -4,12 +4,9 @@ require_relative 'element'
 
 module Sidney
 module Gui
-  # A container that contains GuiElements.
-  # @abstract
+  # A container that contains Elements.
   class Container < Element
-    DEFAULT_SPACING_X, DEFAULT_SPACING_Y = 5, 5
-
-    attr_reader :spacing_x, :spacing_y
+    DEBUG_BORDER_COLOR = Color.rgb(0, 0, 255) # Color to draw an outline in when debugging layout.
 
     # Recalculate the size of the container.
     public
@@ -36,18 +33,9 @@ module Gui
 
     protected
     def initialize(parent, options = {})
-      options = {
-        spacing_x: DEFAULT_SPACING_X,
-        spacing_y: DEFAULT_SPACING_Y,
-      }.merge! options
-
-      @spacing_x = options[:spacing_x]
-      @spacing_y = options[:spacing_y]
       @children = []
 
       super(parent, options)
-
-      recalc
     end
 
     public
@@ -61,6 +49,7 @@ module Gui
 
     public
     def draw
+      $window.draw_box x, y, width, height, z, DEBUG_BORDER_COLOR if debug_mode?
       each { |c| c.draw }
     end
 
@@ -70,10 +59,10 @@ module Gui
     end
 
     # Returns the element within this container that was hit,
-    # @return [GuiElement, nil] The element hit, otherwise nil.
+    # @return [Element, nil] The element hit, otherwise nil.
     public
     def hit_element(x, y)
-      @children.each do |child|
+      @children.reverse_each do |child|
         if child.is_a? Container
           if element = child.hit_element(x, y)
             return element

@@ -24,8 +24,6 @@ class ToolTip < Element
     rect.y = [y, $window.height - height - padding_y].min
     rect.width = width
     rect.height = height
-
-    post_init &block
   end
 
   public

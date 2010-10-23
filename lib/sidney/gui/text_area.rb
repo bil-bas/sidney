@@ -120,9 +120,6 @@ module Gui
         @min_height = options[:min_height] ? [options[:min_height], min_height].max : min_height
       end
       rect.height = [(padding_y * 2) + font_size, @min_height].max
-      recalc
-
-      post_init &block
     end
 
     public

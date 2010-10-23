@@ -20,8 +20,6 @@ class Button < Element
 
     rect.height = [font_size + padding_y * 2, height].max
     rect.width = [font.text_width(@text) + padding_x * 2, width].max
-
-    post_init &block
   end
 
   public

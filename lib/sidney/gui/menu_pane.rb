@@ -56,8 +56,6 @@ class MenuPane < Element
     @index = nil # The index of the item hovered over.
 
     super(nil, options)
-
-    post_init &block
   end
 
   def index(value)

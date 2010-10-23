@@ -1,17 +1,11 @@
 # encoding: utf-8
 
-require_relative 'container'
+require_relative 'packer'
 
 module Sidney
 module Gui
   # A vertically aligned element packing container.
-  class VerticalPacker < Container
-    protected
-    def initialize(parent, options = {}, &block)
-      super
-      post_init &block
-    end
-
+  class VerticalPacker < Packer
     public
     def recalc
       old_width, old_height = width, height

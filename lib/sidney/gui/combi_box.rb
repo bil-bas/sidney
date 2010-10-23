@@ -52,8 +52,6 @@ class CombiBox < Element
 
     rect.height = [height, font_size + padding_y * 2].max
     rect.width = [width, font_size * 4 + padding_x * 2].max
-
-    post_init &block
   end
 
   public
