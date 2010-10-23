@@ -32,6 +32,18 @@ module Sidney
       TextArea.new(side_bar, width: 120, min_height: 60, max_height: 120, editable: true,
               text: "")
 
+      RadioButton::Group.new do |group|
+        HorizontalPacker.new(side_bar) do |packer|
+          width = 20
+          RadioButton.new(packer, 1, group: group, text: '1', width: width, checked: true)
+          RadioButton.new(packer, 2, group: group, text: '2', width: width)
+          RadioButton.new(packer, 3, group: group, text: '3', width: width)
+          group.subscribe :changed do |sender, value|
+            # TODO: Do something?
+          end
+        end
+      end
+
       nil
     end
 
