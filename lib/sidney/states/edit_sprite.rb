@@ -58,6 +58,8 @@ module Sidney
       else
         @grid.overlay.hide!
       end
+      @grid_button.on = old_grid.overlay.visible?
+
       nil
     end
 
@@ -72,6 +74,7 @@ module Sidney
       else
         old_grid.overlay.hide!
       end
+      previous_game_state.grid_button.on = @grid.overlay.visible?
 
       nil
     end

@@ -22,8 +22,12 @@ en:
 
   centre_button:
     tip: Centre the game window and reset scale to 100%
+
   grid_button:
-    tip: Show/Hide the grid
+    'on':
+      tip: Hide the grid
+    'off':
+      tip: Show the grid
   
   help: # General help, shown in every mode.
     (Escape to exit this help).

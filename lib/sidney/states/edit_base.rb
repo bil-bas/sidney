@@ -10,7 +10,7 @@ module Sidney
 
     INITIAL_ZOOM = 1
 
-    attr_reader :side_bar, :zoom_box, :grid
+    attr_reader :side_bar, :zoom_box, :grid, :grid_button
 
     protected
     def initialize
@@ -65,8 +65,8 @@ module Sidney
             end
           end
 
-          @grid_button = Button.new(packer, icon: Image['grid.png'],
-                                        tip: t('grid_button.tip')) do |button|
+          @grid_button = ToggleButton.new(packer, on: true, icon: Image['grid.png'],
+                                        on_tip: t('grid_button.on.tip'), off_tip: t('grid_button.off.tip')) do |button|
             button.subscribe :click do
               grid.toggle_overlay
             end
