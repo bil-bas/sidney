@@ -15,7 +15,7 @@ class Grid < Element
   BORDER_COLOR = Color.new(0xffffffff)
 
   public
-  attr_reader :scale, :base_scale, :rect
+  attr_reader :scale, :base_scale, :rect, :overlay
 
   attr_reader :offset_x, :offset_y
 

@@ -64,6 +64,13 @@ module Sidney
               @grid.offset_x = @grid.offset_y = 0
             end
           end
+
+          @grid_button = Button.new(packer, icon: Image['grid.png'],
+                                        tip: t('grid_button.tip')) do |button|
+            button.subscribe :click do
+              grid.toggle_overlay
+            end
+          end
         end
       end
     end

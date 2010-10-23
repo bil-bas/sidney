@@ -53,7 +53,11 @@ module Sidney
       @zoom_box.value = previous_game_state.zoom_box.value
       @grid.offset_x = old_grid.offset_x
       @grid.offset_y = old_grid.offset_y
-
+      if old_grid.overlay.visible?
+        @grid.overlay.show!
+      else
+        @grid.overlay.hide!
+      end
       nil
     end
 
@@ -63,6 +67,11 @@ module Sidney
       previous_game_state.zoom_box.value = @zoom_box.value
       old_grid.offset_x = @grid.offset_x
       old_grid.offset_y = @grid.offset_y
+      if @grid.overlay.visible?
+        old_grid.overlay.show!
+      else
+        old_grid.overlay.hide!
+      end
 
       nil
     end
