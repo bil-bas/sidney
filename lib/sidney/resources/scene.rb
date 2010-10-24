@@ -1,9 +1,9 @@
 # encoding: utf-8
 
+require_relative 'json_serialization_wrapper'
 require_relative 'visual_resource'
 require_relative 'room'
 require_relative 'state_object_layer'
-
 
 module Sidney
   class Scene < VisualResource  
@@ -12,11 +12,14 @@ module Sidney
     has_many :state_object_layers
     has_many :state_objects, through: :state_object_layers
 
-    serialize :tint
+    # Manage saving tint (Gosu::Color) as json.
+    before_save JsonSerializationWrapper.new(:tint)
+    after_save  JsonSerializationWrapper.new(:tint)
+    after_find  JsonSerializationWrapper.new(:tint)
 
     CURRENT_VERSION = 2
     DEFAULT_OBJECT_ZERO_FROZEN = false
-    DEFAULT_TINT = [0, 0, 0, 0]
+    DEFAULT_TINT = Color.rgba(0, 0, 0, 0)
     SAVE_ZOOM = 1 # Render to a image this many times larger.
 
     def self.current_version
@@ -25,19 +28,6 @@ module Sidney
 
     public
     def composed_image?; true; end
-
-    def tint
-      Gosu::Color.rgba(*self[:tint])
-    end
-
-    def tint=(color)
-      self[:tint] = case color
-      when Gosu::Color
-        [color.red, color.blue, color.green, color.alpha]
-      when Array
-        color
-      end
-    end
 
     protected
     def initialize(options)
@@ -73,7 +63,7 @@ module Sidney
 
       room_alpha, object_zero_frozen, num_objects = data[offset, 3].unpack("CCC")
       offset += 3
-      attributes[:tint] = [0, 0, 0, 255 - room_alpha]
+      attributes[:tint] = Color.rgba(0, 0, 0, 255 - room_alpha)
 
       object_data_length = StateObjectLayer.data_length(version)
 
@@ -95,7 +85,7 @@ module Sidney
 
     def self.default_attributes(attributes = {})
       attributes[:room_id] = Room.default.id unless attributes[:room_id]
-      attributes[:tint] = DEFAULT_TINT unless attributes[:tint]
+      attributes[:tint] = DEFAULT_TINT.dup unless attributes[:tint]
       attributes[:state_object_layers] = [] # TODO: create default player object.
       
       super(attributes)

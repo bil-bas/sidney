@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-require_relative '../gosu_ext'
 require 'devil'
 require 'devil/gosu'
 

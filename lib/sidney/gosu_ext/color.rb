@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require 'json'
 require 'gosu'
 
 module Gosu
@@ -47,5 +48,21 @@ module Gosu
     def to_tex_play
       [red / 255.0, green / 255.0, blue / 255.0,  alpha / 255.0]
     end
+
+    # Json serialization.
+    public
+    def to_json
+      {
+        'json_class' => self.class.name,
+        'rgba' => [red, green, blue, alpha]
+      }.to_json
+    end
+
+    public
+    def self.json_create(attributes)
+      rgba(*attributes['rgba'])
+    end
   end
 end
+
+

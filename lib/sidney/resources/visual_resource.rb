@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 require_relative 'resource'
-
+require_relative '../gosu_ext'
 
 module Sidney
 class VisualResource < Resource
