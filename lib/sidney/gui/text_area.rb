@@ -188,7 +188,7 @@ module Gui
 
     public
     # @return [nil]
-    def recalc
+    def layout
       # Don't need to re-layout if the text hasn't changed.
       return if @old_text == text
 
@@ -278,7 +278,6 @@ module Gui
       if new_height <= max_height
         @old_text = text
         rect.height = [new_height, @min_height].max
-        parent.recalc if @lines.size != old_lines.size and parent
         @old_caret_position = caret_position
         @old_selection_start = @text_input.selection_start
       else

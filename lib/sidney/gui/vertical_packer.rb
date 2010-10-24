@@ -6,10 +6,8 @@ module Sidney
 module Gui
   # A vertically aligned element packing container.
   class VerticalPacker < Packer
-    public
-    def recalc
-      old_width, old_height = width, height
-
+    protected
+    def layout
       total_height = padding_y
 
       @children.each.with_index do |child, index|
@@ -21,10 +19,6 @@ module Gui
 
       rect.height = total_height + padding_y
       rect.width = (@children.map {|c| c.width }.max || 0) + (padding_x * 2)
-
-      super
-
-      parent.recalc if parent and (width != old_width or height != old_height)
 
       nil
     end

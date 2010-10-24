@@ -1,44 +1,48 @@
 # encoding: utf-8
 
 require_relative 'button'
-require_relative '../event'
+require_relative 'container'
 
 module Sidney
 module Gui
   class RadioButton < Button
-    class Group
-      include Event
-
-      attr_reader :name, :selected
+    class Group < Container
+      attr_reader :selected
 
       def value; @selected ? @selected.value : nil; end
 
       protected
       # @example
-      #   RadioButton::Group.new do |group|
-      #     HorizontalPacker.new(side_bar) do |packer|
-      #       RadioButton.new(packer, 1, group: group, text: '1' checked: true)
-      #       RadioButton.new(packer, 2, group: group, text: '2')
+      #   RadioButton::Group.new(packer) do |group|
+      #     HorizontalPacker.new(group) do |packer|
+      #       RadioButton.new(packer, 1, text: '1' checked: true)
+      #       RadioButton.new(packer, 2, text: '2')
       #       group.subscribe :changed do |sender, value|
       #         puts value
       #       end
       #     end
       #    end
-      def initialize(&block)
+      def initialize(parent, options = {}, &block)
+        options = {
+          padding_x: 0,
+          padding_y: 0
+        }.merge! options
+
+        super(parent, options)
+
         @selected = nil
         @buttons = []
-
-        yield self if block_given?
       end
 
       public
-      def add(button)
+      def add_button(button)
         @buttons.push button
         button_checked button if button.checked?
 
         nil
       end
 
+      # @param [RadioButton] button
       public
       def button_checked(button)
         @selected.send :uncheck if @selected
@@ -52,10 +56,10 @@ module Gui
 
       public
       # @example
-      #   RadioButton::Group.new do |group|
-      #     HorizontalPacker.new(side_bar) do |packer|
-      #       RadioButton.new(packer, 1, group: group, text: '1')
-      #       RadioButton.new(packer, 2, group: group, text: '2')
+      #   RadioButton::Group.new(packer) do |group|
+      #     HorizontalPacker.new(group) do |packer|
+      #       RadioButton.new(packer, 1, text: '1')
+      #       RadioButton.new(packer, 2, text: '2')
       #       group.value = 2
       #     end
       #    end
@@ -87,12 +91,26 @@ module Gui
 
       @checked = options[:checked]
 
-      @group = options[:group]
-      @group.add self
-
       @value = value
 
       super(parent, options)
+
+      add_to_group
+    end
+
+    protected
+    def add_to_group
+      container = parent
+      while container
+        break if container.is_a? Group
+        container = container.parent
+      end
+
+      raise "#{self.class.name} must be placed inside a group element" unless container
+
+      @group = container
+      @group.add_button self
+      nil
     end
 
     public

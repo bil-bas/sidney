@@ -79,9 +79,25 @@ class Element
   # Called when all initialization is complete.
   protected
   def post_init(&block)
-    recalc if respond_to? :recalc
+    recalc
     @parent.add self if @parent
     yield self if block_given?
+  end
+
+  public
+  def recalc
+    old_width, old_height = width, height
+    layout
+    parent.recalc if parent and (width != old_width or height != old_height)
+
+    nil
+  end
+
+  protected
+  # Should be overridden in children to recalculate the width and height of the element and, if a container
+  # manage the positions of its children.
+  def layout
+    nil
   end
 
   # Check if a point (screen coordinates) is over the element.

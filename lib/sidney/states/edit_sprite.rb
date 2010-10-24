@@ -32,12 +32,12 @@ module Sidney
 
       @draw_color = INITIAL_DRAW_COLOR
 
-      ColorWell::Group.new do |group|
-        HorizontalPacker.new(side_bar, padding_x: 0) do |packer|
+      ColorWell::Group.new(side_bar) do |group|
+        HorizontalPacker.new(group, padding_x: 0) do |packer|
           5.times do
             VerticalPacker.new(packer, padding_x: 0, spacing_x: 0) do |packer|
               10.times do
-                ColorWell.new(packer, group: group, color: Color.rgb(rand(255), rand(255), rand(255)))
+                ColorWell.new(packer, color: Color.rgb(rand(255), rand(255), rand(255)))
               end
             end
           end

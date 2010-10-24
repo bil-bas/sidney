@@ -9,9 +9,22 @@ module Gui
     DEBUG_BORDER_COLOR = Color.rgb(0, 0, 255) # Color to draw an outline in when debugging layout.
 
     # Recalculate the size of the container.
-    public
-    def recalc
-      nil
+    # Should be overridden by any descendant that manages the positions of its children.
+    protected
+    def layout
+      # This assumes that the container overlaps all the children.
+
+      # Move all children if we have moved.
+      @children.each.with_index do |child, index|
+        child.x = x + padding_x
+        child.y = y + padding_y
+      end
+
+      # Make us as wrap around the largest child.
+      rect.width = (@children.map {|c| c.width }.max || 0) + padding_x * 2
+      rect.height = (@children.map {|c| c.height }.max || 0) + padding_y * 2
+
+      super
     end
 
     public
@@ -49,7 +62,11 @@ module Gui
 
     public
     def draw
-      $window.draw_box x, y, width, height, z, DEBUG_BORDER_COLOR if debug_mode?
+      if debug_mode?
+        $window.draw_box x, y, width, height, z, DEBUG_BORDER_COLOR
+        font.draw self.class.name, x, y, z + 0.001
+      end
+
       each { |c| c.draw }
     end
 
