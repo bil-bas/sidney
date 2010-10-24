@@ -46,6 +46,9 @@ en:
     Ctrl-G => Show/hide pixel grid.
 
   edit_scene:
+    tint_slider:
+      tip: Tint opacity
+
     help:
       === Editing scene ===
 
