@@ -74,12 +74,11 @@ class Element
     @font_size = options[:font_size]
   end
 
-  # Called when all initialization is complete.
   protected
   def post_init(&block)
     recalc
     @parent.add self if @parent
-    yield self if block_given?
+    yield self if block_given? # Return the result of the yield.
   end
 
   public

@@ -32,14 +32,14 @@ module Gui
       options = {
         range: 0..1.0,
         value: 0,
-        height: 20
+        height: 25
       }.merge! options
 
       @range = options[:range]
 
       super(parent, options)
 
-      @handle = Handle.new(self, width: height - padding_x * 2, height: height - padding_y * 2)
+      @handle = Handle.new(self, width: (height / 2 - padding_x), height: height - padding_y * 2)
       self.value = options[:value]
     end
 

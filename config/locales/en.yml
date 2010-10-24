@@ -121,6 +121,9 @@ en:
       Escape => Save and leave editing mode.
 
   edit_sprite:
+    color_picker:
+      channel_names: [Red, Green, Blue, Alpha]
+
     help:
       === Editing sprite image ===
 

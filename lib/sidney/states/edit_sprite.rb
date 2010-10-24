@@ -12,7 +12,7 @@ module Sidney
     IMAGE_X = - MAX_IMAGE_WIDTH / 3
     IMAGE_Y = - MAX_IMAGE_HEIGHT / 3
 
-    INITIAL_DRAW_COLOR = [1, 1, 1, 1]
+    INITIAL_DRAW_COLOR = Color.rgba(255, 255, 255, 255)
 
     protected
     def initialize
@@ -30,9 +30,9 @@ module Sidney
         holding_down: ->{ grid.down }
       )
 
-      @draw_color = INITIAL_DRAW_COLOR
-
       @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
+        @color_picker = ColorPicker.new(packer, width: 100, color: INITIAL_DRAW_COLOR, channel_names: t('edit_sprite.color_picker.channel_names'))
+
         ColorWell::Group.new(packer) do |group|
           HorizontalPacker.new(group, padding_x: 0, spacing: 1) do |packer|
             5.times do
@@ -44,7 +44,7 @@ module Sidney
             end
           end
           group.subscribe :changed do |sender, value|
-            @draw_color = value.to_tex_play
+            @color_picker.color = value
           end
         end
       end
@@ -68,7 +68,7 @@ module Sidney
       x, y = cursor.x, cursor.y
       if grid.hit?(x, y)
         x, y = grid.screen_to_grid(x, y)
-        @image.set_pixel(x - IMAGE_X, y - IMAGE_Y, color: @draw_color)
+        @image.set_pixel(x - IMAGE_X, y - IMAGE_Y, color: @color_picker.color)
       end
 
       nil
@@ -79,7 +79,7 @@ module Sidney
       x, y = cursor.x, cursor.y
       if grid.hit?(x, y)
         x, y = grid.screen_to_grid(x, y)
-        @draw_color = @image.get_pixel(x - IMAGE_X, y - IMAGE_Y)
+        @color_picker.color = Color.from_tex_play(@image.get_pixel(x - IMAGE_X, y - IMAGE_Y))
       end
 
       nil
@@ -118,12 +118,6 @@ module Sidney
 
         @image.draw(IMAGE_X, IMAGE_Y, 0)
       end
-
-      # Draw a transparent checkerboard, then draw the colour on top of that.
-      rect = grid.rect
-      x, y = rect.right + 10, rect.top + 50
-      @transparent_small.draw x, y, ZOrder::GUI, 25, 25
-      $window.draw_box x, y, 50, 50, ZOrder::GUI, 0xffffffff, Gosu::Color.from_tex_play(@draw_color)
 
       Element.font.draw("Sprite: '#{@sprite.sprite.name}' [#{@sprite.sprite.id}]", 10, $window.height - 25, ZOrder::GUI)
 
