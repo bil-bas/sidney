@@ -51,11 +51,11 @@ module Sidney
       )
 
       # Create a common packer, used by all editing modes.
-      @@edit_packer ||= HorizontalPacker.new(container, padding_x: 0, padding_y: 0) do |packer|
+      @@edit_packer ||= HorizontalPacker.new(container, padding: 0) do |packer|
         # The grid contains the actual game state.
         @@grid = Grid.new(packer, ($window.height / 300).floor)
 
-        VerticalPacker.new(packer, padding_y: 0, padding_x: 0) do |packer|
+        VerticalPacker.new(packer, padding: 0) do |packer|
           # The zoomer allows the user to change the zoom.
           values = t 'zoom_combo.values'
           zooms = [0.5, 1, 2, 4, 8].inject({}) do |hash, value|
@@ -63,7 +63,7 @@ module Sidney
             hash
           end
 
-          HorizontalPacker.new(packer, padding_y: 0, padding_x: 0) do |packer|
+          HorizontalPacker.new(packer, padding: 0) do |packer|
             @@zoom_box = ComboBox.new(packer, value: INITIAL_ZOOM, tip: t('zoom_combo.tip')) do |widget|
               zooms.each_pair do |key, value|
                 widget.add(key, value)
@@ -91,7 +91,7 @@ module Sidney
           end
 
           # Sidebar used by the individual states.
-          @@state_bar_container = VerticalPacker.new(packer, padding_y: 0, padding_x: 0)
+          @@state_bar_container = VerticalPacker.new(packer, padding: 0)
         end
       end
     end

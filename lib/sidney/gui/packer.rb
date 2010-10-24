@@ -15,12 +15,10 @@ module Gui
     protected
     def initialize(parent, options = {})
       options = {
-        spacing_x: DEFAULT_SPACING_X,
-        spacing_y: DEFAULT_SPACING_Y,
       }.merge! options
 
-      @spacing_x = options[:spacing_x]
-      @spacing_y = options[:spacing_y]
+      @spacing_x = options[:spacing_x] || options[:spacing] || DEFAULT_SPACING_X
+      @spacing_y = options[:spacing_y] || options[:spacing] || DEFAULT_SPACING_Y
 
       super(parent, options)
     end

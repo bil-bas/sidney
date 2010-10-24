@@ -32,11 +32,11 @@ module Sidney
 
       @draw_color = INITIAL_DRAW_COLOR
 
-      @state_bar = VerticalPacker.new(nil, padding_y: 0, padding_x: 0) do |packer|
+      @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
         ColorWell::Group.new(packer) do |group|
-          HorizontalPacker.new(group, padding_x: 0) do |packer|
+          HorizontalPacker.new(group, padding_x: 0, spacing: 1) do |packer|
             5.times do
-              VerticalPacker.new(packer, padding_x: 0, spacing_x: 0) do |packer|
+              VerticalPacker.new(packer, padding_x: 0, spacing: 1) do |packer|
                 10.times do
                   ColorWell.new(packer, color: Color.rgb(rand(255), rand(255), rand(255)))
                 end

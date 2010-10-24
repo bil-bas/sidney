@@ -18,7 +18,7 @@ module Sidney
         f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) }
       )
 
-      @state_bar = VerticalPacker.new(nil, padding_y: 0, padding_x: 0) do |packer|
+      @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
         @save_button = Button.new(packer, icon: Image['save.png'],
                                           tip: t('edit_object.save_button.tip')) do |button|
           button.subscribe :click, method(:save)

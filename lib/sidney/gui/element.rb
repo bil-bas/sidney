@@ -60,13 +60,11 @@ class Element
       height: 0,
       tip: '',
       font_size: DEFAULT_FONT_SIZE,
-      padding_x: DEFAULT_PADDING_X,
-      padding_y: DEFAULT_PADDING_Y,
       debug: false
     }.merge! options
 
-    @padding_x = options[:padding_x]
-    @padding_y = options[:padding_y]
+    @padding_x = options[:padding_x] || options[:padding] || DEFAULT_PADDING_X
+    @padding_y = options[:padding_y] || options[:padding] || DEFAULT_PADDING_Y
     @parent = parent
     @debug = options[:debug]
 

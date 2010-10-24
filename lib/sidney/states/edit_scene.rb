@@ -24,7 +24,7 @@ module Sidney
 
       @scene = Scene.load('d252be6903bd')
 
-      @state_bar = VerticalPacker.new(nil, padding_y: 0, padding_x: 0) do |packer|
+      @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
         TextArea.new(packer, width: 120, editable: true,
                 text: "T'was brillig and the Slithy toves gyred and gimbled across the wabe.\nAll mimsy were the borro1234567890goves and the mome-raths outgrabe!")
 
@@ -34,7 +34,7 @@ module Sidney
                 text: "")
 
         RadioButton::Group.new(packer) do |group|
-          HorizontalPacker.new(group) do |packer|
+          HorizontalPacker.new(group, padding: 0) do |packer|
             width = 20
             RadioButton.new(packer, 1, text: '1', width: width, checked: true)
             RadioButton.new(packer, 2, text: '2', width: width)
