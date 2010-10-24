@@ -18,21 +18,23 @@ module Sidney
         f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) }
       )
 
-      @save_button = Button.new(side_bar, icon: Image['save.png'],
-                                        tip: t('edit_object.save_button.tip')) do |button|
-        button.subscribe :click, method(:save)
-      end
+      @state_bar = VerticalPacker.new(nil, padding_y: 0, padding_x: 0) do |packer|
+        @save_button = Button.new(packer, icon: Image['save.png'],
+                                          tip: t('edit_object.save_button.tip')) do |button|
+          button.subscribe :click, method(:save)
+        end
 
-      @save_copy_button = Button.new(side_bar, icon: Image['copy_and_save.png'],
-                                             tip: t('edit_object.save_copy_button.tip')) do |button|
-        button.subscribe :click, method(:save_copy)
+        @save_copy_button = Button.new(packer, icon: Image['copy_and_save.png'],
+                                               tip: t('edit_object.save_copy_button.tip')) do |button|
+          button.subscribe :click, method(:save_copy)
+        end
       end
     end
 
     protected
     def save(*args)
       save_changes
-      pop_game_state(:setup => false)
+      pop_game_state
     end
 
     protected
@@ -44,7 +46,7 @@ module Sidney
     def edit
       @edit_sprite ||= EditSprite.new
       @edit_sprite.init(@selection[0], @object)
-      push_game_state @edit_sprite, finalize: false
+      push_game_state @edit_sprite
 
       nil
     end
@@ -120,39 +122,6 @@ module Sidney
       copy
       @selection.each {|o| object.state_object.cached_layers.delete(o) }
       @selection.clear
-
-      nil
-    end
-
-    public
-    def setup
-      log.info { "Started editing object" }
-      old_grid = previous_game_state.grid
-      @zoom_box.value = previous_game_state.zoom_box.value
-      @grid.offset_x = old_grid.offset_x
-      @grid.offset_y = old_grid.offset_y
-      if old_grid.overlay.visible?
-        @grid.overlay.show!
-      else
-        @grid.overlay.hide!
-      end
-      @grid_button.on = old_grid.overlay.visible?
-
-      nil
-    end
-
-    public
-    def finalize
-      old_grid = previous_game_state.grid
-      previous_game_state.zoom_box.value = @zoom_box.value
-      old_grid.offset_x = @grid.offset_x
-      old_grid.offset_y = @grid.offset_y
-      if @grid.overlay.visible?
-        old_grid.overlay.show!
-      else
-        old_grid.overlay.hide!
-      end
-      previous_game_state.grid_button.on = @grid.overlay.visible?
 
       nil
     end

@@ -53,10 +53,29 @@ module Gui
 
     public
     def add(element)
-      element.parent = self
+      element.send :parent=, self
       @children.push element
 
       recalc
+      nil
+    end
+
+    public
+    def remove(element)
+      @children.delete element
+      element.send :parent=, nil
+
+      recalc
+      nil
+    end
+
+    public
+    def clear
+      @children.each {|child| child.parent = nil }
+      @children.clear
+
+      recalc
+
       nil
     end
 

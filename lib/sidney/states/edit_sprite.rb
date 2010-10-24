@@ -19,7 +19,7 @@ module Sidney
       super()
 
       add_inputs(
-        released_escape: ->{ save_changes; pop_game_state(:setup => false) },
+        released_escape: ->{ save_changes; pop_game_state },
         g: ->{ grid.toggle_overlay if $window.holding_control? },
         f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_sprite.help', general: t('help'))) },
         mouse_wheel_up: ->{ zoom_box.index += 1 },
@@ -32,18 +32,20 @@ module Sidney
 
       @draw_color = INITIAL_DRAW_COLOR
 
-      ColorWell::Group.new(side_bar) do |group|
-        HorizontalPacker.new(group, padding_x: 0) do |packer|
-          5.times do
-            VerticalPacker.new(packer, padding_x: 0, spacing_x: 0) do |packer|
-              10.times do
-                ColorWell.new(packer, color: Color.rgb(rand(255), rand(255), rand(255)))
+      @state_bar = VerticalPacker.new(nil, padding_y: 0, padding_x: 0) do |packer|
+        ColorWell::Group.new(packer) do |group|
+          HorizontalPacker.new(group, padding_x: 0) do |packer|
+            5.times do
+              VerticalPacker.new(packer, padding_x: 0, spacing_x: 0) do |packer|
+                10.times do
+                  ColorWell.new(packer, color: Color.rgb(rand(255), rand(255), rand(255)))
+                end
               end
             end
           end
-        end
-        group.subscribe :changed do |sender, value|
-          @draw_color = value.to_tex_play
+          group.subscribe :changed do |sender, value|
+            @draw_color = value.to_tex_play
+          end
         end
       end
 
@@ -59,39 +61,6 @@ module Sidney
       @image.splice(@sprite.sprite.image, @object.x + @sprite.x + @sprite.sprite.x_offset - IMAGE_X, @object.y + @sprite.y + @sprite.sprite.y_offset - IMAGE_Y)
 
       @sprite
-    end
-
-    public
-    def setup
-      log.info { "Started editing sprite image" }
-      old_grid = previous_game_state.grid
-      @zoom_box.value = previous_game_state.zoom_box.value
-      @grid.offset_x = old_grid.offset_x
-      @grid.offset_y = old_grid.offset_y
-      if old_grid.overlay.visible?
-        @grid.overlay.show!
-      else
-        @grid.overlay.hide!
-      end
-      @grid_button.on = old_grid.overlay.visible?
-
-      nil
-    end
-
-    public
-    def finalize
-      old_grid = previous_game_state.grid
-      previous_game_state.zoom_box.value = @zoom_box.value
-      old_grid.offset_x = @grid.offset_x
-      old_grid.offset_y = @grid.offset_y
-      if @grid.overlay.visible?
-        old_grid.overlay.show!
-      else
-        old_grid.overlay.hide!
-      end
-      previous_game_state.grid_button.on = @grid.overlay.visible?
-
-      nil
     end
 
     protected

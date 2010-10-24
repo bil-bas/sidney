@@ -10,7 +10,22 @@ module Sidney
 
     INITIAL_ZOOM = 1
 
-    attr_reader :side_bar, :zoom_box, :grid, :grid_button
+    attr_reader :state_bar
+
+    public
+    def state_bar_container
+      @@state_bar_container
+    end
+
+    public
+    def zoom_box
+      @@zoom_box
+    end
+
+    public
+    def grid
+      @@grid
+    end
 
     protected
     def initialize
@@ -35,11 +50,12 @@ module Sidney
         end
       )
 
-      HorizontalPacker.new(container, padding_x: 2, padding_y: 2) do |packer|
+      # Create a common packer, used by all editing modes.
+      @@edit_packer ||= HorizontalPacker.new(container, padding_x: 0, padding_y: 0) do |packer|
         # The grid contains the actual game state.
-        @grid = Grid.new(packer, ($window.height / 300).floor)
+        @@grid = Grid.new(packer, ($window.height / 300).floor)
 
-        @side_bar = VerticalPacker.new(packer, padding_y: 0, padding_x: 0) do |packer|
+        VerticalPacker.new(packer, padding_y: 0, padding_x: 0) do |packer|
           # The zoomer allows the user to change the zoom.
           values = t 'zoom_combo.values'
           zooms = [0.5, 1, 2, 4, 8].inject({}) do |hash, value|
@@ -47,30 +63,35 @@ module Sidney
             hash
           end
 
-          @zoom_box = ComboBox.new(packer, value: INITIAL_ZOOM, tip: t('zoom_combo.tip')) do |widget|
-            zooms.each_pair do |key, value|
-              widget.add(key, value)
+          HorizontalPacker.new(packer, padding_y: 0, padding_x: 0) do |packer|
+            @@zoom_box = ComboBox.new(packer, value: INITIAL_ZOOM, tip: t('zoom_combo.tip')) do |widget|
+              zooms.each_pair do |key, value|
+                widget.add(key, value)
+              end
+
+              widget.subscribe :change do |widget, value|
+                @@grid.scale = value * @@grid.base_scale
+              end
             end
 
-            widget.subscribe :change do |widget, value|
-              @grid.scale = value * @grid.base_scale
+            @@centre_button = Button.new(packer, icon: Image['center.png'],
+                                          tip: t('centre_button.tip')) do |button|
+              button.subscribe :click do
+                @@zoom_box.value = 1
+                @@grid.offset_x = @@grid.offset_y = 0
+              end
+            end
+
+            @@grid_button = ToggleButton.new(packer, on: true, icon: Image['grid.png'],
+                                          on_tip: t('grid_button.on.tip'), off_tip: t('grid_button.off.tip')) do |button|
+              button.subscribe :click do
+                @@grid.toggle_overlay
+              end
             end
           end
 
-          @centre_button = Button.new(packer, icon: Image['center.png'],
-                                        tip: t('centre_button.tip')) do |button|
-            button.subscribe :click do
-              @zoom_box.value = 1
-              @grid.offset_x = @grid.offset_y = 0
-            end
-          end
-
-          @grid_button = ToggleButton.new(packer, on: true, icon: Image['grid.png'],
-                                        on_tip: t('grid_button.on.tip'), off_tip: t('grid_button.off.tip')) do |button|
-            button.subscribe :click do
-              grid.toggle_overlay
-            end
-          end
+          # Sidebar used by the individual states.
+          @@state_bar_container = VerticalPacker.new(packer, padding_y: 0, padding_x: 0)
         end
       end
     end
@@ -104,6 +125,28 @@ module Sidney
 
       cursor.draw
       nil
+    end
+
+    public
+    def setup
+      log.info { "Entered state" }
+
+      # Move the layout into the window, then add state-specific elements.
+      container.add @@edit_packer
+      state_bar_container.add state_bar
+
+      super
+    end
+
+    public
+    def finalize
+      log.info { "Left state" }
+
+      # Move the layout out of the window, then remove state-specific elements.
+      container.remove @@edit_packer
+      state_bar_container.remove state_bar
+
+      super
     end
 
     public
