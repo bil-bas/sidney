@@ -168,6 +168,11 @@ module Sidney
     def draw
       grid.draw_with_respect_to do
         previous_game_state.scene.draw
+        flush
+
+        draw_checked_background
+        flush
+
         @object.draw_layers
       end
 

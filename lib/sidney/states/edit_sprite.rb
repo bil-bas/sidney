@@ -85,35 +85,19 @@ module Sidney
       nil
     end
 
-    protected
-    def draw_background
-      @transparent_large.draw(((grid.offset_x % Grid::CELL_WIDTH) - Grid::CELL_WIDTH - grid.offset_x),
-                               ((grid.offset_y % Grid::CELL_HEIGHT) - Grid::CELL_HEIGHT - grid.offset_y),
-                               0, 4, 4, Color.rgba(255, 255, 255, 150))
-    end
-
     public
     def draw
-      unless @transparent_small
-        row = [[80, 80, 80, 255], [120, 120, 120, 255]]
-        blob = [row, row.reverse]
-        # Small transparent checkerboard drawn behind colour wells.
-        @transparent_small = Image.from_blob(blob.flatten.pack('C*'), 2, 2, caching: true)
-        # Large grey checkerboard drawn behind the sprite being edited.
-        @transparent_large = Image.create(Grid::WIDTH + Grid::CELL_WIDTH, Grid::HEIGHT + Grid::CELL_HEIGHT)
-        @transparent_large.rect 0, 0, @transparent_large.width - 1, @transparent_large.height - 1,
-                                fill: true, texture: @transparent_small
-      end
-
       grid.draw_with_respect_to do
         previous_game_state.previous_game_state.scene.draw
         flush
+
         draw_background
         flush
 
         previous_game_state.object.draw_layers
         flush
-        draw_background
+
+        draw_checked_background
         flush
 
         @image.draw(IMAGE_X, IMAGE_Y, 0)

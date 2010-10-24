@@ -9,6 +9,7 @@ module Sidney
     include Log
 
     INITIAL_ZOOM = 1
+    BACKGROUND_COLOR = Color.rgba(0, 0, 0, 175)
 
     attr_reader :state_bar
 
@@ -174,6 +175,32 @@ module Sidney
     protected
     def history
       previous_game_state.history
+    end
+
+    protected
+    def draw_checked_background
+      unless defined? @@transparent_large
+        row = [[80, 80, 80, 255], [120, 120, 120, 255]]
+        blob = [row, row.reverse]
+        # Small transparent checkerboard drawn behind colour wells.
+        transparent_small = Image.from_blob(blob.flatten.pack('C*'), 2, 2, caching: true)
+        # Large grey checkerboard drawn behind the sprite being edited.
+        @@transparent_large = Image.create(Grid::WIDTH + Grid::CELL_WIDTH, Grid::HEIGHT + Grid::CELL_HEIGHT)
+        @@transparent_large.rect 0, 0, @@transparent_large.width - 1, @@transparent_large.height - 1,
+                                fill: true, texture: transparent_small
+      end
+
+      @@transparent_large.draw(((grid.offset_x % Grid::CELL_WIDTH) - Grid::CELL_WIDTH - grid.offset_x),
+                               ((grid.offset_y % Grid::CELL_HEIGHT) - Grid::CELL_HEIGHT - grid.offset_y),
+                               0, 8.0 / grid.scale, 8.0 / grid.scale, Color.rgba(255, 255, 255, 100))
+
+      nil
+    end
+
+    protected
+    def draw_background
+      $window.draw_box -grid.width, -grid.height, grid.width * 2, grid.height * 2, 0, nil, BACKGROUND_COLOR
+      nil
     end
   end
 end
