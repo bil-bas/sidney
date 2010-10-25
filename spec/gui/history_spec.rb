@@ -1,6 +1,6 @@
 require_relative '../helper'
 
-require 'gui'
+require 'gui/history'
 
 module Sidney
 module Gui

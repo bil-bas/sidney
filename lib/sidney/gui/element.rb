@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 require_relative '../gosu_ext'
-require_relative '../event'
+require_relative 'event'
 
 module Sidney
 module Gui

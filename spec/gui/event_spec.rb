@@ -1,6 +1,6 @@
-require_relative 'helper'
+require_relative '../helper'
 
-require 'event'
+require 'gui/event'
 
 module Sidney
 describe Event do
