@@ -103,27 +103,6 @@ class Element
     @rect.collide_point?(x, y)
   end
 
-  # Hover the mouse over the element.
-  public
-  def hover(x, y)
-    nil
-  end
-
-  # Mouse moves over the element.
-  def enter
-    nil
-  end
-
-  # Mouse leaves the element.
-  def leave
-    nil
-  end
-
-  # Clicked the mouse button (usually only the left one) on the element.
-  def click(sender)
-    nil
-  end
-
   # Redraw the element.
   def draw
     nil

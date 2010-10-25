@@ -55,8 +55,8 @@ class Button < Element
   end
 
   public
-  def click(sender)
-
+  def clicked_left_mouse_button(sender, x, y)
+    # TODO: Play click sound?
     nil
   end
 end

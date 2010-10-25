@@ -33,17 +33,27 @@ module Event
     nil
   end
 
-  # Publish an event to all previously added handlers. It will automatically call the publishing object with the method
-  # named after the event if it is defined.
+  # Publish an event to all previously added handlers in the order they were added.
+  # It will automatically call the publishing object with the method named after the event if it is defined
+  # (this will be done before the manually added handlers are called).
+  #
+  # If any handler returns :handled, then no further handlers will be called.
   #
   # @param [Symbol] event Name of the event to publish.
   # @param [Array] args Arguments to pass to the event handlers.
-  # @return nil
+  # @yieldparams [:handled, any] The handler should return :handled if it has used the event.
+  # @return [:handled, nil] :handled if any handler handled the event or nil if none did.
   public
   def publish(event, *args)
-    send event, self, *args if respond_to? event
+    if respond_to? event
+      return :handled if send(event, self, *args) == :handled
+    end
 
-    @_event_handlers[event].each { |handler| handler.call(self, *args) } if @_event_handlers
+    if @_event_handlers
+      @_event_handlers[event].each do |handler|
+        return :handled if handler.call(self, *args) == :handled
+      end
+    end
 
     nil
   end

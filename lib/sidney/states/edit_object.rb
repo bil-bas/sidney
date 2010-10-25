@@ -21,12 +21,12 @@ module Sidney
       @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
         @save_button = Button.new(packer, icon: Image['save.png'],
                                           tip: t('edit_object.save_button.tip')) do |button|
-          button.subscribe :click, method(:save)
+          button.subscribe :clicked_left_mouse_button, method(:save)
         end
 
         @save_copy_button = Button.new(packer, icon: Image['copy_and_save.png'],
                                                tip: t('edit_object.save_copy_button.tip')) do |button|
-          button.subscribe :click, method(:save_copy)
+          button.subscribe :clicked_left_mouse_button, method(:save_copy)
         end
       end
     end

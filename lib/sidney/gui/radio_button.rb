@@ -114,7 +114,7 @@ module Gui
     end
 
     public
-    def click(sender)
+    def clicked_left_mouse_button(sender, x, y)
       super
       check
       nil

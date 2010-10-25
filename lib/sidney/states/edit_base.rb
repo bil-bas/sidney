@@ -77,7 +77,7 @@ module Sidney
 
             @@centre_button = Button.new(packer, icon: Image['center.png'],
                                           tip: t('centre_button.tip')) do |button|
-              button.subscribe :click do
+              button.subscribe :clicked_left_mouse_button do
                 @@zoom_box.value = 1
                 @@grid.offset_x = @@grid.offset_y = 0
               end
@@ -85,7 +85,7 @@ module Sidney
 
             @@grid_button = ToggleButton.new(packer, on: true, icon: Image['grid.png'],
                                           on_tip: t('grid_button.on.tip'), off_tip: t('grid_button.off.tip')) do |button|
-              button.subscribe :click do
+              button.subscribe :clicked_left_mouse_button do
                 @@grid.toggle_overlay
               end
             end

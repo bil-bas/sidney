@@ -47,9 +47,10 @@ module Gui
     end
 
     public
-    def click(sender)
+    def clicked_left_mouse_button(sender, x, y)
       @on = (not @on)
       update_status
+
       super
     end
 

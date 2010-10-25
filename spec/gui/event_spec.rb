@@ -27,8 +27,38 @@ describe Event do
   end
 
   describe "#publish" do
-    it "should do nothing if there are no handlers" do
-      lambda { subject.publish :frog }.should_not raise_error
+    it "should return nil if there are no handlers" do
+      subject.publish(:frog).should be_nil
+    end
+
+    it "should return nil if there are no handlers that handle the event" do
+      subject.should_receive(:frog).with(subject)
+      subject.should_receive(:handler).with(subject)
+      subject.subscribe(:frog, subject.method(:handler))
+      subject.publish(:frog).should be_nil
+    end
+
+    it "should not call any more handlers if one returns :handled" do
+      subject.should_receive(:handler1).with(subject).and_return(:handled)
+      subject.should_not_receive(:handler2)
+      subject.subscribe(:frog, subject.method(:handler1))
+      subject.subscribe(:frog, subject.method(:handler2))
+      subject.publish(:frog).should == :handled
+    end
+
+    it "should return :handled if a manual handler handled the event and not call other handlers" do
+      subject.should_receive(:handler1).with(subject).and_return(:handled)
+      subject.should_not_receive(:handler2)
+      subject.subscribe(:frog, subject.method(:handler1))
+      subject.subscribe(:frog, subject.method(:handler2))
+      subject.publish(:frog).should == :handled
+    end
+
+    it "should return :handled if an automatic handler handled the event and not call other handlers" do
+      subject.should_receive(:frog).with(subject).and_return(:handled)
+      subject.should_not_receive(:handler2)
+      subject.subscribe(:frog, subject.method(:handler2))
+      subject.publish(:frog).should == :handled
     end
 
     it "should pass the object as the first parameter" do
@@ -42,13 +72,13 @@ describe Event do
       subject.should_receive(:handler2).with(subject)
       subject.subscribe(:frog, subject.method(:handler1))
       subject.subscribe(:frog, subject.method(:handler2))
-      subject.publish :frog
+      subject.publish(:frog).should be_nil
     end
 
     it "should pass parameters passed to it" do
       subject.should_receive(:handler).with(subject, 1, 2)
       subject.subscribe(:frog, subject.method(:handler))
-      subject.publish :frog, 1, 2
+      subject.publish(:frog, 1, 2).should be_nil
     end
 
     it "should only call the handlers requested" do
@@ -56,12 +86,12 @@ describe Event do
       subject.should_not_receive(:handler2)
       subject.subscribe(:frog, subject.method(:handler1))
       subject.subscribe(:fish, subject.method(:handler2))
-      subject.publish :frog
+      subject.publish(:frog).should be_nil
     end
 
     it "should automatically call a method on the publisher if it exists" do
       subject.should_receive(:frog).with(subject)
-      subject.publish :frog
+      subject.publish(:frog).should be_nil
     end
   end
 end

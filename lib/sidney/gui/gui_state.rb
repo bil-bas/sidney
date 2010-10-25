@@ -24,7 +24,7 @@ module Sidney
 
     public
     def focus=(focus)
-      @focus.blur if @focus and focus
+      @focus.publish :blur if @focus and focus
       @focus = focus
     end
 
@@ -35,7 +35,9 @@ module Sidney
 
     protected
     def initialize
-      @container = Container.new(nil)
+      @outer_container = Container.new(nil) do |container|
+        @container = Container.new(container)
+      end
 
       @mouse_x, @mouse_y = 0, 0
       @focus = nil
@@ -58,20 +60,14 @@ module Sidney
     def update
       x, y = $window.mouse_x, $window.mouse_y
 
-      # Maintain a record of which element we are hovering over, so we
-      # can send enter/leave events.
-      if @menu
-        new_mouse_over = @menu if @menu.hit? x, y
-      end
-
-      new_mouse_over = @container.hit_element(x, y) unless new_mouse_over
+      new_mouse_over = @outer_container.hit_element(x, y)
 
       if new_mouse_over
-        new_mouse_over.enter if new_mouse_over != @mouse_over
-        new_mouse_over.hover(x, y)
+        new_mouse_over.publish :enter if new_mouse_over != @mouse_over
+        new_mouse_over.publish :hover, x, y
       end
 
-      @mouse_over.leave if @mouse_over and new_mouse_over != @mouse_over
+      @mouse_over.publish :leave if @mouse_over and new_mouse_over != @mouse_over
 
       @mouse_over = new_mouse_over
 
@@ -80,6 +76,7 @@ module Sidney
         if @mouse_over and (not @tool_tip) and (milliseconds - @mouse_moved_at) > tool_tip_delay
           if text = @mouse_over.tip and not text.empty?
             @tool_tip = ToolTip.new(text)
+            @outer_container.add @tool_tip
           end
         end
       else
@@ -89,18 +86,14 @@ module Sidney
 
       @mouse_x, @mouse_y = x, y
 
-      @container.update
-      @menu.update if @menu
-      @tool_tip.update if @tool_tip
+      @outer_container.update
 
       super
     end
 
     public
     def draw
-      @container.draw
-      @menu.draw if @menu
-      @tool_tip.draw if @tool_tip
+      @outer_container.draw
 
       nil
     end
@@ -120,6 +113,7 @@ module Sidney
     def show_menu(menu)
       hide_menu if @menu
       @menu = menu
+      @outer_container.add @menu
 
       nil
     end
@@ -127,6 +121,7 @@ module Sidney
     # @return nil
     public
     def hide_menu
+      @outer_container.remove @menu if @menu
       @menu = nil
 
       nil
@@ -135,17 +130,18 @@ module Sidney
     public
     def left_mouse_button
       # Ensure that if the user clicks away from a menu, it is automatically closed.
-      if @menu
-        if @mouse_over == @menu
-          return :handled
-        else
-          hide_menu
-        end
-      end
+      hide_menu unless @menu and @menu == @mouse_over
 
       if @focus and @mouse_over != @focus
-        @focus.blur
+        @focus.publish :blur
         @focus = nil
+      end
+
+      if @mouse_over
+        @mouse_over.publish :left_mouse_button, @mouse_x, @mouse_y
+        @mouse_down_on = @mouse_over
+      else
+        @mouse_down_on = nil
       end
 
       nil
@@ -154,11 +150,12 @@ module Sidney
     public
     def released_left_mouse_button
       # Ensure that if the user clicks away from a menu, it is automatically closed.
-      if @menu and @mouse_over != @menu
-        hide_menu
-      end
+      hide_menu if @menu and @mouse_over != @menu
 
-      @mouse_over.publish :click if @mouse_over
+      if @mouse_over
+        @mouse_over.publish :released_left_mouse_button, @mouse_x, @mouse_y
+        @mouse_over.publish :clicked_left_mouse_button, @mouse_x, @mouse_y if @mouse_over == @mouse_down_on
+      end
 
       nil
     end
@@ -166,6 +163,7 @@ module Sidney
     # Hide the tool-tip, if any.
     protected
     def clear_tip
+      @outer_container.remove @tool_tip if @tool_tip
       @tool_tip = nil
       @mouse_moved_at = milliseconds
 

@@ -123,19 +123,21 @@ class MenuPane < Element
   end
 
   public
-  def hover(x, y)
+  def hover(sender, x, y)
     @index = ((y - rect.y) / line_height).floor
 
     nil
   end
 
   public
-  def leave
+  def leave(sender)
     @index = nil
+
+    nil
   end
 
   public
-  def click(sender)
+  def clicked_left_mouse_button(sender, x, y)
     if @items[@index].enabled?
       $window.game_state_manager.current_game_state.hide_menu
       publish(:select, @items[@index].value)
