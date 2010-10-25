@@ -3,6 +3,7 @@ require_relative '../helper'
 require 'gui'
 
 module Sidney
+module Gui
   
 class History
   class Maths < Action
@@ -141,5 +142,6 @@ describe History do
       end
     end
   end
+end
 end
 end

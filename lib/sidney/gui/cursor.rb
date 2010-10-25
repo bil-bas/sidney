@@ -1,5 +1,8 @@
 # encoding: utf-8
 
+require 'chingu'
+include Chingu
+
 module Sidney
 module Gui
 class Cursor < GameObject
@@ -36,6 +39,8 @@ class Cursor < GameObject
 
   public
   def draw
+    update # TODO: Get Gosu fixed so this isn't required.
+
     # Prevent system and game mouse from being shown at the same time.
     super if inside_window?
   end
