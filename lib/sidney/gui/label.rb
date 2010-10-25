@@ -5,9 +5,18 @@ require_relative 'element'
 module Sidney
 module Gui
 class Label < Element
-  BACKGROUND_COLOR = Color.rgb(100, 100, 100)
-  BORDER_COLOR = Color.rgb(150, 150, 150)
-  TEXT_COLOR = Color.rgb(255, 255, 255)
+  DEFAULT_BACKGROUND_COLOR = Color.rgba(0, 0, 0, 0)
+  DEFAULT_BORDER_COLOR = Color.rgba(0, 0, 0, 0)
+  DEFAULT_COLOR = Color.rgb(255, 255, 255)
+
+  attr_reader :color, :background_color, :border_color, :text, :icon
+
+  public
+  def text=(value)
+    @text = value
+    recalc
+    nil
+  end
 
   protected
   # @option options [Gosu::Image, nil] icon (nil)
@@ -15,11 +24,17 @@ class Label < Element
   def initialize(parent, options = {}, &block)
     options = {
       icon: nil,
-      text: ''
+      text: '',
+      color: DEFAULT_COLOR.dup,
+      background_color: DEFAULT_BACKGROUND_COLOR.dup,
+      border_color: DEFAULT_BORDER_COLOR.dup
     }.merge! options
 
     @text = options[:text]
     @icon = options[:icon]
+
+    @color = options[:color]
+
     
     super(parent, options)
   end
@@ -41,9 +56,7 @@ class Label < Element
   end
 
   public
-  def draw
-    $window.draw_box(x, y, width, height, z, BORDER_COLOR, BACKGROUND_COLOR)
-
+  def draw_foreground
     current_x = x + padding_x - 1
     if @icon
       @icon.draw(current_x, y + padding_y, z)
@@ -51,7 +64,7 @@ class Label < Element
     end
 
     unless @text.empty?
-      font.draw(@text, current_x, y + padding_y, z, 1, 1, TEXT_COLOR)
+      font.draw(@text, current_x, y + padding_y, z, 1, 1, @color)
     end
 
     nil

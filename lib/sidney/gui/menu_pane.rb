@@ -36,6 +36,7 @@ class MenuPane < Element
     end
   end
 
+  DEFAULT_BACKGROUND_COLOR = Color.rgb(50, 50, 50)
 
   attr_reader :items, :index
 
@@ -44,14 +45,12 @@ class MenuPane < Element
   public
   def initialize(options = {}, &block)
     options = {
-      z: ZOrder::MENU
+      background_color: DEFAULT_BACKGROUND_COLOR.dup,
     }.merge! options
 
     @items = []
 
-    @background_color = 0xff333333
     @hover_background_color = 0xff999999
-    @border_color = nil
     
     @index = nil # The index of the item hovered over.
 
@@ -100,10 +99,8 @@ class MenuPane < Element
     @items.size
   end
 
-  public
-  def draw
-    $window.draw_box(rect.x, rect.y, rect.width, rect.height, z, @border_color, @background_color)
-
+  protected
+  def draw_foreground
     @items.each_with_index do |item, i|
       y = rect.y + (line_height * i)
 

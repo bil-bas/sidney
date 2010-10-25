@@ -3,8 +3,9 @@
 module Sidney
 module Gui
   class TextArea < Element
-    FOCUS_BORDER_COLOR = Color.rgb(0, 255, 255)
-    BLUR_BORDER_COLOR = Color.rgb(255, 255, 255)
+    DEFAULT_BORDER_COLOR_FOCUSED = Color.rgb(0, 255, 255)
+    DEFAULT_BORDER_COLOR = Color.rgb(200, 200, 200)
+
     CARET_COLOR = Color.rgb(255, 0, 0)
     SELECTION_COLOR = Color.rgb(100, 100, 100)
     CARET_PERIOD = 500 # ms
@@ -96,11 +97,15 @@ module Gui
         editable: false,
         text: '',
         max_height: Float::INFINITY,
-        line_spacing: 0
+        line_spacing: 0,
+        border_color: DEFAULT_BORDER_COLOR.dup,
+        border_color_focused: DEFAULT_BORDER_COLOR_FOCUSED.dup
       }.merge! options
 
       @editable = options[:editable]
       @line_spacing = options[:line_spacing]
+      @border_color_focused = options[:border_color_focused]
+
       @lines = [''] # List of lines of wrapped text.
       @text_positions = [[0, 0, 0]] # [x, y, width] of each character.
       @text_input = TextInput.new
@@ -292,11 +297,17 @@ module Gui
       nil
     end
 
-    public
+    protected
+    def draw_background
+      recalc if focused? # Workaround for Windows draw/update bug.
+      super
+    end
+
+    protected
     # Draw the text area.
     #
     # @return [nil]
-    def draw
+    def draw_foreground
       # Always roll back changes made by the user unless the text is editable.
       if not editable? and text != @old_text
         @text_input.text = @old_text
@@ -306,11 +317,6 @@ module Gui
         @old_caret_position = caret_position
         @old_selection_start = @text_input.selection_start
       end
-
-      recalc if focused?
-
-      # Draw the border.
-      $window.draw_box x, y, width, height, z, @focused ? FOCUS_BORDER_COLOR : BLUR_BORDER_COLOR, BACKGROUND_COLOR
 
       caret_x, caret_y = @text_positions[caret_position]
 

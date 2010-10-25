@@ -53,8 +53,13 @@ module Sidney
 
       # Create a common packer, used by all editing modes.
       @@edit_packer ||= HorizontalPacker.new(container, padding: 0) do |packer|
-        # The grid contains the actual game state.
-        @@grid = Grid.new(packer, ($window.height / 300).floor)
+        VerticalPacker.new(packer, padding: 0) do |packer|
+          # The grid contains the actual game state.
+          @@grid = Grid.new(packer, ($window.height / 300).floor)
+
+          @@base_packer = VerticalPacker.new(container) do |packer|
+          end
+        end
 
         VerticalPacker.new(packer, padding: 0) do |packer|
           # The zoomer allows the user to change the zoom.

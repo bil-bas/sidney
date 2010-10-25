@@ -28,10 +28,11 @@ module Gui
       options = {
         padding: 0,
         spacing: 0,
-        channel_names: DEFAULT_CHANNEL_NAMES
+        channel_names: DEFAULT_CHANNEL_NAMES.dup,
+        color: DEFAULT_COLOR.dup,
       }.merge! options
 
-      @color = options[:color] || DEFAULT_COLOR.dup
+      @color = options[:color]
 
       super(parent, options)
 
@@ -57,10 +58,12 @@ module Gui
     def layout
       super
       rect.height += INDICATOR_HEIGHT
+
+      nil
     end
 
-    public
-    def draw
+    protected
+    def draw_foreground
       sliders_height = @sliders[:red].height * 4
 
       @@color_picker_transparent.draw x, y + sliders_height, z, width / 2, INDICATOR_HEIGHT / 2

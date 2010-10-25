@@ -73,10 +73,15 @@ module Sidney
 
       # Check if the mouse has moved, and no menu is shown, so we can show a tooltip.
       if [x, y] == [@mouse_x, @mouse_y] and (not @menu)
-        if @mouse_over and (not @tool_tip) and (milliseconds - @mouse_moved_at) > tool_tip_delay
+        if @mouse_over and (milliseconds - @mouse_moved_at) > tool_tip_delay
           if text = @mouse_over.tip and not text.empty?
-            @tool_tip = ToolTip.new(text)
+            @tool_tip ||= ToolTip.new(nil)
+            @tool_tip.text = text
             @outer_container.add @tool_tip
+            @tool_tip.x = $window.cursor.x
+            @tool_tip.y = $window.cursor.y + $window.cursor.height # Place the tip beneath the cursor.
+          else
+            clear_tip
           end
         end
       else

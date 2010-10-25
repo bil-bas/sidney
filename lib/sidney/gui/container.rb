@@ -27,6 +27,8 @@ module Gui
 
     protected
     def initialize(parent, options = {})
+      options[:border_color] = DEBUG_BORDER_COLOR if options[:debug] or debug_mode?
+
       @children = []
 
       super(parent, options)
@@ -60,19 +62,20 @@ module Gui
       nil
     end
 
-    public
-    def draw
-      if debug_mode?
-        $window.draw_box x, y, width, height, z, DEBUG_BORDER_COLOR
-        font.draw self.class.name, x, y, z + 0.001
-      end
-
+    protected
+    def draw_foreground
       each { |c| c.draw }
+
+      font.draw self.class.name, x, y, z if debug_mode?
+
+      nil
     end
 
     public
     def update
       each { |c| c.update }
+
+      nil
     end
 
     # Returns the element within this container that was hit,

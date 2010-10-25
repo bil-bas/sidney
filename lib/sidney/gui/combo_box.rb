@@ -1,25 +1,30 @@
 # encoding: utf-8
 
-require_relative 'element'
+require_relative 'button'
 require_relative 'menu_pane'
 
 module Sidney
 module Gui
-class ComboBox < Element
+class ComboBox < Button
+  DEFAULT_BORDER_COLOR = Color.new(255, 255, 255)
+  DEFAULT_BACKGROUND_COLOR = Color.new(100, 100, 100)
+
   public
   attr_accessor :index
 
   public
   def index; @menu.index(@value) end
   def value; @value; end
-  def text; @menu.find(@value).text; end
   
   public
   def value=(value)
     if @value != value
       @value = value
+      @text = @menu.find(@value).text
       publish :changed, @value
     end
+
+    value
   end
 
   public
@@ -27,18 +32,19 @@ class ComboBox < Element
     if index.between?(0, @menu.size - 1)
       self.value = @menu[index].value
     end
+
+    index
   end
 
   # @option options [] :value
   protected
   def initialize(parent, options = {}, &block)
     options = {
+      border_color: DEFAULT_BORDER_COLOR.dup,
+      background_color: DEFAULT_BACKGROUND_COLOR.dup
     }.merge! options
 
     @value = options[:value]
-
-    @border_color = 0xffffffff
-    @background_color = 0xff666666
     
     @hover_index = 0
 
@@ -57,12 +63,9 @@ class ComboBox < Element
   public
   def add(*args)
     @menu.add(*args)
-  end
 
-  public
-  def draw
-    $window.draw_box(x, y, width, height, z, @border_color, @background_color)
-    font.draw(text, x + padding_x, y + ((height - font_size) / 2).floor, z)
+    # Force text to be updated.
+    @text = @menu.find(@value).text if @menu.find(@value)
 
     nil
   end

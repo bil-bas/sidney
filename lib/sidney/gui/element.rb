@@ -13,9 +13,10 @@ class Element
   DEFAULT_FONT_SIZE = 15
   FONT_NAME = File.join(ROOT_PATH, 'media', 'fonts', 'SFPixelate.ttf')
   DEFAULT_PADDING_X, DEFAULT_PADDING_Y = 4, 4
-  BACKGROUND_COLOR = Color.rgb(0, 0, 0)
-  
-  attr_reader :rect, :z, :tip, :font_size, :padding_x, :padding_y
+  DEFAULT_BACKGROUND_COLOR = Color.rgba(0, 0, 0, 0)
+  DEFAULT_BORDER_COLOR = Color.rgba(0, 0, 0, 0)
+
+  attr_reader :z, :tip, :font_size, :padding_x, :padding_y
 
   attr_accessor :parent
 
@@ -37,6 +38,7 @@ class Element
   def self.debug_mode=(value); @@debug_mode = value; end
 
   protected
+  def rect; @rect; end
   def debug_mode?; @@debug_mode; end
 
   class << self
@@ -60,8 +62,13 @@ class Element
       height: 0,
       tip: '',
       font_size: DEFAULT_FONT_SIZE,
-      debug: false
+      debug: @@debug_mode,
+      background_color: DEFAULT_BACKGROUND_COLOR.dup,
+      border_color: DEFAULT_BORDER_COLOR.dup
     }.merge! options
+
+    @background_color = options[:background_color]
+    @border_color = options[:border_color]
 
     @padding_x = options[:padding_x] || options[:padding] || DEFAULT_PADDING_X
     @padding_y = options[:padding_y] || options[:padding] || DEFAULT_PADDING_Y
@@ -105,6 +112,19 @@ class Element
 
   # Redraw the element.
   def draw
+    draw_background
+    draw_foreground
+    nil
+  end
+
+  public
+  def draw_background
+    $window.draw_box(x, y, width, height, z, nil, @background_color) unless @background_color.transparent?
+    $window.draw_box(x, y, width, height, z, @border_color, nil) unless @border_color.transparent?
+  end
+
+  protected
+  def draw_foreground
     nil
   end
 

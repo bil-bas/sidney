@@ -7,40 +7,49 @@ module Gui
   class Slider < Container
     # @private
     class Handle < Element
-      BACKGROUND_COLOR = Color.rgb(255, 0, 0)
+      DEFAULT_BACKGROUND_COLOR = Color.rgb(255, 0, 0)
+      DEFAULT_BORDER_COLOR = Color.rgba(0, 0, 0, 0)
 
       protected
       def initialize(parent, options = {}, &block)
-        super parent, options
-      end
+        options = {
+          background_color: DEFAULT_BACKGROUND_COLOR.dup,
+          border_color: DEFAULT_BORDER_COLOR.dup,
+        }.merge! options
 
-      public
-      def draw
-        $window.draw_box x, y, width, height, z, nil, BACKGROUND_COLOR
-        super
+        super parent, options
       end
     end
 
-    BACKGROUND_COLOR = Color.rgb(200, 200, 200)
+    DEFAULT_BACKGROUND_COLOR = Color.rgba(0, 0, 0, 0)
+    DEFAULT_BORDER_COLOR = Color.rgba(0, 0, 0, 0)
+    DEFAULT_GROOVE_COLOR = Color.rgb(200, 200, 200)
+    DEFAULT_HANDLE_COLOR = Color.rgb(255, 0, 0)
 
     attr_reader :value, :range
 
-    # @param [Range] range (0..1.0)
-    # @param [Range] value (0)
+    # @option options [Range] :range (0..1.0)
+    # @option options [Range] :value (minimum of :range)
     protected
     def initialize(parent, options = {}, &block)
       options = {
         range: 0..1.0,
-        value: 0,
-        height: 25
+        height: 25,
+        background_color: DEFAULT_BACKGROUND_COLOR.dup,
+        border_color: DEFAULT_BORDER_COLOR.dup,
+        groove_color: DEFAULT_GROOVE_COLOR.dup,
+        handle_color: DEFAULT_HANDLE_COLOR.dup,
       }.merge! options
 
       @range = options[:range]
+      @groove_color = options[:groove_color]
 
       super(parent, options)
 
-      @handle = Handle.new(self, width: (height / 2 - padding_x), height: height - padding_y * 2)
-      self.value = options[:value]
+      @handle = Handle.new(self, width: (height / 2 - padding_x), height: height - padding_y * 2,
+                           background_color: options[:handle_color])
+
+      self.value = options[:value] ? options[:value] : @range.min
     end
 
     protected
@@ -64,9 +73,10 @@ module Gui
     end
 
     public
-    def draw
-      $window.draw_box x + padding_x, y + padding_y, width - padding_x * 2, height - padding_y * 4, z, nil, BACKGROUND_COLOR
+    def draw_background
       super
+      $window.draw_box x + padding_x, y + padding_y, width - padding_x * 2, height - padding_y * 4, z, nil, @groove_color
+      nil
     end
 
     public

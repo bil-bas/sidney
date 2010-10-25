@@ -77,7 +77,8 @@ module Gui
       end
     end
 
-    CHECKED_BORDER_COLOR = Color.new(255, 0, 255)
+    DEFAULT_BORDER_COLOR_CHECKED = Color.new(255, 0, 255)
+    DEFAULT_BORDER_COLOR_UNCHECKED = Color.new(50, 50, 50)
 
     attr_reader :group, :value
 
@@ -86,16 +87,21 @@ module Gui
     protected
     def initialize(parent, value, options = {}, &block)
       options = {
-        checked: false
+        checked: false,
+        border_color_checked: DEFAULT_BORDER_COLOR_CHECKED.dup,
+        border_color_unchecked: DEFAULT_BORDER_COLOR_UNCHECKED.dup
       }.merge! options
 
       @checked = options[:checked]
-
       @value = value
 
       super(parent, options)
 
+      @border_color_checked = options[:border_color_checked] || @border_color
+      @border_color_unchecked = options[:border_color_unchecked] || @border_color
       add_to_group
+
+      @border_color = checked? ? @border_color_checked : @border_color_unchecked
     end
 
     protected
@@ -125,6 +131,7 @@ module Gui
       @group.button_checked self unless checked?
 
       @checked = true
+      @border_color = @border_color_checked
       publish :checked
 
       nil
@@ -134,16 +141,17 @@ module Gui
     # Only ever called from Group!
     def uncheck
       @checked = false
+      @border_color = @border_color_unchecked
       publish :unchecked
 
       nil
     end
 
     public
-    def draw
+    def draw_background
       super
 
-      $window.draw_box x, y, width, height, z, CHECKED_BORDER_COLOR if checked?
+      $window.draw_box x, y, width, height, z, @border_color
 
       nil
     end

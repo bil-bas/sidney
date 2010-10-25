@@ -1,23 +1,28 @@
 # encoding: utf-8
 
-require_relative 'element'
+require_relative 'label'
 
 module Sidney
 module Gui
-class ToolTip < Element
-  BACKGROUND_COLOR = Color.rgb(25, 25, 25)
-  BORDER_COLOR = Color.rgb(255, 255, 255)
-  TEXT_COLOR = Color.rgb(255, 255, 255)
+class ToolTip < Label
+  DEFAULT_BACKGROUND_COLOR = Color.rgb(25, 25, 25)
+  DEFAULT_BORDER_COLOR = Color.rgb(255, 255, 255)
+
+  def x=(value); super(value); recalc; value; end
+  def y=(value); super(value); recalc; value; end
 
   protected
-  def initialize(text, &block)
-    @text = text
+  def initialize(parent, options = {}, &block)
+    options = {
+      background_color: DEFAULT_BACKGROUND_COLOR.dup,
+      border_color: DEFAULT_BORDER_COLOR.dup
+    }.merge! options
 
-    super(nil, z: ZOrder::TOOL_TIP)
+    super(parent, options)
+  end
 
-    x = $window.cursor.x
-    y = $window.cursor.y + $window.cursor.height # Place the tip beneath the cursor.
-
+  protected
+  def layout
     width, height = font.text_width(@text) + padding_x * 2, font_size + padding_y * 2
     # Ensure the tip can't go other the edge of the screen.
     rect.x = [x, $window.width - width - padding_x].min
@@ -25,16 +30,6 @@ class ToolTip < Element
     rect.width = width
     rect.height = height
   end
-
-  public
-  def draw
-    $window.draw_box(x, y, width, height, z, BORDER_COLOR, BACKGROUND_COLOR)
-
-    font.draw(@text, x + padding_x, y + padding_y, z, 1, 1, TEXT_COLOR)
-
-    nil
-  end
-
 end
 end
 end
