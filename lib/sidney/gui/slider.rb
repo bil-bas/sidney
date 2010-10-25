@@ -70,12 +70,10 @@ module Gui
     end
 
     public
-    def click
+    def click(sender)
       mouse_x = $window.cursor.x
       value = (((mouse_x - x - padding_x) / (width - padding_x * 2)) * (@range.max - @range.min) + @range.min).to_i
       self.value = [[value, @range.max].min, @range.min].max
-
-      publish(:click)
 
       super
     end

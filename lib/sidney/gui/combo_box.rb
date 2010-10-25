@@ -18,7 +18,7 @@ class ComboBox < Element
   def value=(value)
     if @value != value
       @value = value
-      publish :change, @value
+      publish :changed, @value
     end
   end
 
@@ -68,7 +68,7 @@ class ComboBox < Element
   end
 
   public
-  def click
+  def click(sender)
     @menu.x = x
     @menu.y = y + height + 1
     $window.game_state_manager.current_game_state.show_menu @menu

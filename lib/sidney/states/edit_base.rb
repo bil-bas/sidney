@@ -70,7 +70,7 @@ module Sidney
                 widget.add(key, value)
               end
 
-              widget.subscribe :change do |widget, value|
+              widget.subscribe :changed do |widget, value|
                 @@grid.scale = value * @@grid.base_scale
               end
             end

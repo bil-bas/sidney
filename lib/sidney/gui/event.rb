@@ -33,12 +33,16 @@ module Event
     nil
   end
 
-  # Publish an event to all previously added handlers.
+  # Publish an event to all previously added handlers. It will automatically call the publishing object with the method
+  # named after the event if it is defined.
+  #
   # @param [Symbol] event Name of the event to publish.
   # @param [Array] args Arguments to pass to the event handlers.
   # @return nil
   public
   def publish(event, *args)
+    send event, self, *args if respond_to? event
+
     @_event_handlers[event].each { |handler| handler.call(self, *args) } if @_event_handlers
 
     nil

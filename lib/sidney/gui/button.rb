@@ -55,8 +55,7 @@ class Button < Element
   end
 
   public
-  def click
-    publish(:click)
+  def click(sender)
 
     nil
   end

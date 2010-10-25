@@ -124,7 +124,7 @@ module Gui
 
     public
     # @return [nil]
-    def click
+    def click(sender)
       focus unless focused?
 
       # Move caret to position the user clicks on.

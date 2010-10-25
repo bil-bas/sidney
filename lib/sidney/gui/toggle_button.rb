@@ -47,7 +47,7 @@ module Gui
     end
 
     public
-    def click
+    def click(sender)
       @on = (not @on)
       update_status
       super

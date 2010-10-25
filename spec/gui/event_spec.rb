@@ -4,13 +4,7 @@ require 'gui/event'
 
 module Sidney
 describe Event do
-  before :all do
-    class EventTest
-      include Event
-    end
-  end
-
-  subject { EventTest.new }
+  subject { Object.new.extend described_class }
 
   describe "#subscribe" do
     it "should add a handler as a block" do
@@ -34,7 +28,7 @@ describe Event do
 
   describe "#publish" do
     it "should do nothing if there are no handlers" do
-      lambda { subject.send :publish, :frog }.should_not raise_error
+      lambda { subject.publish :frog }.should_not raise_error
     end
 
     it "should pass the object as the first parameter" do
@@ -62,6 +56,11 @@ describe Event do
       subject.should_not_receive(:handler2)
       subject.subscribe(:frog, subject.method(:handler1))
       subject.subscribe(:fish, subject.method(:handler2))
+      subject.publish :frog
+    end
+
+    it "should automatically call a method on the publisher if it exists" do
+      subject.should_receive(:frog).with(subject)
       subject.publish :frog
     end
   end

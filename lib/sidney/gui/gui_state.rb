@@ -158,7 +158,7 @@ module Sidney
         hide_menu
       end
 
-      @mouse_over.click if @mouse_over
+      @mouse_over.publish :click if @mouse_over
 
       nil
     end

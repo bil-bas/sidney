@@ -135,7 +135,7 @@ class MenuPane < Element
   end
 
   public
-  def click
+  def click(sender)
     if @items[@index].enabled?
       $window.game_state_manager.current_game_state.hide_menu
       publish(:select, @items[@index].value)

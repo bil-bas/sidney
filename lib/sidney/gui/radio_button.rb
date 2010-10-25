@@ -114,7 +114,7 @@ module Gui
     end
 
     public
-    def click
+    def click(sender)
       super
       check
       nil

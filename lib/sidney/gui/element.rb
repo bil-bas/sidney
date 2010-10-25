@@ -120,7 +120,7 @@ class Element
   end
 
   # Clicked the mouse button (usually only the left one) on the element.
-  def click
+  def click(sender)
     nil
   end
 
