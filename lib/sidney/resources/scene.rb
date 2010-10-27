@@ -146,7 +146,7 @@ module Sidney
 
       # Overlay a filter.
       if tint.alpha > 0
-        $window.draw_box(0, 0, background.width, background.height, Sidney::ZOrder::SCENE_FILTER, nil, tint)
+        $window.current_game_state.draw_rect(0, 0, background.width, background.height, Sidney::ZOrder::SCENE_FILTER, tint)
       end
 
       nil

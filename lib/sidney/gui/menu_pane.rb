@@ -105,7 +105,7 @@ class MenuPane < Element
       y = rect.y + (line_height * i)
 
       if item.enabled? and i == @index
-        $window.draw_box(rect.x, y, rect.width, line_height, z, nil, @hover_background_color)
+        draw_rect(rect.x, y, rect.width, line_height, z, @hover_background_color)
       end
 
       color = item.enabled? ? 0xffffffff : 0xff888888

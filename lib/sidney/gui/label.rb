@@ -56,7 +56,7 @@ class Label < Element
 
   public
   def draw_foreground
-    current_x = x + padding_x - 1
+    current_x = x + padding_x
     if @icon
       @icon.draw(current_x, y + padding_y, z)
       current_x += @icon.width + padding_x

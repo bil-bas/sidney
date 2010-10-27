@@ -42,6 +42,8 @@ module Sidney
       @mouse_x, @mouse_y = 0, 0
       @focus = nil
 
+      @@draw_pixel ||= Image.create(1, 1, color: [1, 1, 1])
+
       super()
       add_inputs *DEFAULT_INPUTS
     end
@@ -178,6 +180,23 @@ module Sidney
     public
     def flush
       $window.flush
+    end
+
+    public
+    def draw_rect(x, y, width, height, z, color, mode = :default)
+      @@draw_pixel.draw x, y, z, width, height, color, mode
+
+      nil
+    end
+
+    public
+    def draw_frame(x, y, width, height, z, color, mode = :default)
+      draw_rect(x, y, 1, height, z, color, mode) # left
+      draw_rect(x, y, width, 1, z, color, mode) # top
+      draw_rect(x + width - 1, y, 1, height, z, color, mode) # right
+      draw_rect(x, y + height - 1, width, 1, z, color, mode) # bottom
+
+      nil
     end
   end
 end

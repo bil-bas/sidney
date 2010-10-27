@@ -75,7 +75,7 @@ module Gui
     public
     def draw_background
       super
-      $window.draw_box x + padding_x, y + padding_y, width - padding_x * 2, height - padding_y * 4, z, nil, @groove_color
+      draw_rect x + padding_x, y + padding_y, width - padding_x * 2, height - padding_y * 4, z, @groove_color
       nil
     end
 

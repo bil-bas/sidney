@@ -104,12 +104,13 @@ class Element
     nil
   end
 
-  # Check if a point (screen coordinates) is over the element.
   public
+  # Check if a point (screen coordinates) is over the element.
   def hit?(x, y)
     @rect.collide_point?(x, y)
   end
 
+  public
   # Redraw the element.
   def draw
     draw_background
@@ -119,8 +120,8 @@ class Element
 
   public
   def draw_background
-    $window.draw_box(x, y, width, height, z, nil, @background_color) unless @background_color.transparent?
-    $window.draw_box(x, y, width, height, z, @border_color, nil) unless @border_color.transparent?
+    draw_rect(x, y, width, height, z, @background_color) unless @background_color.transparent?
+    draw_frame(x, y, width, height, z, @border_color) unless @border_color.transparent?
   end
 
   protected
@@ -128,9 +129,18 @@ class Element
     nil
   end
 
+  public
   # Update the element.
   def update
     nil
+  end
+
+  def draw_rect(*args)
+    $window.current_game_state.draw_rect(*args)
+  end
+
+  def draw_frame(*args)
+    $window.current_game_state.draw_frame(*args)
   end
 end
 end

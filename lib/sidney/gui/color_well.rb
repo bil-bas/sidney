@@ -38,14 +38,14 @@ module Gui
     def draw_background
       super
 
-      $window.draw_box x + 2, y + 2, width - 4, height - 4, z, nil, OUTLINE_COLOR
+      draw_frame x + 2, y + 2, width - 4, height - 4, z, OUTLINE_COLOR
 
       nil
     end
 
     protected
     def draw_foreground
-      $window.draw_box x + 3, y + 3, width - 6, height - 6, z, nil, @color
+      draw_rect x + 3, y + 3, width - 6, height - 6, z, @color
 
       nil
     end

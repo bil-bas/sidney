@@ -53,7 +53,7 @@ module Sidney
       )
 
       # Create a common packer, used by all editing modes.
-      @@edit_packer ||= HorizontalPacker.new(container, padding: 0) do |packer|
+      @@edit_packer ||= HorizontalPacker.new(container, padding: 2) do |packer|
         VerticalPacker.new(packer, padding: 0) do |packer|
           # The grid contains the actual game state.
           @@grid = Grid.new(packer, ($window.height / 300).floor)
@@ -205,7 +205,7 @@ module Sidney
 
     protected
     def draw_background
-      $window.draw_box -grid.width, -grid.height, grid.width * 2, grid.height * 2, 0, nil, BACKGROUND_COLOR
+      draw_rect -grid.width, -grid.height, grid.width * 2, grid.height * 2, 0, BACKGROUND_COLOR
       nil
     end
   end

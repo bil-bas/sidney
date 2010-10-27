@@ -4,7 +4,7 @@ require_relative 'gui'
 require_relative 'grid_overlay'
 
 module Sidney
-class Grid < Element
+class Grid < Composite
   CELLS_WIDE, CELLS_HIGH = 20, 15
   CELL_WIDTH = CELL_HEIGHT = 16
   WIDTH = CELL_WIDTH * CELLS_WIDE
@@ -88,18 +88,18 @@ class Grid < Element
 
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
 
-    x, y = (@base_scale * MARGIN).to_i, (@base_scale * MARGIN).to_i
-    width, height = (WIDTH * @base_scale + 2).to_i, (HEIGHT * @base_scale + 2).to_i
-    @overlay = GridOverlay.new(width, height, CELL_WIDTH * @scale)
 
     @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
 
-    super(parent, x: x, y: y, width: width, height: height)
+    super(parent, VerticalPacker.new(nil, padding: 0))
+
+    width, height = (WIDTH * @base_scale + 2).to_i, (HEIGHT * @base_scale + 2).to_i
+    @overlay = GridOverlay.new(inner_container, CELL_WIDTH * @scale, width: width, height: height)
   end
 
   public
   def draw_with_respect_to
-    $window.translate(@rect.x + 1, @rect.y + 1) do
+    $window.translate(x + 1, y + 1) do
       $window.clip_to(0, 0, @rect.width - 2, @rect.height - 2) do
         $window.scale(scale) do
           $window.translate(@offset_x, @offset_y) do
@@ -112,10 +112,10 @@ class Grid < Element
 
   public
   def draw
-    $window.translate(@rect.x, @rect.y) do
+    $window.translate(x, y) do
       @overlay.draw(@offset_x * scale, @offset_y * scale)
 
-      $window.draw_box(1, 0, width, height, z, BORDER_COLOR)
+      $window.current_game_state.draw_frame(0, 0, width, height, z, BORDER_COLOR)
     end
 
     nil

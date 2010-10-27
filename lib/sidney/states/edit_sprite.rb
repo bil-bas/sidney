@@ -34,9 +34,9 @@ module Sidney
         @color_picker = ColorPicker.new(packer, width: 100, color: INITIAL_DRAW_COLOR, channel_names: t('edit_sprite.color_picker.channel_names'))
 
         ColorWell::Group.new(packer) do |group|
-          HorizontalPacker.new(group, padding_x: 0, spacing: 1) do |packer|
+          HorizontalPacker.new(group, padding: 0, spacing: 4) do |packer|
             5.times do
-              VerticalPacker.new(packer, padding_x: 0, spacing: 1) do |packer|
+              VerticalPacker.new(packer, padding: 0, spacing: 4) do |packer|
                 10.times do
                   ColorWell.new(packer, color: Color.rgb(rand(255), rand(255), rand(255)))
                 end

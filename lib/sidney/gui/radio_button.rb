@@ -151,7 +151,7 @@ module Gui
     def draw_background
       super
 
-      $window.draw_box x, y, width, height, z, @border_color
+      draw_frame x, y, width, height, z, @border_color
 
       nil
     end

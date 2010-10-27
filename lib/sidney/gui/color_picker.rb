@@ -34,7 +34,7 @@ module Gui
 
       @color = options[:color]
 
-      super(parent, VerticalPacker.new(nil), options)
+      super(parent, VerticalPacker.new(nil, spacing: 0), options)
 
       @sliders = {}
       slider_width = width
@@ -67,11 +67,11 @@ module Gui
     def draw_foreground
       super
 
-      sliders_height = @sliders[:red].height * 4
+      sliders_height = @sliders[:red].height * @sliders.size
 
       @@color_picker_transparent.draw x, y + sliders_height, z, width / 2, INDICATOR_HEIGHT / 2
 
-      $window.draw_box x, y + sliders_height, width, INDICATOR_HEIGHT, z, nil, @color
+      draw_rect x, y + sliders_height, width, INDICATOR_HEIGHT, z, @color
 
       nil
     end
