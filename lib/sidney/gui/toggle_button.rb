@@ -48,6 +48,8 @@ module Gui
         @border_color = @border_color_off
       end
 
+      recalc
+
       nil
     end
 
