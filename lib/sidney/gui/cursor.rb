@@ -14,7 +14,7 @@ class Cursor < GameObject
     options = {
       image: Image[ARROW],
       center: 0,
-      zorder: ZOrder::CURSOR
+      zorder: Float::INFINITY
     }.merge!(options)
 
     super(options)
@@ -39,10 +39,8 @@ class Cursor < GameObject
 
   public
   def draw
-    update # TODO: Get Gosu fixed so this isn't required.
-
     # Prevent system and game mouse from being shown at the same time.
-    super if inside_window?
+    super if inside_window? and not $window.needs_cursor?
   end
 end
 end

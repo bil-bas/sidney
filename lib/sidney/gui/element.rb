@@ -57,7 +57,7 @@ class Element
     options = {
       x: 0,
       y: 0,
-      z: ZOrder::GUI,
+      z: 0,
       width: 0,
       height: 0,
       tip: '',
