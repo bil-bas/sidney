@@ -1,12 +1,12 @@
 # encoding: utf-8
 
 require_relative 'button'
-require_relative 'container'
+require_relative 'packer'
 
 module Sidney
 module Gui
   class RadioButton < Button
-    class Group < Container
+    class Group < Packer
       attr_reader :selected
 
       def value; @selected ? @selected.value : nil; end

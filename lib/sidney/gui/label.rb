@@ -19,11 +19,10 @@ class Label < Element
   end
 
   protected
-  # @option options [Gosu::Image, nil] icon (nil)
-  # @option options [String] text ('')
+  # @option options [Gui::Icon, Gosu::Image, nil] :icon (nil)
+  # @option options [String] :text ('')
   def initialize(parent, options = {}, &block)
     options = {
-      icon: nil,
       text: '',
       color: DEFAULT_COLOR.dup,
       background_color: DEFAULT_BACKGROUND_COLOR.dup,
@@ -32,10 +31,8 @@ class Label < Element
 
     @text = options[:text]
     @icon = options[:icon]
-
     @color = options[:color]
 
-    
     super(parent, options)
   end
 
@@ -53,6 +50,8 @@ class Label < Element
       rect.width = [font.text_width(@text) + padding_x * 2, width].max
       rect.height = [font_size + padding_y * 2, height].max
     end
+
+    nil
   end
 
   public

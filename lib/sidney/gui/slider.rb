@@ -4,7 +4,7 @@ require_relative 'container'
 
 module Sidney
 module Gui
-  class Slider < Container
+  class Slider < Composite
     # @private
     class Handle < Element
       DEFAULT_BACKGROUND_COLOR = Color.rgb(255, 0, 0)
@@ -44,9 +44,9 @@ module Gui
       @range = options[:range]
       @groove_color = options[:groove_color]
 
-      super(parent, options)
+      super(parent, HorizontalPacker.new(nil, padding: 0), options)
 
-      @handle = Handle.new(self, width: (height / 2 - padding_x), height: height - padding_y * 2,
+      @handle = Handle.new(inner_container, width: (height / 2 - padding_x), height: height - padding_y * 2,
                            background_color: options[:handle_color])
 
       self.value = options[:value] ? options[:value] : @range.min

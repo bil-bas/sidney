@@ -105,10 +105,10 @@ module Sidney
       end
 
       if @bubble.focused?
-        @bubble.blur
+        @bubble.publish :blur
         @bubble = nil if @bubble.text.empty?
       else
-        @bubble.focus
+        @bubble.publish :focus
       end
 
       nil

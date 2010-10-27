@@ -16,12 +16,28 @@ class Button < Label
       border_color: DEFAULT_BORDER_COLOR.dup
     }.merge! options
 
+
+
     super(parent, options)
   end
 
   public
   def clicked_left_mouse_button(sender, x, y)
     # TODO: Play click sound?
+    nil
+  end
+
+  public
+  def enter(sender)
+    @background_color = Color.rgb(150, 150, 150)
+
+    nil
+  end
+
+  public
+  def leave(sender)
+    @background_color = Color.rgb(100, 100, 100)
+
     nil
   end
 end

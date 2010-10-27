@@ -1,12 +1,12 @@
 # encoding: utf-8
 
-require_relative 'vertical_packer'
+require_relative 'composite'
 
 module Sidney
 module Gui
-  class ColorPicker < VerticalPacker
+  class ColorPicker < Composite
     DEFAULT_COLOR = Color.rgba(255, 255, 255, 255)
-    CHANNELS = [:red, :green, :blue, :alpha]
+    CHANNELS = [:red, :green, :blue]
     DEFAULT_CHANNEL_NAMES = CHANNELS.map {|c| c.to_s.capitalize }
 
     INDICATOR_HEIGHT = 20
@@ -34,11 +34,12 @@ module Gui
 
       @color = options[:color]
 
-      super(parent, options)
+      super(parent, VerticalPacker.new(nil), options)
 
       @sliders = {}
+      slider_width = width
       CHANNELS.each_with_index do |channel, i|
-        Slider.new(self, value: @color.send(channel), range: 0..255, width: width, tip: options[:channel_names][i]) do |slider|
+        Slider.new(inner_container, value: @color.send(channel), range: 0..255, width: slider_width, tip: options[:channel_names][i]) do |slider|
           slider.subscribe :changed do |sender, value|
             @color.send "#{channel}=", value
           end
@@ -64,13 +65,15 @@ module Gui
 
     protected
     def draw_foreground
+      super
+
       sliders_height = @sliders[:red].height * 4
 
       @@color_picker_transparent.draw x, y + sliders_height, z, width / 2, INDICATOR_HEIGHT / 2
 
       $window.draw_box x, y + sliders_height, width, INDICATOR_HEIGHT, z, nil, @color
 
-      super
+      nil
     end
   end
 end

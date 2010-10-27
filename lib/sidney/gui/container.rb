@@ -5,8 +5,11 @@ require_relative 'element'
 module Sidney
 module Gui
   # A container that contains Elements.
+  # @abstract
   class Container < Element
-    DEBUG_BORDER_COLOR = Color.rgb(0, 0, 255) # Color to draw an outline in when debugging layout.
+    DEBUG_BORDER_COLOR = Color.rgba(0, 0, 255, 100) # Color to draw an outline in when debugging layout.
+
+    def size; @children.size; end
 
     public
     def each(&block)
@@ -83,7 +86,8 @@ module Gui
     public
     def hit_element(x, y)
       @children.reverse_each do |child|
-        if child.is_a? Container
+        case child
+        when Container, Composite
           if element = child.hit_element(x, y)
             return element
           end

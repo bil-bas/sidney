@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require_relative '../gui'
+require_relative '../resource_browser'
 
 module Sidney
   # @abstract

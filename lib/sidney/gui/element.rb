@@ -84,7 +84,7 @@ class Element
   protected
   def post_init(&block)
     recalc
-    @parent.add self if @parent
+    @parent.send :add, self if @parent
     yield self if block_given? # Return the result of the yield.
   end
 

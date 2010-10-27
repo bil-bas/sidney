@@ -3,6 +3,7 @@
 module Sidney
 module Gui
   class TextArea < Element
+    DEFAULT_BACKGROUND_COLOR = Color.rgb(50, 50, 50)
     DEFAULT_BORDER_COLOR_FOCUSED = Color.rgb(0, 255, 255)
     DEFAULT_BORDER_COLOR = Color.rgb(200, 200, 200)
 
@@ -82,6 +83,7 @@ module Gui
     def text=(text)
       @text_input.text = text
       recalc # This may roll back the text if it is too long.
+      publish :changed, self.text
       self.text
     end
 
@@ -98,6 +100,7 @@ module Gui
         text: '',
         max_height: Float::INFINITY,
         line_spacing: 0,
+        background_color: DEFAULT_BACKGROUND_COLOR .dup,
         border_color: DEFAULT_BORDER_COLOR.dup,
         border_color_focused: DEFAULT_BORDER_COLOR_FOCUSED.dup
       }.merge! options
@@ -130,7 +133,7 @@ module Gui
     public
     # @return [nil]
     def clicked_left_mouse_button(sender, x, y)
-      focus unless focused?
+      publish :focus unless focused?
 
       # Move caret to position the user clicks on.
       mouse_x, mouse_y = $window.cursor.x - x - padding_x, $window.cursor.y - y - padding_y
@@ -151,7 +154,7 @@ module Gui
 
     public
     # @return [nil]
-    def focus
+    def focus(sender)
       @focused = true
       $window.current_game_state.focus = self
       $window.text_input = @text_input
@@ -161,7 +164,7 @@ module Gui
 
     public
     # @return [nil]
-    def blur
+    def blur(sender)
       if focused?
         $window.current_game_state.focus = nil
         $window.text_input = nil
@@ -196,6 +199,8 @@ module Gui
     def layout
       # Don't need to re-layout if the text hasn't changed.
       return if @old_text == text
+
+      publish :changed, self.text
 
       # Save these in case we are too long.
       old_lines = @lines

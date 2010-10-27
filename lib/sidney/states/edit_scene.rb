@@ -30,6 +30,8 @@ module Sidney
             @scene.tint.alpha = value
           end
         end
+
+        ResourceBrowser.new(packer, StateObject)
       end
 
       nil

@@ -19,7 +19,7 @@ class VisualResource < Resource
 
     THUMBNAIL_CACHE_DIR = File.join(CACHE_DIR, 'thumbnails')
     FileUtils.mkdir_p THUMBNAIL_CACHE_DIR
-    THUMBNAIL_SIZE = 16
+    THUMBNAIL_SIZE = 32
     @@cached_thumbnails = Hash.new
 
     OUTLINE_CACHE_DIR = File.join(CACHE_DIR, 'outlines')
