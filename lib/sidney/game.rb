@@ -34,7 +34,7 @@ include Chingu
 module Sidney
 # Z-order of all elements of the game.
 module ZOrder
-  SCENE, SCENE_FILTER, GUI, DIALOG, FPS = (0..1000).to_a
+  SCENE, SCENE_FILTER, GUI, BUBBLE, DIALOG, FPS = (0..1000).to_a
   OUTLINE = GUI
 end
 end

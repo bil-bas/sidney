@@ -10,9 +10,6 @@ class ComboBox < Button
   DEFAULT_BACKGROUND_COLOR = Color.new(100, 100, 100)
 
   public
-  attr_accessor :index
-
-  public
   def index; @menu.index(@value) end
   def value; @value; end
   
@@ -49,7 +46,7 @@ class ComboBox < Button
     @hover_index = 0
 
     @menu = MenuPane.new do |widget|
-      widget.subscribe :select do |widget, value|
+      widget.subscribe :selected do |widget, value|
         self.value = value
       end
     end
@@ -61,11 +58,13 @@ class ComboBox < Button
   end
 
   public
-  def add(*args)
-    @menu.add(*args)
+  def add_item(*args)
+    @menu.add_item(*args)
 
     # Force text to be updated.
-    @text = @menu.find(@value).text if @menu.find(@value)
+    if item = @menu.find(@value)
+      @text = item.text
+    end
 
     nil
   end

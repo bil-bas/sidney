@@ -11,6 +11,7 @@ class GridOverlay < Element
   end
   
   public
+  def hit?(x, y); false; end
   def visible?; @visible; end
   def show!; @visible = true; end
   def hide!; @visible = false; end

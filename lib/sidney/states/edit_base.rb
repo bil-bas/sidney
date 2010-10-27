@@ -73,7 +73,7 @@ module Sidney
           HorizontalPacker.new(packer, padding: 0) do |packer|
             @@zoom_box = ComboBox.new(packer, value: INITIAL_ZOOM, tip: t('zoom_combo.tip')) do |widget|
               zooms.each_pair do |key, value|
-                widget.add(key, value)
+                widget.add_item(key, text: value)
               end
 
               widget.subscribe :changed do |widget, value|

@@ -10,11 +10,10 @@ module Gui
     DEBUG_BORDER_COLOR = Color.rgba(0, 0, 255, 100) # Color to draw an outline in when debugging layout.
 
     def size; @children.size; end
-
-    public
-    def each(&block)
-      @children.each &block
-    end
+    def each(&block); @children.each &block; end
+    def find(&block); @children.find &block; end
+    def index(value); @children.index value; end
+    def [](index); @children[value]; end
 
     public
     def x=(value)

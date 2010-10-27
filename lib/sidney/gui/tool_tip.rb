@@ -10,6 +10,7 @@ class ToolTip < Label
 
   def x=(value); super(value); recalc; value; end
   def y=(value); super(value); recalc; value; end
+  def hit?(x, y); false; end
 
   protected
   def initialize(parent, options = {}, &block)
@@ -23,12 +24,13 @@ class ToolTip < Label
 
   protected
   def layout
-    width, height = font.text_width(@text) + padding_x * 2, font_size + padding_y * 2
-    # Ensure the tip can't go other the edge of the screen.
+    super
+
+    # Ensure the tip can't go over the edge of the screen.
     rect.x = [x, $window.width - width - padding_x].min
     rect.y = [y, $window.height - height - padding_y].min
-    rect.width = width
-    rect.height = height
+
+    nil
   end
 end
 end

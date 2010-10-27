@@ -65,15 +65,15 @@ module Sidney
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
         MenuPane.new(x: x, y: y) do |widget|
-          widget.add(:edit, 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
-          widget.add(:mirror, 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
-          widget.add(:flip, 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
+          widget.add_item(:edit, text: 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
+          widget.add_item(:mirror, text: 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
+          widget.add_item(:flip, text: 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
           widget.add_separator
-          widget.add(:copy, 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
-          widget.add(:paste, 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not clipboard.empty?))
-          widget.add(:delete, 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
+          widget.add_item(:copy, text: 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
+          widget.add_item(:paste, text: 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not clipboard.empty?))
+          widget.add_item(:delete, text: 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
 
-          widget.subscribe :select do |widget, value|
+          widget.subscribe :selected do |widget, value|
             case value
               when :delete then delete
               when :copy   then copy

@@ -32,6 +32,8 @@ class Element
   def y=(value); rect.y = value; end
   def width; rect.width; end
   def height; rect.height; end
+  def enabled?; @enabled; end
+  def enabled=(value); @enabled = value; end
 
   @@debug_mode = false
   def self.debug_mode?; @@debug_mode; end
@@ -64,9 +66,11 @@ class Element
       font_size: DEFAULT_FONT_SIZE,
       debug: @@debug_mode,
       background_color: DEFAULT_BACKGROUND_COLOR.dup,
-      border_color: DEFAULT_BORDER_COLOR.dup
+      border_color: DEFAULT_BORDER_COLOR.dup,
+      enabled: true,
     }.merge! options
 
+    @enabled = options[:enabled]
     @background_color = options[:background_color]
     @border_color = options[:border_color]
 
@@ -75,10 +79,12 @@ class Element
     @parent = parent
     @debug = options[:debug]
 
-    @rect = Rect.new(options[:x], options[:y], options[:width], options[:height])
     @z = options[:z]
     @tip = options[:tip]
     @font_size = options[:font_size]
+
+    @rect = Rect.new(0, 0, options[:width], options[:height])
+    self.x, self.y = options[:x], options[:y]
   end
 
   protected

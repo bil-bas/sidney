@@ -101,7 +101,7 @@ module Sidney
       unless @bubble
         @bubble = TextArea.new(nil, width: BUBBLE_INITIAL_WIDTH, font_size: BUBBLE_FONT_SIZE,
                                padding_x: BUBBLE_PADDING_X, padding_y: BUBBLE_PADDING_Y,
-                               line_spacing: BUBBLE_LINE_SPACING, editable: true)
+                               line_spacing: BUBBLE_LINE_SPACING, editable: true, z: ZOrder::BUBBLE)
       end
 
       if @bubble.focused?

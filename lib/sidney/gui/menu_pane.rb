@@ -1,144 +1,125 @@
 # encoding: utf-8
 
-require_relative 'element'
+require_relative 'composite'
+require_relative 'button'
 
 module Sidney
 module Gui
-class MenuPane < Element
-  class Item
-    attr_reader :text, :value, :shortcut
+class MenuPane < Composite
+  # An item within the menu.
+  class Item < Button
+    DEFAULT_BORDER_COLOR = Color.rgba(0, 0, 0, 0)
+    attr_reader :value, :shortcut
 
-    def enabled?
-      @enabled
-    end
-
-    def enabled=(value)
-      @enabled = value
-    end
-
-    # === Parameters
-    # +value+:: Value if the user picks this item [Any]
-    # +text+:: Descriptive text shown to the user [String]
-    # +options+:: [Hash]
-    # * +:enabled+ - [Boolean]
-    # * +:shortcut+ - [String]
-    protected
-    def initialize(value, text, options = {})
+    public
+    # @param [any] value Value if the user picks this item
+    # @option options [Boolean] :enabled (true)
+    # @option options [String] :shortcut ('')
+    def initialize(parent, value, options = {})
       options = {
-        enabled: true
+        enabled: true,
+        border_color: DEFAULT_BORDER_COLOR,
       }.merge! options
 
-      @value, @text = value, text
+      @value = value
       @enabled = [true, false].include?(options[:enabled]) ? options[:enabled] : true
-      @shortcut = options[:shortcut] || nil
+      @shortcut = options[:shortcut] || ''
 
-      yield self if block_given?
+      super(parent, options)
+    end
+
+    protected
+    def layout
+      super
+      rect.width += font.text_width("  #{@shortcut}") unless @shortcut.empty?
+      nil
+    end
+
+    public
+    def draw_foreground
+      super
+      unless @shortcut.empty?
+        font.draw_rel("#{@shortcut}", rect.right - padding_x, y + ((height - font_size) / 2).floor, z, 1, 0, 1, 1, color)
+      end
+
+      nil
+    end
+  end
+
+  class Separator < Item
+    DEFAULT_LINE_HEIGHT = 1
+
+    public
+    def initialize(parent, options)
+      options = {
+        enabled: false,
+        line_height: DEFAULT_LINE_HEIGHT,
+      }.merge! options
+
+      @line_height = options[:line_height]
+
+      super parent, options
+    end
+
+    protected
+    def layout
+      super
+      rect.height = @line_height
+      nil
     end
   end
 
   DEFAULT_BACKGROUND_COLOR = Color.rgb(50, 50, 50)
 
-  attr_reader :items, :index
-
-  def line_height; font_size + padding_y * 2; end
+  def index(value); inner_container.index find(value); end
+  def size; inner_container.size; end
+  def [](index); inner_container[index]; end
   
   public
   def initialize(options = {}, &block)
     options = {
       background_color: DEFAULT_BACKGROUND_COLOR.dup,
+      z: Float::INFINITY,
     }.merge! options
 
-    @items = []
-
-    @hover_background_color = 0xff999999
-    
-    @index = nil # The index of the item hovered over.
-
-    super(nil, options)
+    super(nil, VerticalPacker.new(nil, spacing: 0, padding: 0), options)
   end
 
-  def index(value)
-    @items.index(find(value))
-  end
-
+  public
   def find(value)
-    @items.find { |item| item.value == value }
+    inner_container.find {|c| c.value == value }
   end
 
-  def size
-    @items.size
-  end
-
-  def [](index)
-    @items[index]
-  end
-
-  def add(*args)
-    @items << Item.new(*args)
-    recalc
-    self
-  end
-
-  def add_separator
-    @@sep_num ||= 0
-    @@sep_num += 1
-    @items << Item.new(:"_sep_#{@@sep_num}", '---', enabled: false)
-    recalc
-    self
-  end
-
-  public
-  def recalc
-    @rect.height = line_height * @items.size
-    @items.each do |item|
-      text = item.text
-      text += "  (#{item.shortcut})" if item.shortcut
-      rect.width = [rect.width, font.text_width(text) + padding_x * 2].max
-    end
-
-    @items.size
-  end
-
-  protected
-  def draw_foreground
-    @items.each_with_index do |item, i|
-      y = rect.y + (line_height * i)
-
-      if item.enabled? and i == @index
-        draw_rect(rect.x, y, rect.width, line_height, z, @hover_background_color)
-      end
-
-      color = item.enabled? ? 0xffffffff : 0xff888888
-      font.draw(item.text, rect.x + padding_x, y + ((line_height - font_size) / 2).floor, z, 1, 1, color)
-
-      if item.shortcut
-        font.draw_rel("(#{item.shortcut})", rect.right - padding_x, y + ((line_height - font_size) / 2).floor, z, 1, 0, 1, 1, color)
-      end
-    end
-
+  def layout
+    super
+    max_width = inner_container.each.to_a.map {|c| c.width }.max || 0
+    inner_container.each {|c| c.rect.width = max_width }
     nil
   end
 
   public
-  def hover(sender, x, y)
-    @index = ((y - rect.y) / line_height).floor
+  def add_separator(options = {})
+    options[:z] = z
 
-    nil
+    Separator.new(inner_container, options)
   end
 
   public
-  def leave(sender)
-    @index = nil
+  def add_item(value, options = {})
+    options[:z] = z
+    item = Item.new(inner_container, value, options)
 
-    nil
+    item.subscribe :left_mouse_button, method(:item_selected)
+    item.subscribe :right_mouse_button, method(:item_selected)
+
+    item
   end
 
   public
-  def clicked_left_mouse_button(sender, x, y)
-    if @items[@index].enabled?
-      $window.game_state_manager.current_game_state.hide_menu
-      publish(:select, @items[@index].value)
-    end
+  def item_selected(sender, x, y)
+    publish(:selected, sender.value)
+
+    $window.game_state_manager.current_game_state.hide_menu
 
     nil
   end
