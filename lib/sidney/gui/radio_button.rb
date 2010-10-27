@@ -128,7 +128,9 @@ module Gui
 
     public
     def check
-      @group.button_checked self unless checked?
+      return if checked?
+
+      @group.button_checked self
 
       @checked = true
       @border_color = @border_color_checked
@@ -143,15 +145,6 @@ module Gui
       @checked = false
       @border_color = @border_color_unchecked
       publish :unchecked
-
-      nil
-    end
-
-    public
-    def draw_background
-      super
-
-      draw_frame x, y, width, height, z, @border_color
 
       nil
     end

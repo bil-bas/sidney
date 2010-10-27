@@ -32,7 +32,7 @@ module Sidney
         records = @type.all
         records.each do |record|
           if text.split(/ +/).all? {|word| record.name =~ /#{word}/i }
-            Button.new(@object_grid, icon: Icon.new(record.thumbnail), tip: record.name)
+            RadioButton.new(@object_grid, record, icon: Icon.new(record.thumbnail), tip: record.name)
           end
         end
         @label.text = "#{@object_grid.size} of #{records.size}"
