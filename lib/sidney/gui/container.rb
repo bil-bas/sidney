@@ -13,7 +13,7 @@ module Gui
     def each(&block); @children.each &block; end
     def find(&block); @children.find &block; end
     def index(value); @children.index value; end
-    def [](index); @children[value]; end
+    def [](index); @children[index]; end
 
     public
     def x=(value)
