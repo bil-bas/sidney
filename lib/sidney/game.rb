@@ -50,7 +50,6 @@ module Sidney
 # Main game window.
 class Game < Window
   include Log
-  attr_reader :cursor
 
   # Any taller and Gosu will scale the whole window to fit.
   MAX_HEIGHT = Gosu::screen_width * 0.8
@@ -85,7 +84,6 @@ class Game < Window
 
     on_input(:f) { @fps.toggle if holding_control? }
 
-    @cursor = Cursor.new
     @fps = FPSDisplay.new(0, 0)
 
     push_game_state(EditScene)

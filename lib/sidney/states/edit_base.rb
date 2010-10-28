@@ -109,13 +109,6 @@ module Sidney
     end
 
     public
-    def update
-      cursor.update
-      super
-      nil
-    end
-
-    public
     def draw
       super
       flush
@@ -129,8 +122,6 @@ module Sidney
       end
 
       Element.font.draw("(#{x}, #{y})", 10, $window.height - 40, ZOrder::GUI)
-
-      cursor.draw
       nil
     end
 
@@ -166,11 +157,6 @@ module Sidney
     def mouse_wheel_down
       zoom_box.index -= 1
       nil
-    end
-
-    protected
-    def cursor
-      $window.cursor
     end
 
     protected
