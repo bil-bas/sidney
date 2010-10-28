@@ -329,7 +329,7 @@ module Gui
       selection_range.each do |i|
         char_x, char_y = @text_positions[i]
         left, top = x + padding_x + char_x, y + padding_y + char_y
-        draw_frame left, top, font.text_width(text[i]), font_size,
+        draw_rect left, top, font.text_width(text[i]), font_size,
                        z, SELECTION_COLOR
       end
 
