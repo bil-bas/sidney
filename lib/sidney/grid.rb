@@ -1,6 +1,4 @@
 # encoding: utf-8
-
-require_relative 'gui'
 require_relative 'grid_overlay'
 
 module Sidney
@@ -79,7 +77,12 @@ class Grid < Composite
 
   public
   def hit?(x, y)
-    @rect.collide_point?(x, y)
+    rect.collide_point?(x, y)
+  end
+
+  public
+  def hit_object(x, y)
+    self if hit?(x, y)
   end
 
   protected
@@ -88,8 +91,7 @@ class Grid < Composite
 
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
 
-
-    @offset_x, @offset_y = WIDTH / 2, HEIGHT / 2
+    @offset_x, @offset_y = 0, 0
 
     super(parent, VerticalPacker.new(nil, padding: 0))
 

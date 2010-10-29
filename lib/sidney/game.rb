@@ -26,10 +26,24 @@ require 'chingu'
 require 'devil'
 require 'devil/gosu'
 
+if defined? Ocra
+  require 'fidgit' # Ocra MUST compile with the gem.
+else
+  begin
+    # For development, run from my local version.
+    require_relative File.join(ROOT_PATH, '/../fidgit/lib/fidgit')
+  rescue Exception => ex
+    require 'fidgit'
+  end
+end
+
+Fidgit.default_font_name = File.join(ROOT_PATH, 'media', 'fonts', 'SFPixelate.ttf')
+
 I18n.load_path << Dir[File.join(ROOT_PATH, 'config', 'locales', '*.yml')]
 
 include Gosu
 include Chingu
+include Fidgit
 
 module Sidney
 # Z-order of all elements of the game.

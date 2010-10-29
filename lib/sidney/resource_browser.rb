@@ -1,7 +1,6 @@
 # encoding: utf-8
 
 require_relative "resources"
-require_relative "gui"
 
 module Sidney
   class ResourceBrowser < Composite

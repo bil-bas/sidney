@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-require_relative '../gui'
 require_relative '../resource_browser'
 
 module Sidney
@@ -121,7 +120,7 @@ module Sidney
         x, y = 'x', 'y'
       end
 
-      Element.font.draw("(#{x}, #{y})", 10, $window.height - 40, ZOrder::GUI)
+      default_font.draw("(#{x}, #{y})", 10, $window.height - 40, ZOrder::GUI)
       nil
     end
 

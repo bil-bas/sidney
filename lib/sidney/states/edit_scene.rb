@@ -75,7 +75,7 @@ module Sidney
       if object_layer = hit_object(cursor.x, cursor.y)
         object_layer.state_object.name
       else
-        nil
+        ''
       end
     end
 
@@ -176,7 +176,7 @@ module Sidney
         @scene.draw
       end
 
-      Element.font.draw("Scene: '#{@scene.name}' [#{@scene.id}]", 10, $window.height - 25, ZOrder::GUI)
+      default_font.draw("Scene: '#{@scene.name}' [#{@scene.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end

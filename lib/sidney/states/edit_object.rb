@@ -159,7 +159,7 @@ module Sidney
       if sprite_layer = hit_object(cursor.x, cursor.y)
         sprite_layer.sprite.name
       else
-        nil
+        ''
       end
     end
 
@@ -176,7 +176,7 @@ module Sidney
         @object.draw_layers
       end
 
-      Element.font.draw("Object: '#{@object.state_object.name}' [#{@object.state_object.id}]", 10, $window.height - 25, ZOrder::GUI)
+      default_font.draw("Object: '#{@object.state_object.name}' [#{@object.state_object.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end
