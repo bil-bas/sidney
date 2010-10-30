@@ -9,14 +9,28 @@ module Sidney
       super
 
       HorizontalPacker.new(container) do |packer|
-        @scene_picker = ResourceBrowser.new(packer, Scene, search: 'jp')
-        Button.new(packer, text: "Edit Scene") do |button|
-          button.subscribe :clicked_left_mouse_button do |sender, x, y|
-            edit if @scene_picker.value
+        @scene_picker = ResourceBrowser.new(packer, Scene, search: 'jp') do |picker|
+          picker.subscribe :changed do |sender, value|
+            if value
+              @name_label.text = value.name
+              @icon_label.icon = value.image
+            else
+              @name_label.text = ''
+              @icon_label.icon = nil
+            end
           end
         end
 
-        Label.new(container)
+        VerticalPacker.new(packer, border_color: Color.new(255, 255, 255)) do |packer|
+          Button.new(packer, text: "Edit Scene") do |button|
+            button.subscribe :clicked_left_mouse_button do |sender, x, y|
+              edit if @scene_picker.value
+            end
+          end
+
+          @name_label = Label.new(packer)
+          @icon_label = Label.new(packer)
+        end
       end
     end
 
