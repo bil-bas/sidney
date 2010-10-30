@@ -4,12 +4,16 @@ require 'active_record'
 
 require_relative 'database'
 
-# scene
-#   has many state_objects (through object_layer)
-#       has many sprites (through sprite_layer)
-#   has a room
-#       has many tiles (through tile_layer)
+# pack has many scenes
+#   scene
+#     has many state_objects (through object_layer)
+#         a state_object has many sprites (through sprite_layer)
+#     has a room
+#         a room has many tiles (through tile_layer)
 #
+# story has many scenes (through frame)
+
+
 ActiveRecord::Schema.define do
   uid_length = 12
 
@@ -116,4 +120,39 @@ ActiveRecord::Schema.define do
   end
 
   add_index :scenes, :id, unique: true
+
+  # Packs (contains scenes).
+  create_table :packs, id: false do |t|
+    t.string :id, limit: uid_length, null: false
+    t.primary_key :id
+
+    t.string :name, null: false
+
+    t.string :scene_id, null: false
+  end
+
+  add_index :packs, :id, unique: true
+
+  # Stories (contains scenes via frames).
+  create_table :stories, id: false do |t|
+    t.string :id, limit: uid_length, null: false
+    t.primary_key :id
+
+    t.string :name, null: false
+
+    t.string :frame_id, null: false
+  end
+
+  add_index :stories, :id, unique: true
+
+  # Frames (Story->Scenes)
+  create_table :frames, id: false do |t|
+    t.string :pack_id, limit: uid_length, null: false
+    t.string :scene_id, limit: uid_length, null: false
+
+    # TODO: Should have speech/action info here?
+  end
+
+  add_index :frames, :pack_id
+  add_index :frames, :scene_id
 end
