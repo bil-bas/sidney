@@ -1,32 +1,46 @@
-require 'rake/rdoctask'
 require 'rake/clean'
 require 'fileutils'
 include FileUtils
 
 SOURCE_DIR = 'lib'
-RDOC_DIR = File.join('doc', 'rdoc')
+CLOBBER.include("doc/**/*", "sidney.exe")
 
 APP = 'sidney'
 APP_EXE = "#{APP}.exe"
 
-namespace :rdoc do
-  Rake::RDocTask.new do |rdoc|
-    rdoc.rdoc_dir = RDOC_DIR
-    rdoc.rdoc_files.add(%w(*.rdoc doc/*.rdoc lib/**/*.rb))
-    rdoc.title = 'Sidney - Story In A Box'
-  end
+# ------------------------------------------------------------------------------
+desc "Compile #{APP_EXE}"
+task :compile => APP_EXE
+
+prerequisites = FileList["lib/#{APP}.rb*"]
+file APP_EXE => prerequisites do
+  puts "Creating exe using ocra"
+  system "ocra #{prerequisites.join(' ')}"
+  puts 'Done.'
 end
 
-namespace :compile do
-  # ------------------------------------------------------------------------------
-  desc "Compile #{APP_EXE}"
+desc "Delete ALL resources."
+task :clobber_resources do
+  rmtree "resources"
+  rmtree "cache"
+end
 
-  task APP => APP_EXE
+desc "Delete Yard docs."
+task :clobber_yard do
+  rmtree "doc"
+end
 
-  prerequisites = FileList["lib/#{APP}.rb*"]
-  file APP_EXE => prerequisites do
-    puts "Creating exe using ocra"
-    system "ocra #{prerequisites.join(' ')}"
-    puts 'Done.'
-  end
+desc "Generate Yard docs."
+task :yard do
+  system "yard doc lib"
+end
+
+desc "Import SiD resources."
+task :import => :clobber_resources do
+  system "rspec spec/resources/import_resources_spec.rb"
+end
+
+desc "Import SiD resources."
+task :rspec do
+  system "rspec spec"
 end
