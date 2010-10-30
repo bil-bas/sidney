@@ -28,6 +28,8 @@ module Sidney
                                                tip: t('edit_object.save_copy_button.tip')) do |button|
           button.subscribe :clicked_left_mouse_button, method(:save_copy)
         end
+
+        ResourceBrowser.new(packer, Sprite)
       end
     end
 
