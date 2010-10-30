@@ -57,7 +57,7 @@ require_relative 'log'
 require_relative 'database'
 require_relative 'fps_display'
 require_relative 'grid'
-require_relative 'states/edit_scene'
+require_relative 'states/pick_scene'
 require_relative 'resources'
 
 module Sidney
@@ -100,7 +100,7 @@ class Game < Window
 
     @fps = FPSDisplay.new(0, 0)
 
-    push_game_state(EditScene)
+    push_game_state(PickScene)
    
     nil
   end

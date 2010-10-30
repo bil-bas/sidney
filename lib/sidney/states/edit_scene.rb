@@ -9,11 +9,11 @@ module Sidney
 
     attr_reader :clipboard, :history, :scene
 
-    protected
     def initialize
       super
 
       add_inputs(
+        released_escape: ->{ save_changes; pop_game_state },
         s: ->{ save_frame if $window.holding_control? },
         f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_scene.help', general: t('help'))) },
         [:return, :enter] => ->{ speak if @selection.size == 1 }
@@ -22,10 +22,10 @@ module Sidney
       @clipboard = Clipboard.new
       @history = History.new
 
-      @scene = Scene.load('d252be6903bd')
+      @scene = nil
 
       @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
-        Slider.new(packer, width: 100, range: 0..255, value: @scene.tint.alpha, tip: t('edit_scene.tint_slider.tip')) do |slider|
+        @tint_alpha_slider = Slider.new(packer, width: 100, range: 0..255, tip: t('edit_scene.tint_slider.tip')) do |slider|
           slider.subscribe :changed do |sender, value|
             @scene.tint.alpha = value
           end
@@ -37,10 +37,26 @@ module Sidney
       nil
     end
 
+    def scene=(scene)
+      @scene = scene
+      @tint_alpha_slider.value = @scene.tint.alpha
+      scene
+    end
+
     protected
     def speak
       speaker = @selection[0]
       speaker.toggle_speech_bubble
+      nil
+    end
+
+    public
+    def save_changes
+      # Save the current changes to the object being edited.
+      @selection.clear
+      @scene.save!
+      @scene.redraw
+
       nil
     end
 

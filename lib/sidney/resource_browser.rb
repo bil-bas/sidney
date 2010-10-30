@@ -6,10 +6,34 @@ module Sidney
   class ResourceBrowser < Composite
     DEFAULT_BORDER_COLOR = Color.rgb(255, 255, 255)
 
-    protected
+    attr_reader :value
+
+    def refresh
+      refresh_group
+
+      selected_resource = @value
+
+      # TODO: This search should be _very_ much better...
+      resources = @type.all
+      resources.each do |resource|
+        if @text_entry.text.split(/ +/).all? {|word| resource.name =~ /#{word}/i }
+          RadioButton.new(@object_grid, resource, icon: Thumbnail.new(resource.thumbnail), tip: resource.name)
+        end
+      end
+      @label.text = "#{@object_grid.size} found from #{resources.size}"
+
+      if resources.find {|r| r == selected_resource }
+        @group.value = selected_resource
+      else
+        publish :changed, @value
+      end
+
+      nil
+    end
+
     def initialize(parent, type, options = {})
       options = {
-        text: '',
+        search: '',
         border_color: DEFAULT_BORDER_COLOR.dup,
       }.merge! options
 
@@ -19,28 +43,28 @@ module Sidney
 
       # TODO: Use a side-scrolling text editor.
       @text_entry = TextArea.new(inner_container, width: 135, max_height: 30)
-      @label = Label.new(inner_container)
-
-      group = RadioButton::Group.new(inner_container)
-      @object_grid = GridPacker.new(group, width: 135, num_columns: 3)
-
-      @text_entry.subscribe :changed do |sender, text|
-        @object_grid.clear
-
-        # TODO: This search should be _very_ much better...
-        records = @type.all
-        records.each do |record|
-          if text.split(/ +/).all? {|word| record.name =~ /#{word}/i }
-            RadioButton.new(@object_grid, record, icon: Thumbnail.new(record.thumbnail), tip: record.name)
-          end
-        end
-        @label.text = "#{@object_grid.size} of #{records.size}"
-
-        publish :changed, text
+      @text_entry.subscribe :changed do
+        refresh
       end
 
-      @text_entry.text = options['text']
+      @label = Label.new(inner_container)
 
+      @text_entry.text = options[:search] # This will create the group and new radios.
+    end
+
+    protected
+    def refresh_group
+      inner_container.remove @group if @group
+
+      @group = RadioButton::Group.new(inner_container) do |group|
+        @object_grid = GridPacker.new(group, width: 135, num_columns: 3)
+        group.subscribe :changed do |sender, value|
+          @value = value
+          publish :changed, value
+        end
+      end
+
+      nil
     end
   end
 end
