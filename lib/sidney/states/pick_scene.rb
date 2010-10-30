@@ -29,7 +29,7 @@ module Sidney
           end
 
           @name_label = Label.new(packer)
-          @icon_label = Label.new(packer)
+          @icon_label = Label.new(packer, padding: 1, border_color: Color.new(255, 255, 255))
         end
       end
     end
