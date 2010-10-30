@@ -28,6 +28,8 @@ class VisualResource < Resource
 
     IMAGE_EXTENSION = 'png'
 
+    def thumbnail_size; THUMBNAIL_SIZE; end
+
     # Does the resource need to cache an outline?
     public
     def has_outline?; false; end
@@ -112,8 +114,15 @@ class VisualResource < Resource
     def cache_devil_image(devil)
       # Save the image itself.
       devil.save(image_path)
-      # Make it into a thumb (pixelised scaling).
-      devil.thumbnail(THUMBNAIL_SIZE, filter: Devil::NEAREST)
+
+      # Make it into a thumb
+      filter = if devil.width > thumbnail_size or devil.height > thumbnail_size
+        Devil::SCALE_LANCZOS3 # Blurry.
+      else
+        Devil::NEAREST # Pixelly.
+      end
+      devil.thumbnail(thumbnail_size, filter: filter)
+
       # Save the thumbnail.
       devil.save(thumbnail_path)
       # The thumbnail version will be the one returned.

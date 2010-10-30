@@ -17,7 +17,9 @@ module Sidney
       resources = @type.all
       resources.each do |resource|
         if @text_entry.text.split(/ +/).all? {|word| resource.name =~ /#{word}/i }
-          RadioButton.new(@object_grid, resource, icon: Thumbnail.new(resource.thumbnail), tip: resource.name)
+          icon = resource.thumbnail
+          icon = Thumbnail.new(icon) if @square_icons
+          RadioButton.new(@object_grid, resource, icon: icon, tip: resource.name)
         end
       end
       @label.text = "#{@object_grid.size} found from #{resources.size}"
@@ -33,11 +35,13 @@ module Sidney
 
     def initialize(parent, type, options = {})
       options = {
+        square_icons: true,
         search: '',
         border_color: DEFAULT_BORDER_COLOR.dup,
       }.merge! options
 
       @type = type
+      @square_icons = options[:square_icons]
 
       super parent, VerticalPacker.new(nil), options
 

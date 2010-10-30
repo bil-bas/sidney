@@ -9,7 +9,7 @@ module Sidney
       super
 
       HorizontalPacker.new(container) do |packer|
-        @scene_picker = ResourceBrowser.new(packer, Scene, search: 'jp') do |picker|
+        @scene_picker = ResourceBrowser.new(packer, Scene, search: 'jp', square_icons: false) do |picker|
           picker.subscribe :changed do |sender, value|
             if value
               @name_label.text = value.name

@@ -22,6 +22,10 @@ module Sidney
     DEFAULT_TINT = Color.rgba(0, 0, 0, 0)
     SAVE_ZOOM = 1 # Render to a image this many times larger.
 
+    THUMBNAIL_SIZE = 64
+
+    def thumbnail_size; THUMBNAIL_SIZE; end
+
     def self.current_version
       CURRENT_VERSION
     end

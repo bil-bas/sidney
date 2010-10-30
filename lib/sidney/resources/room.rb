@@ -26,7 +26,9 @@ module Sidney
     BLOCKED = 1
     DEFAULT_WALLS = false
 
-    public
+    THUMBNAIL_SIZE = 64
+
+    def thumbnail_size; THUMBNAIL_SIZE; end
     def composed_image?; true; end
 
     # @param [Hash] options
