@@ -127,11 +127,16 @@ ActiveRecord::Schema.define do
     t.primary_key :id
 
     t.string :name, null: false
-
-    t.string :scene_id, null: false
+    t.string :sprite_id, limit: uid_length, null: false
   end
 
   add_index :packs, :id, unique: true
+
+  # Packs->Scenes join table.
+  create_table :packs_scenes, id: false do |t|
+    t.string :pack_id, limit: uid_length, null: false
+    t.string :scene_id, limit: uid_length, null: false
+  end
 
   # Stories (contains scenes via frames).
   create_table :stories, id: false do |t|

@@ -4,6 +4,7 @@ require_relative 'json_serialization_wrapper'
 require_relative 'visual_resource'
 require_relative 'room'
 require_relative 'state_object_layer'
+require_relative 'pack'
 
 module Sidney
   class Scene < VisualResource  
@@ -11,11 +12,14 @@ module Sidney
 
     has_many :state_object_layers
     has_many :state_objects, through: :state_object_layers
+    has_and_belongs_to_many :packs
 
     # Manage saving tint (Gosu::Color) as json.
     before_save JsonSerializationWrapper.new(:tint)
     after_save  JsonSerializationWrapper.new(:tint)
     after_find  JsonSerializationWrapper.new(:tint)
+
+    after_create :link_to_packs
 
     CURRENT_VERSION = 2
     DEFAULT_OBJECT_ZERO_FROZEN = false
@@ -93,6 +97,36 @@ module Sidney
       attributes[:state_object_layers] = [] # TODO: create default player object.
       
       super(attributes)
+    end
+
+    # After creating, link the scene to a pack.
+    def link_to_packs
+      # If a scene has a prefix, put it into that pack. E.g. JPNmegacat will be put into the pack JPN.
+      if pack_name = name[/^[A-Z]{2,}/]
+        add_to_pack(pack_name)
+      else
+        add_to_pack('NOPACK') # Put in this if we couldn't find a prefix.
+      end
+
+      add_to_pack('IMPORTED') # All SiD resources are put in this pack.
+
+      nil
+    end
+
+    # Add to a pack, by name. If the pack does not exist, create it.
+    def add_to_pack(pack_name)
+      # TODO: Need to calculate a better ID. But from what?
+      pack_id = pack_name.downcase.tr(' ', 'x').ljust(12, "x")
+
+      if Pack.exists?(pack_id)
+        packs << Pack.find(pack_id)
+      else
+        pack = packs.build(name: pack_name, sprite_id: "dummysprite1")
+        pack.id = pack_id
+        pack.save!
+      end
+
+      nil
     end
 
     protected

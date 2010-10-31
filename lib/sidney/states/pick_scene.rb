@@ -9,6 +9,13 @@ module Sidney
       super
 
       HorizontalPacker.new(container) do |packer|
+        # Picking a pack limits which scenes will be found in the scene picker.
+        @pack_picker = ResourceBrowser.new(packer, Pack) do |picker|
+          picker.subscribe :changed do |sender, value|
+            @scene_picker.type = value.scenes
+          end
+        end
+
         @scene_picker = ResourceBrowser.new(packer, Scene, search: 'jp', square_icons: false) do |picker|
           picker.subscribe :changed do |sender, value|
             if value

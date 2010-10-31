@@ -6,12 +6,17 @@ module Sidney
   class ResourceBrowser < Composite
     DEFAULT_BORDER_COLOR = Color.rgb(255, 255, 255)
 
-    attr_reader :value
+    def value; @group.value; end
+
+    def type=(type)
+      @type = type
+      refresh
+      value
+    end
 
     def refresh
-      refresh_group
-
-      selected_resource = @value
+      selected_resource = @group.value
+      recreate_group
 
       # TODO: This search should be _very_ much better...
       resources = @type.all
@@ -24,10 +29,11 @@ module Sidney
       end
       @label.text = "#{@object_grid.size} found from #{resources.size}"
 
+      # See if the previously selected resource is still in the list and if so, select it again.
       if resources.find {|r| r == selected_resource }
         @group.value = selected_resource
       else
-        publish :changed, @value
+        publish :changed, nil
       end
 
       nil
@@ -53,17 +59,18 @@ module Sidney
 
       @label = Label.new(inner_container)
 
+      @group = RadioButton::Group.new(inner_container) # Dummy group. Will be replaced.
+
       @text_entry.text = options[:search] # This will create the group and new radios.
     end
 
     protected
-    def refresh_group
-      inner_container.remove @group if @group
+    def recreate_group
+      inner_container.remove @group
 
       @group = RadioButton::Group.new(inner_container) do |group|
         @object_grid = GridPacker.new(group, width: 135, num_columns: 3)
         group.subscribe :changed do |sender, value|
-          @value = value
           publish :changed, value
         end
       end
