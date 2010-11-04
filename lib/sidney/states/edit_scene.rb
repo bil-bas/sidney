@@ -16,7 +16,8 @@ module Sidney
         released_escape: ->{ save_changes; pop_game_state },
         s: ->{ save_frame if $window.holding_control? },
         f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_scene.help', general: t('help'))) },
-        [:return, :enter] => ->{ speak if @selection.size == 1 }
+        [:return, :enter] => ->{ speak if @selection.size == 1 },
+        released_right_mouse_button: :released_right_mouse_button
       )
 
       @clipboard = Clipboard.new
@@ -81,6 +82,7 @@ module Sidney
       @edit_object.object = @selection[0]
       push_game_state @edit_object
 
+
       nil
     end
 
@@ -135,7 +137,7 @@ module Sidney
             end
           end
 
-          show_menu menu
+          show
         end
       end
 

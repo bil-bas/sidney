@@ -15,10 +15,11 @@ module Sidney
 
       add_inputs(
         released_escape: :save,
-        f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) }
+        f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) },
+        released_right_mouse_button: :released_right_mouse_button
       )
 
-      @state_bar = pack :vertical, padding: 0 do
+      @state_bar = VerticalPacker.new(nil, padding: 0) do
         @save_button = button(icon: Image['save.png'], tip: t('edit_object.save_button.tip')) do
           save
         end
@@ -64,7 +65,7 @@ module Sidney
       return if @selection.dragging?
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
-        MenuPane.new(x: x, y: y) do |menu|
+        MenuPane.new(x: x, y: y) do
           item(:edit, text: 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
           item(:mirror, text: 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
           item(:flip, text: 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
@@ -84,7 +85,7 @@ module Sidney
             end
           end
 
-          show_menu menu
+          show
         end
       end
 

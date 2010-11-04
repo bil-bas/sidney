@@ -38,6 +38,8 @@ module Sidney
         holding_right: -> { clear_tip; grid.right unless focus },
         holding_up: -> { clear_tip; grid.up unless focus },
         holding_down: -> { clear_tip; grid.down unless focus },
+        mouse_wheel_up: :mouse_wheel_up,
+        mouse_wheel_down: :mouse_wheel_down,
         m: -> { @selection[0].mirror! if @selection.size == 1 and $window.holding_control? },
         n: -> { @selection[0].flip! if @selection.size == 1 and $window.holding_control? },
         z: lambda do

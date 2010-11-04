@@ -18,6 +18,10 @@ module Sidney
         a: -> { select_all if $window.holding_control? },
         escape: -> { @selection.reset_drag if @selection.dragging? },
         delete: -> { delete unless @selection.empty? },
+        left_mouse_button: :left_mouse_button,
+        released_left_mouse_button: :released_left_mouse_button,
+        right_mouse_button: :right_mouse_button,
+        released_right_mouse_button: :released_right_mouse_button,
         e: -> { edit if $window.holding_control? and @selection.size == 1 },
         x: -> { delete if $window.holding_control? and not @selection.empty? },
         c: -> { copy if $window.holding_control? and not @selection.empty? },
@@ -29,8 +33,6 @@ module Sidney
 
     public
     def left_mouse_button
-      return if super == :handled
-
       x, y = cursor.x, cursor.y
       if grid.hit?(x, y)
         select(x, y)
@@ -46,8 +48,6 @@ module Sidney
 
     public
     def released_left_mouse_button
-      super
-
       x, y = cursor.x, cursor.y
 
       if @selection.dragging?

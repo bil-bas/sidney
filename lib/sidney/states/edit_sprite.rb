@@ -27,7 +27,9 @@ module Sidney
         holding_left: ->{ grid.left },
         holding_right: ->{ grid.right },
         holding_up: ->{ grid.up },
-        holding_down: ->{ grid.down }
+        holding_down: ->{ grid.down },
+        holding_left_mouse_button: :holding_left_mouse_button,
+        holding_right_mouse_button: :holding_right_mouse_button
       )
 
       @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
