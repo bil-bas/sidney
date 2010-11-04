@@ -2,16 +2,32 @@
 
 require_relative "resources"
 
+
+module Fidgit
+  class Container
+    def resource_browser(type, options = {}, &block)
+      Sidney::ResourceBrowser.new(self, type, options, &block)
+    end
+  end
+end
+
 module Sidney
   class ResourceBrowser < Composite
     DEFAULT_BORDER_COLOR = Color.rgb(255, 255, 255)
 
     def value; @group.value; end
+    def search; @text_entry.text; end
+    def type; @type; end
 
     def type=(type)
       @type = type
       refresh
-      value
+      type
+    end
+
+    def search=(search)
+      @text_entry.text = search
+      search
     end
 
     def refresh
@@ -21,10 +37,10 @@ module Sidney
       # TODO: This search should be _very_ much better...
       resources = @type.all
       resources.each do |resource|
-        if @text_entry.text.split(/ +/).all? {|word| resource.name =~ /#{word}/i }
+        if self.search.split(/ +/).all? {|word| resource.name =~ /#{word}/i }
           icon = resource.thumbnail
           icon = Thumbnail.new(icon) if @square_icons
-          RadioButton.new(@object_grid, resource, icon: icon, tip: resource.name)
+          @object_grid.radio_button resource, icon: icon, tip: resource.name
         end
       end
       @label.text = "#{@object_grid.size} found from #{resources.size}"
@@ -46,36 +62,41 @@ module Sidney
         border_color: DEFAULT_BORDER_COLOR.dup,
       }.merge! options
 
-      @type = type
       @square_icons = options[:square_icons]
 
-      super parent, VerticalPacker.new(nil), options
+      super parent, options
+      @type = type
 
-      # TODO: Use a side-scrolling text editor.
-      @text_entry = TextArea.new(inner_container, width: 135, max_height: 30)
-      @text_entry.subscribe :changed do
-        refresh
+      @packer = pack :vertical do
+        # TODO: Use a side-scrolling text editor.
+        @text_entry = text_area(width: 135, max_height: 30) do
+          refresh
+        end
+
+        @label = label ''
+        @group = group
       end
 
-      @label = Label.new(inner_container)
-
-      @group = RadioButton::Group.new(inner_container) # Dummy group. Will be replaced.
-
-      @text_entry.text = options[:search] # This will create the group and new radios.
+      self.search = options[:search] # This will create the group and new radios.
     end
 
-    protected
     def recreate_group
-      inner_container.remove @group
+      @packer.remove @group
 
-      @group = RadioButton::Group.new(inner_container) do |group|
-        @object_grid = GridPacker.new(group, width: 135, num_columns: 3)
-        group.subscribe :changed do |sender, value|
+      @group = @packer.group do
+        subscribe :changed do |sender, value|
           publish :changed, value
         end
+
+        @object_grid = pack :grid, width: 135, num_columns: 3
       end
 
       nil
+    end
+
+    protected
+    def post_init_block(&block)
+      subscribe :changed, &block
     end
   end
 end

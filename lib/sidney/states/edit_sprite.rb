@@ -31,16 +31,16 @@ module Sidney
       )
 
       @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
-        @color_picker = ColorPicker.new(packer, width: 100, color: INITIAL_DRAW_COLOR, channel_names: t('edit_sprite.color_picker.channel_names'))
+        @color_picker = packer.color_picker(width: 100, color: INITIAL_DRAW_COLOR, channel_names: t('edit_sprite.color_picker.channel_names'))
 
-        ColorWell::Group.new(packer) do |group|
-          GridPacker.new(group, num_columns: 5, padding: 0, spacing: 4) do |packer|
+        group do
+          pack :grid, num_columns: 5, padding: 0, spacing: 4 do
             50.times do
-              ColorWell.new(packer, color: Color.rgb(rand(255), rand(255), rand(255)))
+              color_well(color: Color.rgb(rand(255), rand(255), rand(255)))
             end
           end
 
-          group.subscribe :changed do |sender, value|
+          subscribe :changed do |sender, value|
             @color_picker.color = value
           end
         end
@@ -83,6 +83,12 @@ module Sidney
     end
 
     public
+    def update
+      @@state_label.text = "Sprite: '#{@sprite.sprite.name}' [#{@sprite.sprite.id}]"
+      super
+    end
+
+    public
     def draw
       grid.draw_with_respect_to do
         previous_game_state.previous_game_state.scene.draw
@@ -99,8 +105,6 @@ module Sidney
 
         @image.draw(IMAGE_X, IMAGE_Y, 0)
       end
-
-      default_font.draw("Sprite: '#{@sprite.sprite.name}' [#{@sprite.sprite.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end

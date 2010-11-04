@@ -88,45 +88,35 @@ class VisualResource < Resource
     public
     def cache_image(image)
       FileUtils.mkdir_p File.dirname(image_path)
-      FileUtils.mkdir_p File.dirname(thumbnail_path)
+      @@cached_images[id] = image
+      image.save(image_path)
 
-      if image.is_a? Devil::Image
-        @@cached_images[id] = image.flip.to_gosu($window)
-        cache_devil_image(image.flip)
-        image.free
-      else
-        @@cached_images[id] = image
-        image.as_devil { |devil| cache_devil_image(devil) }
-      end
+      FileUtils.mkdir_p File.dirname(thumbnail_path)
+      @@cached_thumbnails[id] = make_thumbnail(image)
+      @@cached_thumbnails[id].save(thumbnail_path)
 
       if has_outline?
         FileUtils.mkdir_p File.dirname(outline_path)
-        @@cached_outlines[id] = @@cached_images[id].outline.as_devil do |devil|
-          devil.save(outline_path)
-          devil.flip.to_gosu($window)
-        end
+        @@cached_outlines[id] = @@cached_images[id].outline
+        @@cached_outlines[id].save(outline_path)
       end
 
       @@cached_images[id]
     end
 
     public
-    def cache_devil_image(devil)
-      # Save the image itself.
-      devil.save(image_path)
+    def make_thumbnail(image)
+      image.as_devil do |devil|
+        # Make it into a thumb
+        filter = if devil.width > thumbnail_size or devil.height > thumbnail_size
+          Devil::SCALE_LANCZOS3 # Blurry.
+        else
+          Devil::NEAREST # Pixelly.
+        end
+        devil.thumbnail(thumbnail_size, filter: filter)
 
-      # Make it into a thumb
-      filter = if devil.width > thumbnail_size or devil.height > thumbnail_size
-        Devil::SCALE_LANCZOS3 # Blurry.
-      else
-        Devil::NEAREST # Pixelly.
+        devil.to_gosu($window)
       end
-      devil.thumbnail(thumbnail_size, filter: filter)
-
-      # Save the thumbnail.
-      devil.save(thumbnail_path)
-      # The thumbnail version will be the one returned.
-      @@cached_thumbnails[id] = devil.flip.to_gosu($window)
     end
 
     public

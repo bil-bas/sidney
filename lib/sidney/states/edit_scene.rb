@@ -24,14 +24,12 @@ module Sidney
 
       @scene = nil
 
-      @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
-        @tint_alpha_slider = Slider.new(packer, width: 100, range: 0..255, tip: t('edit_scene.tint_slider.tip')) do |slider|
-          slider.subscribe :changed do |sender, value|
-            @scene.tint.alpha = value
-          end
+      @state_bar = VerticalPacker.new(nil, padding: 0) do
+        @tint_alpha_slider = slider width: 100, range: 0..255, tip: t('edit_scene.tint_slider.tip') do |sender, value|
+          @scene.tint.alpha = value
         end
 
-        ResourceBrowser.new(packer, StateObject)
+        resource_browser StateObject
       end
 
       nil
@@ -98,6 +96,7 @@ module Sidney
     public
     def update
       super
+      @@state_label.text = "Scene: '#{@scene.name}' [#{@scene.id}]"
       @scene.reorder_layer_cache
 
       nil
@@ -116,16 +115,16 @@ module Sidney
       return if @selection.dragging?
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
-        MenuPane.new(x: x, y: y) do |widget|
-          widget.add_item(:edit, text: 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
-          widget.add_item(:mirror, text: 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
-          widget.add_item(:flip, text: 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
-          widget.add_separator
-          widget.add_item(:copy, text: 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
-          widget.add_item(:paste, text: 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not @clipboard.empty?))
-          widget.add_item(:delete, text: 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
+        MenuPane.new(x: x, y: y) do |menu|
+          item(:edit, text: 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
+          item(:mirror, text: 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
+          item(:flip, text: 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
+          separator
+          item(:copy, text: 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
+          item(:paste, text: 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not @clipboard.empty?))
+          item(:delete, text: 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
 
-          widget.subscribe :selected do |widget, value|
+          subscribe :selected do |sender, value|
             case value
               when :delete then delete
               when :copy   then copy
@@ -136,7 +135,7 @@ module Sidney
             end
           end
 
-          show_menu widget
+          show_menu menu
         end
       end
 
@@ -191,8 +190,6 @@ module Sidney
       grid.draw_with_respect_to do
         @scene.draw
       end
-
-      default_font.draw("Scene: '#{@scene.name}' [#{@scene.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end

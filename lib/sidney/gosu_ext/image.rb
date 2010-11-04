@@ -183,32 +183,34 @@ class Image
   end
 
   # Manipulates an image with DevIL within a block, before returning the newly manipulated version.
+  # Devil is inverted vertically, so images are flipped when they are converted to or from Devil format.
   #
-  # Returns: The manipulated image [Gosu::Image]
+  # Returns: The result of the block
   public
   def as_devil
     raise ArgumentError, "Must provide a block" unless block_given?
 
-    devil_image = Devil.from_blob(Image.from_blob(to_blob, width, height).to_blob, width, height) # to_devil & to_blob are broken!.
-    devil_image.flip # TODO: Fix devil?
+    devil_image = to_devil.flip
     ret_val = yield devil_image
     devil_image.delete
     
     ret_val
   end
 
-  def mirror
-    as_devil do |devil|
-      devil.mirror
-      devil.to_gosu($window)
+
+  def flip!
+    scale 0, -1, 0, $window.height / 2 do
+      $window.render_to_image { } # Don't need to do anything.
     end
   end
 
-  def flip
-    as_devil do |devil|
-      devil.flip
-      devil.to_gosu($window)
+  def mirror!
+    scale -1, 0, $window.width / 2, 0 do
+      $window.render_to_image { } # Don't need to do anything.
     end
   end
+
+  def flip; dup.flip!; end
+  def mirror; dup.mirror!; end
 end
 end

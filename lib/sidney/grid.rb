@@ -93,10 +93,11 @@ class Grid < Composite
 
     @offset_x, @offset_y = 0, 0
 
-    super(parent, VerticalPacker.new(nil, padding: 0))
+    super(parent)
 
     width, height = (WIDTH * @base_scale + 2).to_i, (HEIGHT * @base_scale + 2).to_i
-    @overlay = GridOverlay.new(inner_container, CELL_WIDTH * @scale, width: width, height: height)
+
+    @overlay = GridOverlay.new(self, CELL_WIDTH * @scale, width: width, height: height)
   end
 
   public

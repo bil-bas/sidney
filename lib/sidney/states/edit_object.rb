@@ -18,18 +18,16 @@ module Sidney
         f1: ->{ push_game_state GameStates::Popup.new(text: t('edit_object.help', general: t('help'))) }
       )
 
-      @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
-        @save_button = Button.new(packer, icon: Image['save.png'],
-                                          tip: t('edit_object.save_button.tip')) do |button|
-          button.subscribe :clicked_left_mouse_button, method(:save)
+      @state_bar = pack :vertical, padding: 0 do
+        @save_button = button(icon: Image['save.png'], tip: t('edit_object.save_button.tip')) do
+          save
         end
 
-        @save_copy_button = Button.new(packer, icon: Image['copy_and_save.png'],
-                                               tip: t('edit_object.save_copy_button.tip')) do |button|
-          button.subscribe :clicked_left_mouse_button, method(:save_copy)
+        @save_copy_button = button(icon: Image['copy_and_save.png'], tip: t('edit_object.save_copy_button.tip')) do
+          save_copy
         end
 
-        ResourceBrowser.new(packer, Sprite)
+        resource_browser Sprite
       end
     end
 
@@ -66,16 +64,16 @@ module Sidney
       return if @selection.dragging?
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
-        MenuPane.new(x: x, y: y) do |widget|
-          widget.add_item(:edit, text: 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
-          widget.add_item(:mirror, text: 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
-          widget.add_item(:flip, text: 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
-          widget.add_separator
-          widget.add_item(:copy, text: 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
-          widget.add_item(:paste, text: 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not clipboard.empty?))
-          widget.add_item(:delete, text: 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
+        MenuPane.new(x: x, y: y) do |menu|
+          item(:edit, text: 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
+          item(:mirror, text: 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
+          item(:flip, text: 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
+          separator
+          item(:copy, text: 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
+          item(:paste, text: 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not clipboard.empty?))
+          item(:delete, text: 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
 
-          widget.subscribe :selected do |widget, value|
+          subscribe :selected do |sender, value|
             case value
               when :delete then delete
               when :copy   then copy
@@ -86,7 +84,7 @@ module Sidney
             end
           end
 
-          show_menu widget
+          show_menu menu
         end
       end
 
@@ -165,6 +163,12 @@ module Sidney
       end
     end
 
+    public
+    def update
+      @@state_label.text = "Object: '#{@object.state_object.name}' [#{@object.state_object.id}]"
+      super
+    end
+
     # @return nil
     public
     def draw
@@ -177,8 +181,6 @@ module Sidney
 
         @object.draw_layers
       end
-
-      default_font.draw("Object: '#{@object.state_object.name}' [#{@object.state_object.id}]", 10, $window.height - 25, ZOrder::GUI)
 
       super
     end

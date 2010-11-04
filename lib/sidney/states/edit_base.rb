@@ -52,16 +52,18 @@ module Sidney
       )
 
       # Create a common packer, used by all editing modes.
-      @@edit_packer ||= HorizontalPacker.new(container, padding: 2) do |packer|
-        VerticalPacker.new(packer, padding: 0) do |packer|
+      @@edit_packer ||= HorizontalPacker.new(nil, padding: 2) do
+        pack :vertical, padding: 0 do |packer|
           # The grid contains the actual game state.
           @@grid = Grid.new(packer, ($window.height / 300).floor)
 
-          @@base_packer = VerticalPacker.new(container) do |packer|
+          @@base_packer = pack :vertical do
+            @@coordinate_label = label ''
+            @@state_label = label ''
           end
         end
 
-        VerticalPacker.new(packer, padding: 0) do |packer|
+        pack :vertical, padding: 0 do
           # The zoomer allows the user to change the zoom.
           values = t 'zoom_combo.values'
           zooms = [0.5, 1, 2, 4, 8].inject({}) do |hash, value|
@@ -69,35 +71,30 @@ module Sidney
             hash
           end
 
-          HorizontalPacker.new(packer, padding: 0) do |packer|
-            @@zoom_box = ComboBox.new(packer, value: INITIAL_ZOOM, tip: t('zoom_combo.tip')) do |widget|
+          pack :horizontal, padding: 0 do
+            @@zoom_box = combo_box(value: INITIAL_ZOOM, tip: t('zoom_combo.tip')) do
               zooms.each_pair do |key, value|
-                widget.add_item(key, text: value)
+                item(key, text: value)
               end
 
-              widget.subscribe :changed do |widget, value|
+              subscribe :changed do |widget, value|
                 @@grid.scale = value * @@grid.base_scale
               end
             end
 
-            @@centre_button = Button.new(packer, icon: Image['center.png'],
-                                          tip: t('centre_button.tip')) do |button|
-              button.subscribe :clicked_left_mouse_button do
-                @@zoom_box.value = 1
-                @@grid.offset_x = @@grid.offset_y = 0
-              end
+            @@centre_button = button(icon: Image['center.png'], tip: t('centre_button.tip')) do
+              @@zoom_box.value = 1
+              @@grid.offset_x = @@grid.offset_y = 0
             end
 
-            @@grid_button = ToggleButton.new(packer, on: true, icon: Image['grid.png'],
-                                          on_tip: t('grid_button.on.tip'), off_tip: t('grid_button.off.tip')) do |button|
-              button.subscribe :clicked_left_mouse_button do
-                @@grid.toggle_overlay
-              end
+            @@grid_button = toggle_button(on: true, icon: Image['grid.png'],
+                                          on_tip: t('grid_button.on.tip'), off_tip: t('grid_button.off.tip')) do
+              @@grid.toggle_overlay
             end
           end
 
           # Sidebar used by the individual states.
-          @@state_bar_container = VerticalPacker.new(packer, padding: 0)
+          @@state_bar_container = pack :vertical, padding: 0
         end
       end
     end
@@ -120,7 +117,7 @@ module Sidney
         x, y = 'x', 'y'
       end
 
-      default_font.draw("(#{x}, #{y})", 10, $window.height - 40, ZOrder::GUI)
+      @@coordinate_label.text = "(#{x}, #{y})"
       nil
     end
 
