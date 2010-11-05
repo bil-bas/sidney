@@ -15,6 +15,8 @@ module Sidney
   class ResourceBrowser < Composite
     DEFAULT_BORDER_COLOR = Color.rgb(255, 255, 255)
 
+    handles :changed
+
     def value; @group.value; end
     def search; @text_entry.text; end
     def type; @type; end
