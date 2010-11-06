@@ -117,7 +117,7 @@ module Sidney
       return if @selection.dragging?
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
-        MenuPane.new(x: x, y: y) do |menu|
+        menu do
           item(:edit, text: 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
           item(:mirror, text: 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
           item(:flip, text: 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
@@ -136,8 +136,6 @@ module Sidney
               when :mirror then @selection[0].mirror!
             end
           end
-
-          show
         end
       end
 
