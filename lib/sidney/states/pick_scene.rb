@@ -25,7 +25,7 @@ module Sidney
         end
 
         pack :vertical, border_color: Color.new(255, 255, 255) do
-          button(text: "Edit Scene") do
+          button 'Edit Scene' do
             edit if @scene_picker.value
           end
 
@@ -46,6 +46,7 @@ module Sidney
     end
 
     def setup
+      super
       #@scene_picker.refresh
 
       nil

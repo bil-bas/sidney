@@ -32,7 +32,7 @@ module Sidney
         holding_right_mouse_button: :holding_right_mouse_button
       )
 
-      @state_bar = VerticalPacker.new(nil, padding: 0) do |packer|
+      @state_bar = VerticalPacker.new(padding: 0) do |packer|
         @color_picker = packer.color_picker(width: 100, color: INITIAL_DRAW_COLOR, channel_names: t('edit_sprite.color_picker.channel_names'))
 
         group do

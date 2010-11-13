@@ -17,12 +17,12 @@ class GridOverlay < Element
   def hide!; @visible = false; end
 
   protected
-  def initialize(parent, cell_width, options = {})
+  def initialize(cell_width, options = {})
     @cell_width = cell_width
 
     @visible = true
 
-    super parent, options
+    super options
   end
 
   public

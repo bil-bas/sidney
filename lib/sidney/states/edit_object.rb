@@ -19,12 +19,12 @@ module Sidney
         released_right_mouse_button: :released_right_mouse_button
       )
 
-      @state_bar = VerticalPacker.new(nil, padding: 0) do
-        @save_button = button(icon: Image['save.png'], tip: t('edit_object.save_button.tip')) do
+      @state_bar = VerticalPacker.new(padding: 0) do
+        @save_button = button('', icon: Image['save.png'], tip: t('edit_object.save_button.tip')) do
           save
         end
 
-        @save_copy_button = button(icon: Image['copy_and_save.png'], tip: t('edit_object.save_copy_button.tip')) do
+        @save_copy_button = button('', icon: Image['copy_and_save.png'], tip: t('edit_object.save_copy_button.tip')) do
           save_copy
         end
 
@@ -66,13 +66,13 @@ module Sidney
       x, y = $window.mouse_x, $window.mouse_y
       if grid.hit?(x, y)
         menu do
-          item(:edit, text: 'Edit', shortcut: 'Ctrl-E', enabled: @selection.size == 1)
-          item(:mirror, text: 'Mirror', shortcut: 'Ctrl-M', enabled: @selection.size == 1)
-          item(:flip, text: 'Flip vertically', shortcut: 'Ctrl-N', enabled: @selection.size == 1)
+          item('Edit', :edit, shortcut: 'Ctrl-E', enabled: @selection.size == 1)
+          item('Mirror', :mirror, shortcut: 'Ctrl-M', enabled: @selection.size == 1)
+          item('Flip vertically', :flip, shortcut: 'Ctrl-N', enabled: @selection.size == 1)
           separator
-          item(:copy, text: 'Copy', shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
-          item(:paste, text: 'Paste', shortcut: 'Ctrl-V', enabled: (@selection.empty? and not clipboard.empty?))
-          item(:delete, text: 'Delete', shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
+          item('Copy', :copy, shortcut: 'Ctrl-C', enabled: (not @selection.empty?))
+          item('Paste', :paste, shortcut: 'Ctrl-V', enabled: (@selection.empty? and not clipboard.empty?))
+          item('Delete', :delete, shortcut: 'Ctrl-X', enabled: (not @selection.empty?))
 
           subscribe :selected do |sender, value|
             case value

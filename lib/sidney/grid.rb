@@ -86,18 +86,18 @@ class Grid < Composite
   end
 
   protected
-  def initialize(parent, scale, &block)
+  def initialize(scale, options = {}, &block)
     @base_scale = @scale = scale.to_f
 
     @scale_range = (@base_scale * SCALE_RANGE.min)..(@base_scale * SCALE_RANGE.max)
 
     @offset_x, @offset_y = 0, 0
 
-    super(parent)
+    super(options)
 
     width, height = (WIDTH * @base_scale + 2).to_i, (HEIGHT * @base_scale + 2).to_i
 
-    @overlay = GridOverlay.new(self, CELL_WIDTH * @scale, width: width, height: height)
+    @overlay = GridOverlay.new(CELL_WIDTH * @scale, width: width, height: height, parent: self)
   end
 
   public

@@ -54,10 +54,10 @@ module Sidney
       )
 
       # Create a common packer, used by all editing modes.
-      @@edit_packer ||= HorizontalPacker.new(nil, padding: 2) do
+      @@edit_packer ||= HorizontalPacker.new(padding: 2) do
         pack :vertical, padding: 0 do |packer|
           # The grid contains the actual game state.
-          @@grid = Grid.new(packer, ($window.height / 300).floor)
+          @@grid = Grid.new(($window.height / 300).floor, parent: packer)
 
           @@base_packer = pack :vertical do
             @@coordinate_label = label ''
@@ -75,8 +75,8 @@ module Sidney
 
           pack :horizontal, padding: 0 do
             @@zoom_box = combo_box(value: INITIAL_ZOOM, tip: t('zoom_combo.tip')) do
-              zooms.each_pair do |key, value|
-                item(key, text: value)
+              zooms.each_pair do |key, text|
+                item(text, key)
               end
 
               subscribe :changed do |widget, value|
@@ -84,12 +84,12 @@ module Sidney
               end
             end
 
-            @@centre_button = button(icon: Image['center.png'], tip: t('centre_button.tip')) do
+            @@centre_button = button('', icon: Image['center.png'], tip: t('centre_button.tip')) do
               @@zoom_box.value = 1
               @@grid.offset_x = @@grid.offset_y = 0
             end
 
-            @@grid_button = toggle_button(on: true, icon: Image['grid.png'],
+            @@grid_button = toggle_button('', value: true, icon: Image['grid.png'],
                                           on_tip: t('grid_button.on.tip'), off_tip: t('grid_button.off.tip')) do
               @@grid.toggle_overlay
             end
@@ -125,6 +125,7 @@ module Sidney
 
     public
     def setup
+      super
       log.info { "Entered state" }
 
       # Move the layout into the window, then add state-specific elements.
@@ -136,6 +137,7 @@ module Sidney
 
     public
     def finalize
+      super
       log.info { "Left state" }
 
       # Move the layout out of the window, then remove state-specific elements.

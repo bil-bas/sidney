@@ -6,7 +6,7 @@ require_relative "resources"
 module Fidgit
   class Container
     def resource_browser(type, options = {}, &block)
-      Sidney::ResourceBrowser.new(self, type, options, &block)
+      Sidney::ResourceBrowser.new(type, { parent: self }.merge!(options), &block)
     end
   end
 end
@@ -15,7 +15,7 @@ module Sidney
   class ResourceBrowser < Composite
     DEFAULT_BORDER_COLOR = Color.rgb(255, 255, 255)
 
-    handles :changed
+    event :changed
 
     def value; @group.value; end
     def search; @text_entry.text; end
@@ -42,7 +42,7 @@ module Sidney
         if self.search.split(/ +/).all? {|word| resource.name =~ /#{word}/i }
           icon = resource.thumbnail
           icon = Thumbnail.new(icon) if @square_icons
-          @object_grid.radio_button resource, icon: icon, tip: resource.name
+          @object_grid.radio_button '', resource, icon: icon, tip: resource.name
         end
       end
       @label.text = "#{@object_grid.size} found from #{resources.size}"
@@ -57,7 +57,7 @@ module Sidney
       nil
     end
 
-    def initialize(parent, type, options = {})
+    def initialize(type, options = {})
       options = {
         square_icons: true,
         search: '',
@@ -66,7 +66,7 @@ module Sidney
 
       @square_icons = options[:square_icons]
 
-      super parent, options
+      super options
       @type = type
 
       @packer = pack :vertical do
